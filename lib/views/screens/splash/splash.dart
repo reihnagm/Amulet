@@ -4,9 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:provider/provider.dart';
 
+import 'package:panic_button/providers/auth.dart';
+import 'package:panic_button/views/screens/home/home.dart';
 import 'package:panic_button/utils/color_resources.dart';
 import 'package:panic_button/views/screens/welcome/welcome.dart';
-import 'package:panic_button/basewidgets/button/custom.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({Key? key}) : super(key: key);
@@ -30,14 +31,13 @@ class _SplashScreenState extends State<SplashScreen> {
   void initState() {
     super.initState();
     Timer(const Duration(seconds: 3), () {
-      // if (context.read<AuthProvider>().isLoggedIn()) {
-      //   Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (BuildContext context) => const DashBoardScreen()));
-      // } else {
-      Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (BuildContext context) => WelcomeScreen
-      (key: UniqueKey())));
-      // }
+      if (context.read<AuthProvider>().isLoggedIn()) {
+        Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (BuildContext context) => HomeScreen(key: UniqueKey())));
+      } else {
+        Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (BuildContext context) => WelcomeScreen
+        (key: UniqueKey())));
+      }
     });
-      
     (() async {
       PackageInfo p = await PackageInfo.fromPlatform();
       setState(() {      
@@ -77,7 +77,7 @@ class _SplashScreenState extends State<SplashScreen> {
             bottom: 0.0,
             child: Align(
               alignment: Alignment.bottomCenter,
-              child: Image.asset("assets/images/splash-decoration.png", 
+              child: Image.asset("assets/images/decoration.png", 
               ),
             ),
           ),

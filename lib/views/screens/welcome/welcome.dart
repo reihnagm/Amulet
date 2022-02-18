@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 
 import 'package:package_info_plus/package_info_plus.dart';
 
-import 'package:panic_button/basewidgets/button/custom.dart';
 import 'package:panic_button/utils/color_resources.dart';
+import 'package:panic_button/views/basewidgets/button/custom.dart';
 import 'package:panic_button/views/screens/auth/sign_in.dart';
 import 'package:panic_button/views/screens/auth/sign_up.dart';
 
@@ -22,7 +22,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
   @override
   void initState() {
     super.initState();
-      
+  
     (() async {
       PackageInfo p = await PackageInfo.fromPlatform();
       setState(() {      
@@ -60,8 +60,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
           Positioned.fill(
             child: Align(
               alignment: Alignment.bottomCenter,
-              child: Image.asset("assets/images/splash-decoration.png", 
-              fit: BoxFit.scaleDown,
+                child: Image.asset("assets/images/decoration.png", 
               ),
             ),
           ),

@@ -3,12 +3,12 @@ import 'package:intl/intl.dart';
 
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:panic_button/basewidgets/button/custom.dart';
 
-import 'package:panic_button/basewidgets/drawer/drawer.dart';
 import 'package:panic_button/utils/box_shadow.dart';
 import 'package:panic_button/utils/color_resources.dart';
 import 'package:panic_button/utils/dimensions.dart';
+import 'package:panic_button/views/basewidgets/button/custom.dart';
+import 'package:panic_button/views/basewidgets/drawer/drawer.dart';
 
 class CategoryScreen extends StatefulWidget {
   const CategoryScreen({ Key? key }) : super(key: key);

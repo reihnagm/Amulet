@@ -2,12 +2,14 @@ import 'dart:async';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
-import 'package:panic_button/views/screens/notification/notification.dart';
+import 'package:provider/provider.dart';
 import 'package:slide_to_confirm/slide_to_confirm.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
-import 'package:panic_button/basewidgets/drawer/drawer.dart';
+import 'package:panic_button/views/basewidgets/drawer/drawer.dart';
+import 'package:panic_button/providers/auth.dart';
+import 'package:panic_button/views/screens/notification/notification.dart';
 import 'package:panic_button/utils/color_resources.dart';
 import 'package:panic_button/utils/dimensions.dart';
 import 'package:panic_button/views/screens/category/category.dart';
@@ -122,7 +124,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               Container(
                                 margin: const EdgeInsets.only(left: Dimensions.marginSizeDefault),
                                 alignment: Alignment.centerLeft,
-                                child: const Text("Edwin",
+                                child: Text(context.read<AuthProvider>().getUserFullname(),
                                   style: TextStyle(
                                     fontWeight: FontWeight.w500,
                                     fontSize: Dimensions.fontSizeExtraLarge

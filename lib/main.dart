@@ -14,7 +14,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:panic_button/views/screens/splash/splash.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:filesize/filesize.dart';
@@ -22,6 +21,8 @@ import 'package:uuid/uuid.dart';
 import 'package:video_compress/video_compress.dart';
 import 'package:video_player/video_player.dart';
 
+import 'package:panic_button/views/basewidgets/button/custom.dart';
+import 'package:panic_button/views/screens/splash/splash.dart';
 import 'package:panic_button/providers/firebase.dart';
 import 'package:panic_button/providers/location.dart';
 import 'package:panic_button/utils/global.dart';
@@ -29,7 +30,6 @@ import 'package:panic_button/providers.dart';
 import 'package:panic_button/providers/network.dart';
 import 'package:panic_button/providers/videos.dart';
 import 'package:panic_button/services/socket.dart';
-import 'package:panic_button/basewidgets/button/custom.dart';
 import 'package:panic_button/container.dart' as core;
 import 'package:panic_button/services/video.dart';
 

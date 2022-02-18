@@ -1,7 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
-import 'package:panic_button/basewidgets/button/custom.dart';
+import 'package:panic_button/views/basewidgets/button/custom.dart';
+import 'package:panic_button/views/basewidgets/snackbar/snackbar.dart';
+import 'package:panic_button/data/models/user/user.dart';
+import 'package:panic_button/providers/auth.dart';
 import 'package:panic_button/utils/color_resources.dart';
 import 'package:panic_button/utils/dimensions.dart';
 
@@ -46,6 +50,65 @@ class _SignUpScreenState extends State<SignUpScreen> {
     passwordC.dispose();
     passwordConfirmC.dispose();
     super.dispose();
+  }
+
+  Future<void> register() async {
+    String noKtp = noKtpC.text;
+    String fullname = fullnameC.text;
+    String address = addressC.text;
+    String phone = noHpC.text;
+    String email = emailAddressC.text;
+    String password = passwordC.text;
+    String passwordConfirm = passwordConfirmC.text;
+  
+    if(fullname.trim().isEmpty) {
+      ShowSnackbar.snackbar(context, "", "", ColorResources.error);
+      return;
+    }
+
+    if(phone.trim().isEmpty) {
+      ShowSnackbar.snackbar(context, "", "", ColorResources.error);
+      return;
+    }
+
+    if(phone.trim().length < 6) {
+      ShowSnackbar.snackbar(context, "", "", ColorResources.error);
+      return;
+    }
+
+    bool emailValid = RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+").hasMatch(email);
+    if(!emailValid) {
+      ShowSnackbar.snackbar(context, "", "", ColorResources.error);
+      return;
+    }    
+
+    if(password.trim().isEmpty) {
+      ShowSnackbar.snackbar(context, "", "", ColorResources.error);
+      return;
+    }
+
+    if(password.trim().length < 8) {
+      ShowSnackbar.snackbar(context, "", "", ColorResources.error);
+      return;
+    }
+
+    if(password != passwordConfirm) {
+      ShowSnackbar.snackbar(context, "", "", ColorResources.error);
+      return;
+    }
+
+    User user = User();
+    user.identityNumber = noKtp;
+    user.fullname = fullname;
+    user.address = address;
+    user.phoneNumber = phone;
+    user.emailAddress = email;
+    user.password = passwordC.text;
+    try {
+      await context.read<AuthProvider>().register(context, user);
+    } catch(e) {
+      debugPrint(e.toString());
+    }
   }
 
   @override
@@ -106,7 +169,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           child: TextField(
                             controller: noKtpC,
                             style: const TextStyle(
-                              fontSize: 14.0
+                              fontSize: Dimensions.fontSizeDefault
                             ),
                             maxLength: 16,
                             decoration: const InputDecoration(
@@ -127,7 +190,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           child: TextField(
                             controller: fullnameC,
                             style: const TextStyle(
-                              fontSize: 14.0
+                              fontSize: Dimensions.fontSizeDefault
                             ),
                             decoration: const InputDecoration(
                               hintText: "",
@@ -148,7 +211,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                             controller: addressC,
                             maxLines: 2,
                             style: const TextStyle(
-                              fontSize: 14.0
+                              fontSize: Dimensions.fontSizeDefault
                             ),
                             decoration: const InputDecoration(
                               hintText: "",
@@ -168,7 +231,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           child: TextField(
                             controller: noHpC,
                             style: const TextStyle(
-                              fontSize: 14.0
+                              fontSize: Dimensions.fontSizeDefault
                             ),
                             keyboardType: TextInputType.phone,
                             decoration: const InputDecoration(
@@ -189,7 +252,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           child: TextField(
                             controller: emailAddressC,
                             style: const TextStyle(
-                              fontSize: 14.0
+                              fontSize: Dimensions.fontSizeDefault
                             ),
                             keyboardType: TextInputType.emailAddress,
                             decoration: const InputDecoration(
@@ -210,8 +273,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           child: TextField(
                             controller: passwordC,
                             style: const TextStyle(
-                              fontSize: 14.0
+                              fontSize: Dimensions.fontSizeDefault
                             ),
+                            maxLength: 8,
                             obscureText: passwordObscure,
                             decoration: InputDecoration(
                               suffixIcon: InkWell(
@@ -238,8 +302,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           child: TextField(
                             controller: passwordConfirmC,
                             style: const TextStyle(
-                              fontSize: 14.0
+                              fontSize:  Dimensions.fontSizeDefault
                             ),
+                            maxLength: 8,
                             obscureText: passwordConfirmObscure,
                             decoration: InputDecoration(
                               suffixIcon: InkWell(
@@ -268,11 +333,14 @@ class _SignUpScreenState extends State<SignUpScreen> {
               Align(
                 alignment: Alignment.bottomCenter,
                 child: CustomButton(
-                  onTap: () {},
+                  onTap: register,
                   height: 56.0, 
                   btnTxt: "Lanjutkan",
                   btnColor: ColorResources.redPrimary,
                   btnTextColor: ColorResources.white,
+                  isLoading: context.watch<AuthProvider>().registerStatus == RegisterStatus.loading 
+                  ? true  
+                  : false,
                   isBorder: false,
                   isBorderRadius: false,
                   isBoxShadow: true,

@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 
 import 'package:panic_button/utils/color_resources.dart';
 import 'package:panic_button/utils/dimensions.dart';
+import 'package:panic_button/views/basewidgets/dialog/animated/animated.dart';
+import 'package:panic_button/views/basewidgets/dialog/logout/logout.dart';
 
 class DrawerWidget extends StatefulWidget {
   const DrawerWidget({ Key? key }) : super(key: key);
@@ -127,11 +129,26 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                 ),
                 Container(
                   padding: const EdgeInsets.all(Dimensions.paddingSizeSmall),
-                  child: const Text("Log out",
-                    style: TextStyle(
-                      color: ColorResources.redPrimary,
-                      fontWeight: FontWeight.w500,
-                      fontSize: Dimensions.fontSizeDefault
+                  child: Material(
+                    color: ColorResources.transparent,
+                    child: InkWell(
+                      onTap: () {
+                        showAnimatedDialog(
+                          context,
+                          const SignOutConfirmationDialog(),
+                          isFlip: true
+                        );
+                      },
+                      child: const Padding(
+                        padding: EdgeInsets.all(8.0),
+                        child: Text("Log out",
+                          style: TextStyle(
+                            color: ColorResources.redPrimary,
+                            fontWeight: FontWeight.w500,
+                            fontSize: Dimensions.fontSizeDefault
+                          ),
+                        ),
+                      ),
                     ),
                   ),
                 ),
