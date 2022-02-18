@@ -40,7 +40,6 @@ class _SignInScreenState extends State<SignInScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      resizeToAvoidBottomInset: false,
       key: globalKey,
       backgroundColor: ColorResources.backgroundColor,
       body: Stack(
@@ -58,7 +57,7 @@ class _SignInScreenState extends State<SignInScreen> {
           Positioned.fill(
             child: Align(
               alignment: Alignment.bottomCenter,
-              child: Image.asset("assets/images/login-decoration.png", 
+              child: Image.asset("assets/images/decoration.png", 
               fit: BoxFit.scaleDown,
               ),
             ),

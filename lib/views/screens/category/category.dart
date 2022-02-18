@@ -61,7 +61,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
       resizeToAvoidBottomInset: false,
       key: globalKey,
       drawer: DrawerWidget(key: UniqueKey()),
-      backgroundColor:ColorResources.backgroundColor,
+      backgroundColor:ColorResources.white,
       body: SafeArea(
         child: LayoutBuilder(
           builder: (BuildContext context, BoxConstraints constraints) {

@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
+import 'package:panic_button/views/screens/notification/notification.dart';
 import 'package:slide_to_confirm/slide_to_confirm.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -28,7 +29,7 @@ class _HomeScreenState extends State<HomeScreen> {
       resizeToAvoidBottomInset: false,
       key: globalKey,
       drawer: DrawerWidget(key: UniqueKey()),
-      backgroundColor: ColorResources.backgroundColor,
+      backgroundColor: ColorResources.white,
       body: SafeArea(
         child: LayoutBuilder(
           builder: (BuildContext context, BoxConstraints constraints) {
@@ -72,10 +73,35 @@ class _HomeScreenState extends State<HomeScreen> {
                         actions: [
                           Container(
                             margin: const EdgeInsets.only(right: Dimensions.marginSizeDefault),
-                            child: const Icon(
-                              Icons.notifications,
-                              size: 25.0,
-                              color: ColorResources.black,
+                            child: Material(
+                              color: ColorResources.transparent,
+                              child: InkWell(
+                                onTap: () {
+                                  Navigator.push(context,
+                                    PageRouteBuilder(pageBuilder: (BuildContext context, Animation<double> animation, Animation<double> secondaryAnimation) {
+                                      return NotificationScreen(key: UniqueKey());
+                                    },
+                                    transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                                      Offset begin = const Offset(1.0, 0.0);
+                                      Offset end = Offset.zero;
+                                      Cubic curve = Curves.ease;
+                                      Animatable<Offset> tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+                                      return SlideTransition(
+                                        position: animation.drive(tween),
+                                        child: child,
+                                      );
+                                    })
+                                  );
+                                },
+                                child: const Padding(
+                                  padding: EdgeInsets.all(8.0),
+                                  child: Icon(
+                                    Icons.notifications,
+                                    size: 25.0,
+                                    color: ColorResources.black,
+                                  ),
+                                ),
+                              ),
                             ),
                           )
                         ],
