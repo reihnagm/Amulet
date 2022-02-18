@@ -275,7 +275,7 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver, Ti
   @override 
   void didChangeDependencies() {
     super.didChangeDependencies();
-    WidgetsBinding.instance!.addPostFrameCallback((_) async {
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
       if(mounted) {
         videoProvider.fetchFcm(context);
       }
@@ -306,7 +306,7 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver, Ti
       }); 
     });
 
-    WidgetsBinding.instance!.addPostFrameCallback((_) async {
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
       await onInitCamera();
 
       if(mounted) {

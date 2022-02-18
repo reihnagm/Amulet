@@ -54,20 +54,34 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       backgroundColor: ColorResources.backgroundColor,
       key: scaffoldKey,
-      body: Container(
-      width:  MediaQuery.of(context).size.width,
-      height: MediaQuery.of(context).size.height,
-      decoration: const BoxDecoration(
-        image: DecorationImage(
-          fit: BoxFit.cover,
-          image: AssetImage('assets/images/step-first.png')
-        )
-      ),
-      child: Stack(
+      body: Stack(
+        fit: StackFit.expand,
         children: [
-        
+
+          Align(
+            alignment: Alignment.topCenter,
+            child: Container(
+              margin: const EdgeInsets.only(top: 50.0),
+              child: Image.asset("assets/images/logo.png",
+                width: 180.0,
+                height: 180.0,
+                fit: BoxFit.scaleDown,
+              ),
+            ),
+          ),
+
+          Positioned.fill(
+            bottom: 0.0,
+            child: Align(
+              alignment: Alignment.bottomCenter,
+              child: Image.asset("assets/images/splash-decoration.png", 
+              ),
+            ),
+          ),
+
           Align(
             alignment: Alignment.bottomCenter,
             child: Container(
@@ -84,7 +98,7 @@ class _SplashScreenState extends State<SplashScreen> {
           ),
          
         ],
-      ))
+      )
     );
   }
 }

@@ -2,12 +2,14 @@ import 'dart:async';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
+import 'package:slide_to_confirm/slide_to_confirm.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
+import 'package:panic_button/basewidgets/drawer/drawer.dart';
 import 'package:panic_button/utils/color_resources.dart';
 import 'package:panic_button/utils/dimensions.dart';
-import 'package:slide_to_confirm/slide_to_confirm.dart';
+import 'package:panic_button/views/screens/category/category.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({ Key? key }) : super(key: key);
@@ -24,7 +26,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       key: globalKey,
-      drawer: const Drawer(),
+      drawer: DrawerWidget(key: UniqueKey()),
       backgroundColor: ColorResources.backgroundColor,
       resizeToAvoidBottomInset: false,
       body: SafeArea(
@@ -141,15 +143,36 @@ class _HomeScreenState extends State<HomeScreen> {
                       left: Dimensions.marginSizeDefault, 
                       right: Dimensions.marginSizeDefault
                     ),
-                    padding: const EdgeInsets.all(Dimensions.paddingSizeSmall),
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(10.0),
                       color: ColorResources.redPrimary
                     ),
-                    child: const Text("Kategori",
-                      style: TextStyle(
-                        fontSize: Dimensions.fontSizeSmall,
-                        color: ColorResources.white
+                    child: InkWell(
+                      onTap: () { 
+                        Navigator.push(context,
+                          PageRouteBuilder(pageBuilder: (BuildContext context, Animation<double> animation, Animation<double> secondaryAnimation) {
+                            return CategoryScreen(key: UniqueKey());
+                          },
+                          transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                            Offset begin = const Offset(1.0, 0.0);
+                            Offset end = Offset.zero;
+                            Cubic curve = Curves.ease;
+                            Animatable<Offset> tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+                            return SlideTransition(
+                              position: animation.drive(tween),
+                              child: child,
+                            );
+                          })
+                        );
+                      },
+                      child: const Padding(
+                        padding: EdgeInsets.all(Dimensions.paddingSizeSmall),
+                        child: Text("Kategori",
+                          style: TextStyle(
+                            fontSize: Dimensions.fontSizeSmall,
+                            color: ColorResources.white
+                          ),
+                        ),
                       ),
                     )
                   ),

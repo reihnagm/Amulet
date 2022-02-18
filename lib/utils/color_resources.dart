@@ -18,6 +18,7 @@ class ColorResources {
   static const Color textLive = Color(0xffD27542);
   static const Color textDisabled = Color(0xff757575);
   static const Color black = Color(0xff000000);
+  static const Color backgroundCategory = Color(0xffECF1F1);
   static const Color backgroundColor = Color(0xffF6F6F6);
   static const Color white = Color(0xffFFFFFF);
   static const Color bgGrey = Color(0xffF5F5F5);

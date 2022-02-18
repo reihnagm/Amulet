@@ -41,22 +41,35 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
     return Scaffold(
       key: scaffoldKey,
       backgroundColor: ColorResources.backgroundColor,
-      body: Container(
-      width:  MediaQuery.of(context).size.width,
-      height: MediaQuery.of(context).size.height,
-      decoration: const BoxDecoration(
-        image: DecorationImage(
-          fit: BoxFit.cover,
-          image: AssetImage('assets/images/step-first.png')
-        )
-      ),
-      child: Stack(
+      body: Stack(
+        fit: StackFit.expand,
         children: [
+
+          Align(
+            alignment: Alignment.topCenter,
+            child: Container(
+              margin: const EdgeInsets.only(top: 50.0),
+              child: Image.asset("assets/images/logo.png",
+                width: 180.0,
+                height: 180.0,
+                fit: BoxFit.scaleDown,
+              ),
+            ),
+          ),
+
+          Positioned.fill(
+            child: Align(
+              alignment: Alignment.bottomCenter,
+              child: Image.asset("assets/images/splash-decoration.png", 
+              fit: BoxFit.scaleDown,
+              ),
+            ),
+          ),
 
           Align(
             alignment: Alignment.bottomCenter,
             child: Container(
-              margin: const EdgeInsets.only(left: 16.0, right: 16.0, bottom: 180.0),
+              margin: const EdgeInsets.only(left: 16.0, right: 16.0, bottom: 140.0),
               child: CustomButton(
                 onTap: () {
                   Navigator.push(context,
@@ -89,7 +102,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
           Align(
             alignment: Alignment.bottomCenter,
             child: Container(
-              margin: const EdgeInsets.only(left: 16.0, right: 16.0, top: 30.0, bottom: 130.0),
+              margin: const EdgeInsets.only(left: 16.0, right: 16.0, top: 30.0, bottom: 90.0),
               child: CustomButton(
                 onTap: () {
                   Navigator.push(context,
@@ -122,7 +135,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
           Align(
             alignment: Alignment.bottomCenter,
             child: Container(
-              margin: const EdgeInsets.only(bottom: 80.0),
+              margin: const EdgeInsets.only(bottom: 40.0),
               child: packageInfo == null 
               ? const Text("") : Text("Version ${packageInfo!.version} + ${packageInfo!.buildNumber}",
                 style: const TextStyle(
@@ -135,7 +148,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
           ),
          
         ],
-      )),
+      ),
     );
   }
 }

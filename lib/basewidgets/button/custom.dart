@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:panic_button/basewidgets/button/bounce.dart';
+import 'package:panic_button/utils/dimensions.dart';
 
 class CustomButton extends StatelessWidget {
   final Function() onTap;
@@ -68,7 +69,7 @@ class CustomButton extends StatelessWidget {
             style: TextStyle(
               color: btnTextColor,
               fontWeight: FontWeight.bold,
-              fontSize: 16
+              fontSize: Dimensions.fontSizeDefault
             )
           ),
         )
