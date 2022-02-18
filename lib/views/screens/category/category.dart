@@ -1,9 +1,12 @@
 import 'dart:async';
+import 'package:intl/intl.dart';
 
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:panic_button/utils/box_shadow.dart';
+import 'package:panic_button/basewidgets/button/custom.dart';
 
+import 'package:panic_button/basewidgets/drawer/drawer.dart';
+import 'package:panic_button/utils/box_shadow.dart';
 import 'package:panic_button/utils/color_resources.dart';
 import 'package:panic_button/utils/dimensions.dart';
 
@@ -17,6 +20,7 @@ class CategoryScreen extends StatefulWidget {
 class _CategoryScreenState extends State<CategoryScreen> {
   GlobalKey<ScaffoldState> globalKey = GlobalKey<ScaffoldState>();
   Completer<GoogleMapController> mapsController = Completer();
+  int selectedIndex = -1;
 
   List<Map<String, dynamic>> categories = [
     {
@@ -27,7 +31,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
     {
       "id": 2,
       "name": "Pencurian",
-      "image": "assets/images/rape.png"
+      "image": "assets/images/thief.png"
     },
     {
       "id": 3,
@@ -42,7 +46,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
     {
       "id": 5,
       "name": "Perampokan",
-      "image": "assets/images/thief.png"
+      "image": "assets/images/rape.png"
     },
     {
       "id": 6,
@@ -56,7 +60,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
     return Scaffold(
       resizeToAvoidBottomInset: false,
       key: globalKey,
-      drawer: const Drawer(),
+      drawer: DrawerWidget(key: UniqueKey()),
       backgroundColor:ColorResources.backgroundColor,
       body: SafeArea(
         child: LayoutBuilder(
@@ -118,8 +122,8 @@ class _CategoryScreenState extends State<CategoryScreen> {
                                 alignment: Alignment.centerLeft,
                                 child: const Text("Hello",
                                   style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: Dimensions.fontSizeOverLarge
+                                    fontWeight: FontWeight.w400,
+                                    fontSize: Dimensions.fontSizeLarge
                                   ),
                                 ),
                               ),
@@ -130,7 +134,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
                                 child: const Text("Edwin",
                                   style: TextStyle(
                                     fontWeight: FontWeight.w500,
-                                    fontSize: Dimensions.fontSizeExtraLarge
+                                    fontSize: Dimensions.fontSizeOverLarge
                                   ),
                                 ),
                               )
@@ -144,6 +148,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
                         child: Container(
                           margin: const EdgeInsets.only(
                             top: 40.0, 
+                            bottom: 40.0,
                             left: Dimensions.marginSizeDefault, 
                             right: Dimensions.marginSizeDefault
                           ),
@@ -158,15 +163,17 @@ class _CategoryScreenState extends State<CategoryScreen> {
                             physics: const NeverScrollableScrollPhysics(),
                             gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
                               maxCrossAxisExtent: 200,
-                              childAspectRatio: 3 / 2,
+                              childAspectRatio: 4 / 4,
                               crossAxisSpacing: 30,
-                              mainAxisSpacing: 30,
+                              mainAxisSpacing: 35,
                             ),
                             itemCount: categories.length,
                             itemBuilder: (BuildContext context, int i) {
                               return Container(
                                 decoration: BoxDecoration(
-                                  color: ColorResources.backgroundCategory,
+                                  color: selectedIndex == i 
+                                  ? ColorResources.redPrimary 
+                                  : ColorResources.backgroundCategory,
                                   boxShadow: boxShadow,
                                   borderRadius: BorderRadius.circular(20.0)
                                 ),
@@ -176,7 +183,190 @@ class _CategoryScreenState extends State<CategoryScreen> {
                                   child: InkWell(
                                     borderRadius: BorderRadius.circular(20.0),
                                     onTap: () {
-                                      
+                                      setState(() => selectedIndex = i);
+                                      showModalBottomSheet(
+                                        isScrollControlled: true,
+                                        context: context, 
+                                        shape: const RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.only(
+                                            topLeft: Radius.circular(20.0),
+                                            topRight: Radius.circular(20.0)
+                                          )
+                                        ),
+                                        builder: (BuildContext context) {
+                                          return LayoutBuilder(
+                                            builder: (BuildContext context, BoxConstraints constraints) {
+                                              return Padding(
+                                                padding: MediaQuery.of(context).viewInsets,
+                                                child: Padding(
+                                                  padding: const EdgeInsets.all(16.0),
+                                                  child: Column(
+                                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                                    mainAxisSize: MainAxisSize.min,
+                                                    children: [
+                                                      Column(
+                                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                                        mainAxisSize: MainAxisSize.min,
+                                                        children: [
+                                                          Text(categories[i]["name"],
+                                                            style: const TextStyle(
+                                                              fontWeight: FontWeight.w500,
+                                                              fontSize: Dimensions.fontSizeLarge
+                                                            ),
+                                                          ),
+                                                          const SizedBox(height: 10.0),
+                                                          Row(
+                                                            children: [
+                                                              const Expanded(
+                                                                flex: 20,
+                                                                child: Text("Tanggal",
+                                                                  style: TextStyle(
+                                                                    fontWeight: FontWeight.w500,
+                                                                    fontSize: Dimensions.fontSizeDefault
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                              const Expanded(
+                                                                flex: 6,
+                                                                child: Text(":",
+                                                                  style: TextStyle(
+                                                                    fontWeight: FontWeight.w500,
+                                                                    fontSize: Dimensions.fontSizeDefault
+                                                                  ),
+                                                                )
+                                                              ),
+                                                              Expanded(
+                                                                flex: 100,
+                                                                child: Text(DateFormat('M/d/y').format(DateTime.now()),
+                                                                  style: const TextStyle(
+                                                                    fontWeight: FontWeight.w500,
+                                                                    fontSize: Dimensions.fontSizeDefault
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                            ],
+                                                          ),
+                                                          const SizedBox(height: 10.0),
+                                                          Row(
+                                                            children: const [
+                                                              Expanded(
+                                                                flex: 20,
+                                                                child: Text("Lokasi",
+                                                                  style: TextStyle(
+                                                                    fontWeight: FontWeight.w500,
+                                                                    fontSize: Dimensions.fontSizeDefault
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                              Expanded(
+                                                                flex: 6,
+                                                                child: Text(":",
+                                                                  style: TextStyle(
+                                                                    fontWeight: FontWeight.w500,
+                                                                    fontSize: Dimensions.fontSizeDefault
+                                                                  ),
+                                                                )
+                                                              ),
+                                                              Expanded(
+                                                                flex: 100,
+                                                                child: Text("Jl. Kemang Timur No.1 RT.003/RW.002",
+                                                                  style: TextStyle(
+                                                                    fontWeight: FontWeight.w500,
+                                                                    fontSize: Dimensions.fontSizeDefault
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                            ],
+                                                          )
+                                                        ],
+                                                      ),
+                                                  
+                                                      Container(
+                                                        margin: const EdgeInsets.only(top: Dimensions.marginSizeLarge),
+                                                        child: const TextField(
+                                                          cursorColor: ColorResources.black,
+                                                          style: TextStyle(
+                                                            fontSize: Dimensions.fontSizeDefault
+                                                          ),
+                                                          decoration: InputDecoration(
+                                                            labelText: "Pesan",
+                                                            labelStyle: TextStyle(
+                                                              fontWeight: FontWeight.w500,
+                                                              color: ColorResources.black,
+                                                              fontSize: Dimensions.fontSizeLarge
+                                                            ),
+                                                            floatingLabelBehavior: FloatingLabelBehavior.always,
+                                                            border: OutlineInputBorder(),
+                                                            focusedBorder: OutlineInputBorder(),
+                                                            errorBorder: OutlineInputBorder(),
+                                                            enabledBorder: OutlineInputBorder(),
+                                                            disabledBorder: OutlineInputBorder(),
+                                                            focusedErrorBorder: OutlineInputBorder()
+                                                          ),
+                                                          maxLines: 4,
+                                                        ),
+                                                      ),
+
+                                                      Container(
+                                                        margin: const EdgeInsets.only(top: Dimensions.marginSizeLarge),
+                                                        child: Row(
+                                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                          mainAxisSize: MainAxisSize.max,
+                                                          children: [
+                                                            Expanded(
+                                                              flex: 6,
+                                                              child: Row(
+                                                                children: [
+                                                                  Image.asset("assets/images/sound-record.png",
+                                                                    width: 30.0,
+                                                                    height: 30.0,
+                                                                  ),
+                                                                  const SizedBox(width: 14.0),
+                                                                  Image.asset("assets/images/camera.png",
+                                                                    width: 30.0,
+                                                                    height: 30.0,
+                                                                  ),
+                                                                  const SizedBox(width: 14.0),
+                                                                  Image.asset("assets/images/video-record.png",
+                                                                    width: 30.0,
+                                                                    height: 30.0,
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                            ),
+                                                            Expanded(
+                                                              flex: 3,
+                                                              child: Column(
+                                                                mainAxisSize: MainAxisSize.min,
+                                                                children: [
+                                                                  CustomButton(
+                                                                    onTap: () {
+                                                            
+                                                                    }, 
+                                                                    height: 30.0,
+                                                                    isBorder: false,
+                                                                    isBorderRadius: false,
+                                                                    isBoxShadow: true,
+                                                                    btnColor: ColorResources.redPrimary,
+                                                                    btnTextColor: ColorResources.white,
+                                                                    btnTxt: "Kirim"
+                                                                  )
+                                                                ],
+                                                              ),
+                                                            )
+                                                          ],
+                                                        )
+                                                      )
+                                                  
+                                                  
+                                                    ],
+                                                  ),
+                                                ),
+                                              );
+                                            },
+                                          );                                        
+                                        } 
+                                      );
                                     },
                                     child: Padding(
                                       padding: const EdgeInsets.all(8.0),
@@ -188,8 +378,8 @@ class _CategoryScreenState extends State<CategoryScreen> {
                                           Container(
                                             alignment: Alignment.center,
                                             child: Image.asset(categories[i]["image"],
-                                              width: 50.0,
-                                              height: 50.0,
+                                              width: 90.0,
+                                              height: 90.0,
                                               alignment: Alignment.center,
                                             ),
                                           ),
@@ -198,7 +388,10 @@ class _CategoryScreenState extends State<CategoryScreen> {
                                             margin: const EdgeInsets.only(top: Dimensions.marginSizeDefault),
                                             alignment: Alignment.center,
                                             child: Text(categories[i]["name"].toString(),
-                                              style: const TextStyle(
+                                              style: TextStyle(
+                                                color: selectedIndex == i 
+                                                ? ColorResources.white 
+                                                : ColorResources.black,
                                                 fontSize: Dimensions.fontSizeDefault,
                                                 fontWeight: FontWeight.bold
                                               ),
@@ -215,9 +408,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
                             }
                           ),
                         ),
-                      )
-
-
+                      ),
 
                     ],
                   ),

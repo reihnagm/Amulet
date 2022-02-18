@@ -25,10 +25,10 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       key: globalKey,
       drawer: DrawerWidget(key: UniqueKey()),
       backgroundColor: ColorResources.backgroundColor,
-      resizeToAvoidBottomInset: false,
       body: SafeArea(
         child: LayoutBuilder(
           builder: (BuildContext context, BoxConstraints constraints) {
@@ -166,7 +166,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         );
                       },
                       child: const Padding(
-                        padding: EdgeInsets.all(Dimensions.paddingSizeSmall),
+                        padding: EdgeInsets.all(8.0),
                         child: Text("Kategori",
                           style: TextStyle(
                             fontSize: Dimensions.fontSizeSmall,
