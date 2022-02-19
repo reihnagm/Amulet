@@ -51,6 +51,7 @@ class VideoProvider with ChangeNotifier {
       setStateListenVStatus(ListenVStatus.loaded);
       Map<String, dynamic> resData = res.data;
       SosModel sosModel = SosModel.fromJson(resData);
+      _sosData = [];
       List<SosData> sosData = sosModel.data!;
       _sosData = sosData;
     } on DioError catch(e) {

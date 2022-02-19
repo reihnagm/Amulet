@@ -43,6 +43,7 @@ class SosData {
     this.status,
     this.duration,
     this.thumbnail,
+    this.fullname,
     this.userId,
     this.createdAt,
     this.updatedAt,
@@ -58,6 +59,7 @@ class SosData {
   String? status;
   String? duration;
   String? thumbnail;
+  String? fullname;
   String? userId;
   DateTime? createdAt;
   DateTime? updatedAt;
@@ -73,6 +75,7 @@ class SosData {
     status: json["status"],
     duration: json["duration"],
     thumbnail: json["thumbnail"],
+    fullname: json["fullname"],
     userId: json["user_id"],
     createdAt: DateTime.parse(json["created_at"]),
     updatedAt: DateTime.parse(json["updated_at"]),
