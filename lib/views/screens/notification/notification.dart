@@ -37,7 +37,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
                   SliverAppBar(
                     backgroundColor: ColorResources.white,
                     centerTitle: true,
-                    title: Text("Notifikasi",
+                    title: const Text("Notifikasi",
                       style: TextStyle(
                         color: ColorResources.black,
                         fontWeight: FontWeight.w500

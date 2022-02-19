@@ -2,11 +2,14 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
-import 'package:panic_button/utils/color_resources.dart';
-import 'package:panic_button/views/basewidgets/snackbar/snackbar.dart';
+import 'package:panic_button/views/basewidgets/button/custom.dart';
 import 'package:path/path.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'package:panic_button/utils/color_resources.dart';
+import 'package:panic_button/utils/dimensions.dart';
+import 'package:panic_button/views/basewidgets/dialog/animated/animated.dart';
+import 'package:panic_button/views/basewidgets/snackbar/snackbar.dart';
 import 'package:panic_button/utils/constant.dart';
 import 'package:uuid/uuid.dart';
 
@@ -90,7 +93,7 @@ class VideoProvider with ChangeNotifier {
   ) async {
     try {
       Dio dio = Dio();
-      Response res = await dio.post('${AppConstants.baseUrl}/insert-sos', 
+      await dio.post('${AppConstants.baseUrl}/insert-sos', 
         data: {
           "uid": const Uuid().v4(),
           "category": category,
@@ -101,7 +104,90 @@ class VideoProvider with ChangeNotifier {
           "status": "sent"
         }
       );
-      debugPrint("Insert SOS : ${res.statusCode}");
+      Navigator.of(context).pop();
+      showAnimatedDialog(
+        context,
+        Builder(
+          builder: (ctx) {
+            return Stack(
+              clipBehavior: Clip.none,
+              children: [
+
+                Dialog(
+                  backgroundColor: ColorResources.white,
+                  shape: const RoundedRectangleBorder(
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(70.0),
+                      topRight: Radius.circular(70.0)
+                    )
+                  ),
+                  alignment: Alignment.center,
+                  child: SizedBox(
+                    height: 150.0,
+                    child: Container(
+                      margin: const EdgeInsets.only(
+                        top: Dimensions.marginSizeLarge,
+                        left: Dimensions.marginSizeSmall, 
+                        right: Dimensions.marginSizeSmall
+                      ),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Text("Rekaman berhasil terkirim kepada Public Service dan Emergency Contact",
+                            textAlign: TextAlign.center,
+                            textHeightBehavior: TextHeightBehavior(
+                              leadingDistribution: TextLeadingDistribution.proportional
+                            ),
+                            style: TextStyle(
+                              height: 1.5,
+                              fontWeight: FontWeight.w400,
+                              fontSize: Dimensions.fontSizeLarge
+                            ),
+                          ),
+                          Container(
+                            margin: const EdgeInsets.only(top: Dimensions.marginSizeDefault),
+                            child: CustomButton(
+                              onTap: () {
+                                Navigator.of(ctx, rootNavigator: true).pop();
+                              },
+                              height: 30.0,
+                              btnColor: ColorResources.redPrimary,
+                              btnTextColor: ColorResources.white,
+                              isBoxShadow: true,
+                              isBorder: false,
+                              isBorderRadius: false, 
+                              btnTxt: "Ok"
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
+                  )
+                ),
+
+
+                Positioned(
+                  bottom: 460.0,
+                  left: 0.0,
+                  right: 0.0,
+                  child: Align(
+                    alignment: Alignment.center,
+                    child: Image.asset('assets/images/amulet-icon-logo.png',
+                      width: 100.0,
+                      height: 100.0,
+                      fit: BoxFit.scaleDown,
+                    ),
+                  ),
+                ),
+
+              ]
+            );
+          },
+        ),
+        dismissible: false
+      );
     } on DioError catch(e) {
       if(
         e.response!.statusCode == 400

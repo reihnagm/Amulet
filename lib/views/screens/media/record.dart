@@ -3,27 +3,23 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:custom_timer/custom_timer.dart';
+import 'package:path/path.dart' as p;
+
 import 'package:panic_button/providers/location.dart';
 import 'package:panic_button/providers/network.dart';
 import 'package:panic_button/providers/videos.dart';
 import 'package:panic_button/services/socket.dart';
 import 'package:panic_button/services/video.dart';
 import 'package:panic_button/utils/color_resources.dart';
-import 'package:path/path.dart' as p;
-
+import 'package:panic_button/utils/dimensions.dart';
+import 'package:panic_button/views/basewidgets/dialog/animated/animated.dart';
 import 'package:camera/camera.dart';
 import 'package:flutter/foundation.dart';
 import 'package:gallery_saver/gallery_saver.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'package:dotted_decoration/dotted_decoration.dart';
-import 'package:file_picker/file_picker.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
-import 'package:filesize/filesize.dart';
 import 'package:uuid/uuid.dart';
 import 'package:video_compress/video_compress.dart';
 import 'package:video_player/video_player.dart';
@@ -157,7 +153,6 @@ class _RecordScreenState extends State<RecordScreen> with WidgetsBindingObserver
             duration = Duration(microseconds: (videoCompressInfo!.duration! * 1000).toInt());
           });
         }
-        Navigator.of(context).pop();
       }
       File(file!.path).deleteSync();  
     }

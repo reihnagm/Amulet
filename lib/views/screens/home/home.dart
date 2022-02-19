@@ -7,8 +7,8 @@ import 'package:slide_to_confirm/slide_to_confirm.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
-import 'package:panic_button/providers/location.dart';
 import 'package:panic_button/views/screens/media/record.dart';
+import 'package:panic_button/providers/location.dart';
 import 'package:panic_button/views/basewidgets/drawer/drawer.dart';
 import 'package:panic_button/providers/auth.dart';
 import 'package:panic_button/views/screens/notification/notification.dart';

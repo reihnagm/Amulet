@@ -16,6 +16,7 @@ class VideoServices {
     } catch(e) {
       VideoCompress.cancelCompression();
     }
+    return null;
   }
 
 }
