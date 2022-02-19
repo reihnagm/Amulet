@@ -99,59 +99,6 @@ class _ReportsScreenState extends State<ReportsScreen> {
                           ),
                           
                         if(networkProvider.connectionStatus == ConnectionStatus.onInternet)
-                          SliverToBoxAdapter(
-                            child: Container(
-                              margin: const EdgeInsets.only(
-                                top: 50.0,
-                                left: Dimensions.marginSizeLarge,
-                                right: Dimensions.marginSizeLarge,
-                              ),
-                              child: Row(
-                                mainAxisSize: MainAxisSize.max,
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: const [
-                                  Expanded(
-                                    flex: 6,
-                                    child: Text("Berkas",
-                                      style: TextStyle(
-                                        fontSize: Dimensions.fontSizeDefault,
-                                        fontWeight: FontWeight.w500
-                                      ),
-                                    )
-                                  ),
-                                  Expanded(
-                                    flex: 6,
-                                    child: Text("Kasus",
-                                      style: TextStyle(
-                                        fontSize: Dimensions.fontSizeDefault,
-                                        fontWeight: FontWeight.w500
-                                      ),
-                                    )
-                                  ),
-                                  Expanded(
-                                    flex: 6,
-                                    child: Text("Pengirim",
-                                      style: TextStyle(
-                                        fontSize: Dimensions.fontSizeDefault,
-                                        fontWeight: FontWeight.w500
-                                      ),
-                                    )
-                                  ),
-                                  Expanded(
-                                    flex: 3,
-                                    child: Text("Info",
-                                      style: TextStyle(
-                                        fontSize: Dimensions.fontSizeDefault,
-                                        fontWeight: FontWeight.w500
-                                      ),
-                                    )
-                                  ),
-                                ],
-                              ),
-                            )
-                          ),
-                        if(networkProvider.connectionStatus == ConnectionStatus.onInternet)
                           if(videoProvider.listenVStatus == ListenVStatus.loading) 
                             const SliverFillRemaining(
                               child: Center(
@@ -160,6 +107,70 @@ class _ReportsScreenState extends State<ReportsScreen> {
                                   color: Colors.black87,
                                 ),
                               ),
+                            ),
+                           if(videoProvider.listenVStatus == ListenVStatus.empty) 
+                            const SliverFillRemaining(
+                              child: Center(
+                                child: Text("Belum ada data",
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.w400,
+                                    fontSize: Dimensions.fontSizeDefault
+                                  ),
+                                )
+                              ),
+                            ),
+                          if(videoProvider.listenVStatus == ListenVStatus.loaded) 
+                            SliverToBoxAdapter(
+                              child: Container(
+                                margin: const EdgeInsets.only(
+                                  top: 50.0,
+                                  left: Dimensions.marginSizeLarge,
+                                  right: Dimensions.marginSizeLarge,
+                                ),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.max,
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: const [
+                                    Expanded(
+                                      flex: 6,
+                                      child: Text("Berkas",
+                                        style: TextStyle(
+                                          fontSize: Dimensions.fontSizeDefault,
+                                          fontWeight: FontWeight.w500
+                                        ),
+                                      )
+                                    ),
+                                    Expanded(
+                                      flex: 6,
+                                      child: Text("Kasus",
+                                        style: TextStyle(
+                                          fontSize: Dimensions.fontSizeDefault,
+                                          fontWeight: FontWeight.w500
+                                        ),
+                                      )
+                                    ),
+                                    Expanded(
+                                      flex: 6,
+                                      child: Text("Pengirim",
+                                        style: TextStyle(
+                                          fontSize: Dimensions.fontSizeDefault,
+                                          fontWeight: FontWeight.w500
+                                        ),
+                                      )
+                                    ),
+                                    Expanded(
+                                      flex: 3,
+                                      child: Text("Info",
+                                        style: TextStyle(
+                                          fontSize: Dimensions.fontSizeDefault,
+                                          fontWeight: FontWeight.w500
+                                        ),
+                                      )
+                                    ),
+                                  ],
+                                ),
+                              )
                             ),
                           if(videoProvider.listenVStatus == ListenVStatus.loaded) 
                             SliverPadding(

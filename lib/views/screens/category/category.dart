@@ -569,8 +569,11 @@ class _CategoryScreenState extends State<CategoryScreen> {
                                                                                     );
                                                                                     s(() {
                                                                                       loading = false;
+                                                                                      videoCompressInfo = null;
                                                                                     });
-                                                                                    Navigator.of(context).pop();
+                                                                                    setState(() {
+                                                                                      selectedIndex = -1;
+                                                                                    });
                                                                                   } catch(e) {
                                                                                     debugPrint(e.toString());
                                                                                     Navigator.of(context).pop();

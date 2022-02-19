@@ -4,7 +4,6 @@ import 'dart:typed_data';
 
 import 'package:custom_timer/custom_timer.dart';
 import 'package:panic_button/providers/auth.dart';
-import 'package:path/path.dart' as p;
 
 import 'package:panic_button/providers/location.dart';
 import 'package:panic_button/providers/network.dart';
@@ -13,7 +12,6 @@ import 'package:panic_button/services/socket.dart';
 import 'package:panic_button/services/video.dart';
 import 'package:panic_button/utils/color_resources.dart';
 import 'package:panic_button/utils/dimensions.dart';
-import 'package:panic_button/views/basewidgets/dialog/animated/animated.dart';
 import 'package:camera/camera.dart';
 import 'package:flutter/foundation.dart';
 import 'package:gallery_saver/gallery_saver.dart';
@@ -264,14 +262,7 @@ class _RecordScreenState extends State<RecordScreen> with WidgetsBindingObserver
   @override 
   void initState() {
     super.initState();  
-
-    (() async {
-      PermissionStatus permissionStorage = await Permission.storage.status;
-      if(!permissionStorage.isGranted) {
-        await Permission.storage.request();
-      } 
-    });
-         
+            
     subscription = VideoCompress.compressProgress$.subscribe((event) {
       setState(() {
         progress = event;

@@ -213,6 +213,9 @@ class VideoProvider with ChangeNotifier {
         ));
       }
       _sosData = sosDataAssign;
+      if(_sosData.isEmpty) {
+        setStateListenVStatus(ListenVStatus.empty);
+      }
     } on DioError catch(e) {
       if(
         e.response!.statusCode == 400

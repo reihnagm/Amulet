@@ -5,6 +5,7 @@ import 'package:package_info_plus/package_info_plus.dart';
 import 'package:panic_button/providers/location.dart';
 import 'package:panic_button/providers/videos.dart';
 import 'package:panic_button/utils/dimensions.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 
 import 'package:panic_button/providers/auth.dart';
@@ -38,7 +39,11 @@ class _SplashScreenState extends State<SplashScreen> {
         (key: UniqueKey())));
       }
     });
-    (() async {
+    (() async {      
+      PermissionStatus permissionStorage = await Permission.storage.status;
+      if(!permissionStorage.isGranted) {
+        await Permission.storage.request();
+      } 
       PackageInfo p = await PackageInfo.fromPlatform();
       setState(() {      
         packageInfo = PackageInfo(
