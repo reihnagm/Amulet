@@ -51,6 +51,7 @@ class VideoProvider with ChangeNotifier {
     vid = videoPlayerController;
     showModalBottomSheet(
       isScrollControlled: true,
+      isDismissible: false,
       context: context, 
       builder: (BuildContext context) {
         bool isPlay = false;
@@ -59,8 +60,27 @@ class VideoProvider with ChangeNotifier {
             return Container(
               padding: const EdgeInsets.all(Dimensions.paddingSizeSmall),
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
                 mainAxisSize: MainAxisSize.min,
                 children: [
+                  InkWell(
+                    onTap: () {
+                      s(() {
+                        vid.pause();
+                        Navigator.of(context).pop();
+                        isPlay = false;
+                      });
+                    },
+                    child: const Padding(
+                      padding: EdgeInsets.all(8.0),
+                      child: Icon(
+                        Icons.close,
+                        color: ColorResources.redPrimary,
+                        size: 30.0,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 12.0),
                   vid.value.isInitialized
                   ? Container(
                       alignment: Alignment.topCenter, 
@@ -86,7 +106,6 @@ class VideoProvider with ChangeNotifier {
                                   vid.play();
                                 }
                               },
-                            
                               child: Stack(
                                 children: [
                                   isPlay
@@ -132,8 +151,29 @@ class VideoProvider with ChangeNotifier {
     Future.delayed(Duration.zero, () => notifyListeners());
   }
 
+  void appendSos(dynamic data) {
+    _sosData.add(
+      SosData(
+        uid: data["id"],
+        category: data["category"],
+        address: data["address"],
+        content: data["content"],
+        mediaUrl: data["mediaUrl"],
+        duration: data["duration"],
+        fullname: data["fullname"],
+        lat: data["lat"],
+        lng: data["lng"],
+        status: data["status"],
+        thumbnail: data["thumbnail"],
+        userId: data["user_id"],
+        createdAt: DateTime.now(),
+        updatedAt: DateTime.now()
+      )
+    );
+    setStateListenVStatus(ListenVStatus.loaded);
+  }
+
   Future<void> fetchSos(BuildContext context) async {
-    setStateListenVStatus(ListenVStatus.loading);
     try {
       Dio dio = Dio();
       Response res = await dio.get("${AppConstants.baseUrl}/fetch-sos?page=$page");

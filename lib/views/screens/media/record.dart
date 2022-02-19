@@ -27,7 +27,13 @@ import 'package:video_player/video_player.dart';
 
 
 class RecordScreen extends StatefulWidget {
-  const RecordScreen({Key? key}) : super(key: key);
+  final String category;
+  final String content;
+  const RecordScreen({
+    this.category = "-",
+    this.content = "-",
+    Key? key
+  }) : super(key: key);
 
   @override
   State<RecordScreen> createState() => _RecordScreenState();
@@ -122,58 +128,69 @@ class _RecordScreenState extends State<RecordScreen> with WidgetsBindingObserver
   }
 
   Future<XFile?> onStopButtonPressed(BuildContext ctx) async {
-    XFile? xfile = await stopVideoRecording();
-    if (xfile != null) {
-      File f = File(xfile.path);
-      if(mounted) {
-        setState(() {
-          isCompressed = true;
-          file = File(f.path);
-        });
-      }
-      File fileThumbnail = await VideoCompress.getFileThumbnail(f.path); 
-      String? thumbnail = await videoProvider.uploadThumbnail(context, file: fileThumbnail);
-      await generateByteThumbnail(file!);
-      await getVideoSize(file!);
-      await GallerySaver.saveVideo(file!.path);
-      MediaInfo? info = await VideoServices.compressVideo(file!);
-      if(info != null) {
-        String? mediaUrl = await videoProvider.uploadVideo(context, file: info.file!);
-        SocketServices.shared.sendMsg(
-          id: const Uuid().v4(),
-          content: "-",
-          mediaUrl: mediaUrl!,
-          category: "-",
-          lat: locationProvider.getCurrentLat,
-          lng: locationProvider.getCurrentLng,
-          address: locationProvider.getCurrentNameAddress,
-          status: "sent",
-          duration: (Duration(microseconds: (info.duration! * 1000).toInt())).toString(),
-          thumbnail: thumbnail!,
-          userId: authProvider.getUserId()
-        );
-        await videoProvider.insertSos(context,
-          id: const Uuid().v4(), 
-          content: "-",
-          mediaUrl: mediaUrl, 
-          category: "-",
-          lat: locationProvider.getCurrentLat.toString(),
-          lng: locationProvider.getCurrentLng.toString(),
-          address: locationProvider.getCurrentNameAddress,
-          status: "sent",
-          duration: (Duration(microseconds: (info.duration! * 1000).toInt())).toString(),
-          thumbnail: thumbnail,
-          userId: authProvider.getUserId(),
-        );
+    try {
+      XFile? xfile = await stopVideoRecording();
+      if (xfile != null) {
+        File f = File(xfile.path);
         if(mounted) {
           setState(() {
-            isCompressed = false;
-            videoCompressInfo = info;
-            duration = Duration(microseconds: (videoCompressInfo!.duration! * 1000).toInt());
+            isCompressed = true;
+            file = File(f.path);
           });
         }
+        File fileThumbnail = await VideoCompress.getFileThumbnail(f.path); 
+        String? thumbnail = await videoProvider.uploadThumbnail(context, file: fileThumbnail);
+        await generateByteThumbnail(file!);
+        await getVideoSize(file!);
+        await GallerySaver.saveVideo(file!.path);
+        MediaInfo? info = await VideoServices.compressVideo(file!);
+        if(info != null) {
+          String? mediaUrl = await videoProvider.uploadVideo(context, file: info.file!);
+          SocketServices.shared.sendMsg(
+            id: const Uuid().v4(),
+            content: widget.content,
+            mediaUrl: mediaUrl!,
+            category: widget.category,
+            lat: locationProvider.getCurrentLat,
+            lng: locationProvider.getCurrentLng,
+            address: locationProvider.getCurrentNameAddress,
+            status: "sent",
+            duration: (Duration(microseconds: (info.duration! * 1000).toInt())).toString(),
+            thumbnail: thumbnail!,
+            userId: authProvider.getUserId()
+          );
+          await videoProvider.insertSos(context,
+            id: const Uuid().v4(), 
+            content: widget.content,
+            mediaUrl: mediaUrl, 
+            category: widget.category,
+            lat: locationProvider.getCurrentLat.toString(),
+            lng: locationProvider.getCurrentLng.toString(),
+            address: locationProvider.getCurrentNameAddress,
+            status: "sent",
+            duration: (Duration(microseconds: (info.duration! * 1000).toInt())).toString(),
+            thumbnail: thumbnail,
+            userId: authProvider.getUserId(),
+          );
+          if(mounted) {
+            setState(() {
+              isCompressed = false;
+              videoCompressInfo = info;
+              duration = Duration(microseconds: (videoCompressInfo!.duration! * 1000).toInt());
+            });
+          }
+          File(file!.path).deleteSync(); 
+        } else {
+          isCompressed = false;
+          videoCompressInfo = null;
+          VideoCompress.cancelCompression();
+        } 
       }
-      File(file!.path).deleteSync();  
+    } catch(e) {
+      debugPrint(e.toString());
+      isCompressed = false;
+      videoCompressInfo = null;
+      VideoCompress.cancelCompression();
     }
     return null;
   }

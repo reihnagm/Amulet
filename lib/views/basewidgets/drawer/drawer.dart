@@ -6,6 +6,7 @@ import 'package:panic_button/utils/dimensions.dart';
 import 'package:panic_button/views/basewidgets/dialog/animated/animated.dart';
 import 'package:panic_button/views/basewidgets/dialog/logout/logout.dart';
 import 'package:panic_button/views/list_video/index.dart';
+import 'package:panic_button/views/screens/home/home.dart';
 
 class DrawerWidget extends StatefulWidget {
   const DrawerWidget({ Key? key }) : super(key: key);
@@ -43,17 +44,27 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                 padding: const EdgeInsets.all(40.0),
                 child: Image.asset("assets/images/logo.png")
               ),
-      
               Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Container(
                     padding: const EdgeInsets.all(Dimensions.paddingSizeSmall),
-                    child: const Text("Home",
-                      style: TextStyle(
-                        fontWeight: FontWeight.w500,
-                        fontSize: Dimensions.fontSizeDefault
+                    child: Material(
+                      color: ColorResources.transparent,
+                      child: InkWell(
+                        onTap: () {
+                          navigationService.pushNav(context, HomeScreen(key: UniqueKey()));
+                        },
+                        child: const Padding(
+                          padding: EdgeInsets.all(8.0),
+                          child: Text("Beranda",
+                            style: TextStyle(
+                              fontWeight: FontWeight.w500,
+                              fontSize: Dimensions.fontSizeDefault
+                            ),
+                          ),
+                        ),
                       ),
                     ),
                   ),
@@ -89,7 +100,8 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                     child: const Text("History",
                       style: TextStyle(
                         fontWeight: FontWeight.w500,
-                        fontSize: Dimensions.fontSizeDefault
+                        fontSize: Dimensions.fontSizeDefault,
+                        decoration: TextDecoration.lineThrough
                       ),
                     ),
                   ),
@@ -107,7 +119,8 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                     child: const Text("Kontak Darurat",
                       style: TextStyle(
                         fontWeight: FontWeight.w500,
-                        fontSize: Dimensions.fontSizeDefault
+                        fontSize: Dimensions.fontSizeDefault,
+                        decoration: TextDecoration.lineThrough
                       ),
                     ),
                   ),
@@ -154,7 +167,8 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                     child: const Text("Berlangganan",
                       style: TextStyle(
                         fontWeight: FontWeight.w500,
-                        fontSize: Dimensions.fontSizeDefault
+                        fontSize: Dimensions.fontSizeDefault,
+                        decoration: TextDecoration.lineThrough
                       ),
                     ),
                   ),
