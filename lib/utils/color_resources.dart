@@ -26,6 +26,7 @@ class ColorResources {
   static const Color dimGrey = Color(0xff6D6D6D);
   static const Color grey = Color(0xff707070);
   static const Color redPrimary = Color(0xffC90900);
+  static const Color greyTable = Color(0xffF1F1F1);
   static const Color greyLightPrimary = Color(0xFFebebeb);
   static const Color greyDarkPrimary = Color(0xFF707070);
   static const Color gainsBoro = Color(0xffDBDBDB);

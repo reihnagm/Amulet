@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
+import 'package:panic_button/data/models/sos/sos.dart';
 import 'package:panic_button/views/basewidgets/button/custom.dart';
 import 'package:path/path.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -20,6 +21,19 @@ class VideoProvider with ChangeNotifier {
     required this.sharedPreferences
   });
 
+  ListenVStatus _listenVStatus = ListenVStatus.idle;
+  ListenVStatus get listenVStatus => _listenVStatus;
+
+  void setStateListenVStatus(ListenVStatus listenVStatus) {
+    _listenVStatus = listenVStatus;
+    Future.delayed(Duration.zero, () => notifyListeners());
+  }
+
+  int page = 1;
+
+  List<SosData> _sosData = [];
+  List<SosData> get sosData => [..._sosData];
+
   String _videoUrl = "";
   String get videoUrl => _videoUrl;
 
@@ -28,6 +42,40 @@ class VideoProvider with ChangeNotifier {
 
   String _fcm = "";
   String get fcm => _fcm;
+
+  Future<void> fetchSos(BuildContext context) async {
+    setStateListenVStatus(ListenVStatus.loading);
+    try {
+      Dio dio = Dio();
+      Response res = await dio.get("${AppConstants.baseUrl}/fetch-sos?page=$page");
+      setStateListenVStatus(ListenVStatus.loaded);
+      Map<String, dynamic> resData = res.data;
+      SosModel sosModel = SosModel.fromJson(resData);
+      List<SosData> sosData = sosModel.data!;
+      _sosData = sosData;
+    } on DioError catch(e) {
+      if(
+        e.response!.statusCode == 400
+        || e.response!.statusCode == 401
+        || e.response!.statusCode == 402 
+        || e.response!.statusCode == 403
+        || e.response!.statusCode == 404 
+        || e.response!.statusCode == 405 
+        || e.response!.statusCode == 500 
+        || e.response!.statusCode == 501
+        || e.response!.statusCode == 502
+        || e.response!.statusCode == 503
+        || e.response!.statusCode == 504
+        || e.response!.statusCode == 505
+      ) {
+        ShowSnackbar.snackbar(context, "(${e.response!.statusCode.toString()}) : Internal Server Error", "", ColorResources.error);
+      }
+      setStateListenVStatus(ListenVStatus.error);
+    } catch(e) {
+      debugPrint(e.toString());
+      setStateListenVStatus(ListenVStatus.error);
+    }
+  }
 
   Future<String?> fetchFcm(BuildContext context) async {
     try {
@@ -38,8 +86,21 @@ class VideoProvider with ChangeNotifier {
       _fcm  = f;
       return _fcm;
     } on DioError catch(e) {
-      if(e.response!.statusCode == 400 || e.response!.statusCode == 404 || e.response!.statusCode == 500 || e.response!.statusCode == 502) {
-        debugPrint("(${e.response!.statusCode}) : Fetch FCM");
+      if(
+        e.response!.statusCode == 400
+        || e.response!.statusCode == 401
+        || e.response!.statusCode == 402 
+        || e.response!.statusCode == 403
+        || e.response!.statusCode == 404 
+        || e.response!.statusCode == 405 
+        || e.response!.statusCode == 500 
+        || e.response!.statusCode == 501
+        || e.response!.statusCode == 502
+        || e.response!.statusCode == 503
+        || e.response!.statusCode == 504
+        || e.response!.statusCode == 505
+      ) {
+        ShowSnackbar.snackbar(context, "(${e.response!.statusCode.toString()}) : Internal Server Error", "", ColorResources.error);
       }
     } catch(e) {
       debugPrint(e.toString());
