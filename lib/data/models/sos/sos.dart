@@ -51,7 +51,7 @@ class SosData {
 
   String? uid;
   String? category;
-  String? mediaUrl;
+  dynamic mediaUrl;
   String? content;
   String? lat;
   String? lng;

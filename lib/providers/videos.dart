@@ -2,16 +2,18 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
-import 'package:panic_button/data/models/sos/sos.dart';
-import 'package:panic_button/views/basewidgets/button/custom.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:path/path.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'package:panic_button/data/models/sos/sos.dart';
+import 'package:panic_button/views/basewidgets/button/custom.dart';
 import 'package:panic_button/utils/color_resources.dart';
 import 'package:panic_button/utils/dimensions.dart';
 import 'package:panic_button/views/basewidgets/dialog/animated/animated.dart';
 import 'package:panic_button/views/basewidgets/snackbar/snackbar.dart';
 import 'package:panic_button/utils/constant.dart';
+import 'package:video_player/video_player.dart';
 
 enum ListenVStatus { idle, loading, loaded, empty, error }
 
@@ -31,6 +33,8 @@ class VideoProvider with ChangeNotifier {
 
   int page = 1;
 
+  late VideoPlayerController vid;
+
   List<SosData> _sosData = [];
   List<SosData> get sosData => [..._sosData];
 
@@ -43,6 +47,91 @@ class VideoProvider with ChangeNotifier {
   String _fcm = "";
   String get fcm => _fcm;
 
+  void showPreviewThumbnail(BuildContext context, VideoPlayerController videoPlayerController) {
+    vid = videoPlayerController;
+    showModalBottomSheet(
+      isScrollControlled: true,
+      context: context, 
+      builder: (BuildContext context) {
+        bool isPlay = false;
+        return StatefulBuilder(
+          builder: (BuildContext context, Function s) {
+            return Container(
+              padding: const EdgeInsets.all(Dimensions.paddingSizeSmall),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  vid.value.isInitialized
+                  ? Container(
+                      alignment: Alignment.topCenter, 
+                      child: Stack(
+                        children: [
+                          AspectRatio(
+                            aspectRatio: vid.value.aspectRatio,
+                            child: VideoPlayer(vid),
+                          ),
+                          Positioned.fill(
+                            child: GestureDetector(
+                              behavior: HitTestBehavior.opaque,
+                              onTap: () {
+                                if(vid.value.isPlaying) {
+                                  vid.pause();
+                                  s(() {
+                                    isPlay = false;
+                                  });
+                                } else {
+                                  s(() {
+                                    isPlay = true;
+                                  });
+                                  vid.play();
+                                }
+                              },
+                            
+                              child: Stack(
+                                children: [
+                                  isPlay
+                                  ? Container() 
+                                  : Container(
+                                      alignment: Alignment.center,
+                                      child: const Icon(
+                                        Icons.play_arrow,
+                                        color: Colors.white,
+                                        size: 80
+                                      ),
+                                    ),
+                                  Positioned(
+                                    bottom: 0.0,
+                                    left: 0.0,
+                                    right: 0.0,
+                                    child: VideoProgressIndicator(
+                                      vid,
+                                      allowScrubbing: true,
+                                    )
+                                  ),
+                                ],
+                              ),
+                            )
+                          )
+                        ],
+                      )
+                    )
+                  : const SizedBox(
+                    height: 200,
+                    child: SpinKitThreeBounce(
+                      size: 20.0,
+                      color: Colors.black87,
+                    ),
+                  ),
+                ],
+              ),
+            );
+          }, 
+        );
+      }
+    );
+    Future.delayed(Duration.zero, () => notifyListeners());
+  }
+
   Future<void> fetchSos(BuildContext context) async {
     setStateListenVStatus(ListenVStatus.loading);
     try {
@@ -53,7 +142,30 @@ class VideoProvider with ChangeNotifier {
       SosModel sosModel = SosModel.fromJson(resData);
       _sosData = [];
       List<SosData> sosData = sosModel.data!;
-      _sosData = sosData;
+      List<SosData> sosDataAssign = [];
+      for (SosData sos in sosData) {
+        sosDataAssign.add(SosData(
+          address: sos.address,
+          category: sos.category,
+          content: sos.content,
+          createdAt: sos.createdAt,
+          duration: sos.duration,
+          fullname: sos.fullname,
+          lat: sos.lat,
+          lng: sos.lng,
+          mediaUrl: VideoPlayerController
+          .network(sos.mediaUrl!)
+          ..addListener(() { notifyListeners(); })
+          ..setLooping(false)
+          ..initialize(),
+          status: sos.status,
+          thumbnail: sos.thumbnail,
+          uid: sos.uid,
+          updatedAt: sos.updatedAt,
+          userId: sos.userId
+        ));
+      }
+      _sosData = sosDataAssign;
     } on DioError catch(e) {
       if(
         e.response!.statusCode == 400

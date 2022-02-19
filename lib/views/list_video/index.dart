@@ -8,6 +8,7 @@ import 'package:panic_button/providers/videos.dart';
 import 'package:panic_button/utils/color_resources.dart';
 import 'package:panic_button/utils/dimensions.dart';
 import 'package:panic_button/views/basewidgets/drawer/drawer.dart';
+import 'package:video_player/video_player.dart';
 
 class ListVideoScreen extends StatefulWidget {
   const ListVideoScreen({ Key? key }) : super(key: key);
@@ -202,14 +203,23 @@ class _ListVideoScreenState extends State<ListVideoScreen> {
                                                       ),
                                                     ),
 
-                                                    const Positioned.fill(
+                                                    Positioned.fill(
                                                       left: 0.0,
                                                       right: 0.0,
                                                       child: Align(
                                                         alignment: Alignment.center,
-                                                        child: Icon(
-                                                          Icons.arrow_circle_right_outlined,
-                                                          color: ColorResources.white,
+                                                        child: InkWell(
+                                                          onTap: () { 
+
+                                                            
+                                                            videoProvider.showPreviewThumbnail(context, videoProvider.sosData[i].mediaUrl);
+
+                                                            
+                                                          },
+                                                          child: const Icon(
+                                                            Icons.arrow_circle_right_outlined,
+                                                            color: ColorResources.white,
+                                                          ),
                                                         ),
                                                       )
                                                     ),
