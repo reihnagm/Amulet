@@ -129,9 +129,11 @@ class VideoProvider with ChangeNotifier {
       required String content,
       required String lat,
       required String lng,
+      required String address,
       required String status,
       required String duration,
-      required String thumbnail
+      required String thumbnail,
+      required String userId,
     }
   ) async {
     try {
@@ -144,9 +146,11 @@ class VideoProvider with ChangeNotifier {
           "desc": content,
           "lat": lat,
           "lng": lng,
+          "address": address,
           "status": status,
           "duration": duration,
-          "thumbnail": thumbnail
+          "thumbnail": thumbnail,
+          "user_id": userId
         }
       );
       
@@ -184,9 +188,6 @@ class VideoProvider with ChangeNotifier {
                         children: [
                           const Text("Rekaman berhasil terkirim kepada Public Service dan Emergency Contact",
                             textAlign: TextAlign.center,
-                            textHeightBehavior: TextHeightBehavior(
-                              leadingDistribution: TextLeadingDistribution.proportional
-                            ),
                             style: TextStyle(
                               height: 1.5,
                               fontWeight: FontWeight.w400,

@@ -3,6 +3,7 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:custom_timer/custom_timer.dart';
+import 'package:panic_button/providers/auth.dart';
 import 'package:path/path.dart' as p;
 
 import 'package:panic_button/providers/location.dart';
@@ -35,7 +36,10 @@ class RecordScreen extends StatefulWidget {
 class _RecordScreenState extends State<RecordScreen> with WidgetsBindingObserver, TickerProviderStateMixin {
   GlobalKey<ScaffoldState> globalKey = GlobalKey<ScaffoldState>();
 
+  late AuthProvider authProvider;
+  late LocationProvider locationProvider;
   late Subscription? subscription;
+  late VideoProvider videoProvider;
   late NetworkProvider networkProvider;
 
   final double _minAvailableZoom = 1.0;
@@ -128,34 +132,38 @@ class _RecordScreenState extends State<RecordScreen> with WidgetsBindingObserver
         });
       }
       File fileThumbnail = await VideoCompress.getFileThumbnail(f.path); 
-      String? thumbnail = await context.read<VideoProvider>().uploadThumbnail(context, file: fileThumbnail);
+      String? thumbnail = await videoProvider.uploadThumbnail(context, file: fileThumbnail);
       await generateByteThumbnail(file!);
       await getVideoSize(file!);
       await GallerySaver.saveVideo(file!.path);
       MediaInfo? info = await VideoServices.compressVideo(file!);
       if(info != null) {
-        String? mediaUrl = await context.read<VideoProvider>().uploadVideo(context, file: info.file!);
+        String? mediaUrl = await videoProvider.uploadVideo(context, file: info.file!);
         SocketServices.shared.sendMsg(
           id: const Uuid().v4(),
           content: "-",
           mediaUrl: mediaUrl!,
           category: "-",
-          lat: context.read<LocationProvider>().getCurrentLat,
-          lng: context.read<LocationProvider>().getCurrentLng,
+          lat: locationProvider.getCurrentLat,
+          lng: locationProvider.getCurrentLng,
+          address: "",
           status: "sent",
           duration: (Duration(microseconds: (info.duration! * 1000).toInt())).toString(),
-          thumbnail: thumbnail!
+          thumbnail: thumbnail!,
+          userId: authProvider.getUserId()
         );
-        await context.read<VideoProvider>().insertSos(context,
+        await videoProvider.insertSos(context,
           id: const Uuid().v4(), 
           content: "-",
           mediaUrl: mediaUrl, 
           category: "-",
-          lat: context.read<LocationProvider>().getCurrentLat.toString(),
-          lng: context.read<LocationProvider>().getCurrentLng.toString(),
+          lat: locationProvider.getCurrentLat.toString(),
+          lng: locationProvider.getCurrentLng.toString(),
+          address: "",
           status: "sent",
           duration: (Duration(microseconds: (info.duration! * 1000).toInt())).toString(),
-          thumbnail: thumbnail
+          thumbnail: thumbnail,
+          userId: authProvider.getUserId(),
         );
         if(mounted) {
           setState(() {
@@ -254,9 +262,7 @@ class _RecordScreenState extends State<RecordScreen> with WidgetsBindingObserver
   
   @override 
   void initState() {
-    super.initState();
-
-    networkProvider = context.read<NetworkProvider>();
+    super.initState();  
 
     (() async {
       PermissionStatus permissionStorage = await Permission.storage.status;
@@ -300,134 +306,146 @@ class _RecordScreenState extends State<RecordScreen> with WidgetsBindingObserver
 
   @override
   Widget build(BuildContext context) {
-    int progressBar = progress == null ? 0 : (progress!).toInt(); 
-    return WillPopScope(
-      onWillPop: () async {
-        await stopVideoRecording();
-        timer!.cancel();
-        return Future.value(true);
-      },
-      child: Scaffold(
-        resizeToAvoidBottomInset: false,
-        key: globalKey,
-        backgroundColor: ColorResources.backgroundColor,
-        body: SafeArea(
-          child: LayoutBuilder(
-            builder: (BuildContext context, BoxConstraints constraints) {
-              return Consumer<NetworkProvider>(
-                builder: (BuildContext context, NetworkProvider networkProvider, Widget? child) {
-                  if(networkProvider.connectionStatus == ConnectionStatus.offInternet) {
-                    return const Center(
-                      child: SpinKitThreeBounce(
-                        size: 20.0,
-                        color: Colors.black87,
-                      ),
-                    );
-                  }
-                  return isCompressed 
-                  ? Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          const SpinKitThreeBounce(
+    return buildUI();
+  }
+
+  Widget buildUI() {
+    return Builder(
+      builder: (BuildContext context) {
+        int progressBar = progress == null ? 0 : (progress!).toInt(); 
+        authProvider = context.read<AuthProvider>();
+        networkProvider = context.read<NetworkProvider>();
+        locationProvider = context.read<LocationProvider>();
+        videoProvider = context.read<VideoProvider>();
+        return  WillPopScope(
+          onWillPop: () async {
+            await stopVideoRecording();
+            timer!.cancel();
+            return Future.value(true);
+          },
+          child: Scaffold(
+            resizeToAvoidBottomInset: false,
+            key: globalKey,
+            backgroundColor: ColorResources.backgroundColor,
+            body: SafeArea(
+              child: LayoutBuilder(
+                builder: (BuildContext context, BoxConstraints constraints) {
+                  return Consumer<NetworkProvider>(
+                    builder: (BuildContext context, NetworkProvider networkProvider, Widget? child) {
+                      if(networkProvider.connectionStatus == ConnectionStatus.offInternet) {
+                        return const Center(
+                          child: SpinKitThreeBounce(
                             size: 20.0,
                             color: Colors.black87,
                           ),
-                          const SizedBox(height: 10.0),
-                          Text("${progressBar.toString()} %",
-                            style: const TextStyle(
-                              fontSize: 14.0
-                            ),
-                          )
-                        ]
-                      ),
-                  )
-                  : Stack(
-                    clipBehavior: Clip.none,
-                    children: [
-                                                            
-                      Container(
-                        padding: const EdgeInsets.all(1.0),
-                        width: double.infinity,
-                        height: double.infinity,
-                        decoration: BoxDecoration(
-                          color: Colors.black,
-                          border: Border.all(
-                            color: controller != null && controller!.value.isRecordingVideo
-                            ? Colors.redAccent
-                            : Colors.grey,
-                            width: 3.0,
-                          ),
-                        ),
-                        child: cameraPreviewWidget()
-                      ),
-
-                      Container(
-                        margin: const EdgeInsets.only(bottom: 150.0),
-                        child: Align(
-                          alignment: Alignment.center,
-                          child: CustomTimer(
-                            controller: CustomTimerController(initialState: CustomTimerState.counting),
-                            begin: const Duration(seconds: 15),
-                            end: const Duration(),
-                            builder: (time) {
-                              return Text(
-                                time.seconds,
+                        );
+                      }
+                      return isCompressed 
+                      ? Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              const SpinKitThreeBounce(
+                                size: 20.0,
+                                color: Colors.black87,
+                              ),
+                              const SizedBox(height: 10.0),
+                              Text("${progressBar.toString()} %",
                                 style: const TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 50.0
-                                )
-                              );
-                            },
-                            stateBuilder: (time, state) {
-                              if(state == CustomTimerState.paused) {
-                                const Text("The timer is paused",
-                                  style: TextStyle(fontSize: 24.0)
-                                );
-                              }
-                              return null;
-                            },
-                            animationBuilder: (Widget child) {
-                              return AnimatedSwitcher(
-                                duration: const Duration(milliseconds: 250),
-                                child: child,
-                              );
-                            },
-                            onChangeState: (state) { }
+                                  fontSize: 14.0
+                                ),
+                              )
+                            ]
                           ),
-                        ),
-                      ),
-                      
-                      Align(
-                        alignment: Alignment.center,
-                        child: Container(
-                          padding: const EdgeInsets.all(5.0),
-                          decoration: const BoxDecoration(
-                            color: Colors.white,
-                            shape: BoxShape.circle
+                      )
+                      : Stack(
+                        clipBehavior: Clip.none,
+                        children: [
+                                                                
+                          Container(
+                            padding: const EdgeInsets.all(1.0),
+                            width: double.infinity,
+                            height: double.infinity,
+                            decoration: BoxDecoration(
+                              color: Colors.black,
+                              border: Border.all(
+                                color: controller != null && controller!.value.isRecordingVideo
+                                ? Colors.redAccent
+                                : Colors.grey,
+                                width: 3.0,
+                              ),
+                            ),
+                            child: cameraPreviewWidget()
                           ),
-                          child: IconButton(
-                            icon: const Icon(Icons.stop),
-                            color: Colors.red,
-                            onPressed: controller != null &&
-                            controller!.value.isInitialized &&
-                            controller!.value.isRecordingVideo
-                            ? () => onStopButtonPressed(context)
-                            : null,
+
+                          Container(
+                            margin: const EdgeInsets.only(bottom: 150.0),
+                            child: Align(
+                              alignment: Alignment.center,
+                              child: CustomTimer(
+                                controller: CustomTimerController(initialState: CustomTimerState.counting),
+                                begin: const Duration(seconds: 15),
+                                end: const Duration(),
+                                builder: (time) {
+                                  return Text(
+                                    time.seconds,
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 50.0
+                                    )
+                                  );
+                                },
+                                stateBuilder: (time, state) {
+                                  if(state == CustomTimerState.paused) {
+                                    const Text("The timer is paused",
+                                      style: TextStyle(fontSize: 24.0)
+                                    );
+                                  }
+                                  return null;
+                                },
+                                animationBuilder: (Widget child) {
+                                  return AnimatedSwitcher(
+                                    duration: const Duration(milliseconds: 250),
+                                    child: child,
+                                  );
+                                },
+                                onChangeState: (state) { }
+                              ),
+                            ),
                           ),
-                        ),
-                      ),
-                                                            
-                    ],
+                          
+                          Align(
+                            alignment: Alignment.center,
+                            child: Container(
+                              padding: const EdgeInsets.all(5.0),
+                              decoration: const BoxDecoration(
+                                color: Colors.white,
+                                shape: BoxShape.circle
+                              ),
+                              child: IconButton(
+                                icon: const Icon(Icons.stop),
+                                color: Colors.red,
+                                onPressed: controller != null &&
+                                controller!.value.isInitialized &&
+                                controller!.value.isRecordingVideo
+                                ? () => onStopButtonPressed(context)
+                                : null,
+                              ),
+                            ),
+                          ),
+                                                                
+                        ],
+                      );
+                    },   
                   );
-                },   
-              );
-            },
+                },
+              ),
+            )
+            
           ),
-        )
-        
-      ),
+        );
+      }, 
     );
   }
 }

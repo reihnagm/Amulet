@@ -64,9 +64,11 @@ class SocketServices {
     required String category,
     required double lat, 
     required double lng,
+    required String address,
     required String status,
     required String duration,
-    required String thumbnail
+    required String thumbnail,
+    required String userId,
   }) {
     socket.emit("message", jsonEncode({
       "id": id,
@@ -75,9 +77,11 @@ class SocketServices {
       "category": category,
       "lat": lat,
       "lng": lng,
+      "address": address,
       "status": status,
       "duration": duration,
-      "thumbnail": thumbnail
+      "thumbnail": thumbnail,
+      "user_id": userId
     }));
   }
 

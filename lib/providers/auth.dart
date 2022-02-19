@@ -44,6 +44,10 @@ class AuthProvider with ChangeNotifier {
     return authRepo.getUserFullName();
   }
 
+  String getUserId() {
+    return authRepo.getUserId();
+  }
+
   bool isLoggedIn() {
     return authRepo.isLoggedIn();
   }
