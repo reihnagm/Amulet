@@ -59,17 +59,21 @@ class SocketServices {
   
   void sendMsg({
     required String id, 
-    required String msg, 
+    required String content, 
     required String mediaUrl,
+    required String category,
     required double lat, 
-    required double lng
+    required double lng,
+    required String status,
   }) {
     socket.emit("message", jsonEncode({
       "id": id,
+      "content": content,
       "mediaUrl": mediaUrl,
-      "msg": msg,
+      "category": category,
       "lat": lat,
-      "lng": lng
+      "lng": lng,
+      "status": status,
     }));
   }
 

@@ -11,7 +11,6 @@ import 'package:panic_button/utils/dimensions.dart';
 import 'package:panic_button/views/basewidgets/dialog/animated/animated.dart';
 import 'package:panic_button/views/basewidgets/snackbar/snackbar.dart';
 import 'package:panic_button/utils/constant.dart';
-import 'package:uuid/uuid.dart';
 
 enum ListenVStatus { idle, loading, loaded, empty, error }
 
@@ -21,8 +20,11 @@ class VideoProvider with ChangeNotifier {
     required this.sharedPreferences
   });
 
-  String _url = "";
-  String get url => _url;
+  String _videoUrl = "";
+  String get videoUrl => _videoUrl;
+
+  String _thumbnailUrl = "";
+  String get thumbnailUrl => _thumbnailUrl;
 
   String _fcm = "";
   String get fcm => _fcm;
@@ -57,8 +59,8 @@ class VideoProvider with ChangeNotifier {
       Response res = await dio.post("${AppConstants.baseUrl}/upload", data: formData);
       Map<String, dynamic> resData = res.data;
       String url = resData["url"];
-      _url = url;
-      return _url;
+      _videoUrl = url;
+      return _videoUrl;
     } on DioError catch(e) {
       if(
         e.response!.statusCode == 400
@@ -79,32 +81,77 @@ class VideoProvider with ChangeNotifier {
     } catch(e) {
       debugPrint(e.toString());
     } 
-    return url;
+    return videoUrl;
+  }
+
+  Future<String?> uploadThumbnail(BuildContext context, {required File file}) async {
+    try {
+      Dio dio = Dio();
+      FormData formData = FormData.fromMap({
+        "thumbnail": await MultipartFile.fromFile(
+          file.path, 
+          filename: basename(file.path)
+        ),
+      });
+      Response res = await dio.post("${AppConstants.baseUrl}/upload-thumbnail", data: formData);
+      Map<String, dynamic> resData = res.data;
+      String url = resData["url"];
+      _thumbnailUrl = url;
+      return _thumbnailUrl;
+    } on DioError catch(e) {
+      if(
+        e.response!.statusCode == 400
+        || e.response!.statusCode == 401
+        || e.response!.statusCode == 402 
+        || e.response!.statusCode == 403
+        || e.response!.statusCode == 404 
+        || e.response!.statusCode == 405 
+        || e.response!.statusCode == 500 
+        || e.response!.statusCode == 501
+        || e.response!.statusCode == 502
+        || e.response!.statusCode == 503
+        || e.response!.statusCode == 504
+        || e.response!.statusCode == 505
+      ) {
+        ShowSnackbar.snackbar(context, "(${e.response!.statusCode.toString()}) : Internal Server Error", "", ColorResources.error);
+      }
+    } catch(e) {
+      debugPrint(e.toString());
+    } 
+    return thumbnailUrl;
   }
 
   Future<void> insertSos(BuildContext context, 
     {
+      required String id,
       required String category,
       required String mediaUrl, 
       required String content,
       required String lat,
-      required String lng
+      required String lng,
+      required String status,
+      required String duration,
+      required String thumbnail
     }
   ) async {
     try {
       Dio dio = Dio();
       await dio.post('${AppConstants.baseUrl}/insert-sos', 
         data: {
-          "uid": const Uuid().v4(),
+          "id": id,
           "category": category,
           "media_url": mediaUrl,
           "desc": content,
           "lat": lat,
           "lng": lng,
-          "status": "sent"
+          "status": status,
+          "duration": duration,
+          "thumbnail": thumbnail
         }
       );
+      
       Navigator.of(context).pop();
+
       showAnimatedDialog(
         context,
         Builder(

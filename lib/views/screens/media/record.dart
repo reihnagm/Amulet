@@ -36,7 +36,6 @@ class _RecordScreenState extends State<RecordScreen> with WidgetsBindingObserver
   GlobalKey<ScaffoldState> globalKey = GlobalKey<ScaffoldState>();
 
   late Subscription? subscription;
-  late TextEditingController msgController;
   late NetworkProvider networkProvider;
 
   final double _minAvailableZoom = 1.0;
@@ -48,6 +47,7 @@ class _RecordScreenState extends State<RecordScreen> with WidgetsBindingObserver
   bool isLoading = false;
   bool isCompressed = false;
   Uint8List? thumbnail;
+  File? fileThumbnail;
   File? file;
   File? fx;
   MediaInfo? videoCompressInfo;
@@ -127,24 +127,33 @@ class _RecordScreenState extends State<RecordScreen> with WidgetsBindingObserver
           file = File(f.path);
         });
       }
-      await generateThumbnail(file!);
+      File fileThumbnail = await VideoCompress.getFileThumbnail(f.path); 
+      String? thumbnail = await context.read<VideoProvider>().uploadThumbnail(context, file: fileThumbnail);
+      await generateByteThumbnail(file!);
       await getVideoSize(file!);
       await GallerySaver.saveVideo(file!.path);
       MediaInfo? info = await VideoServices.compressVideo(file!);
       if(info != null) {
+        await context.read<VideoProvider>().uploadVideo(context, file: info.file!);
         SocketServices.shared.sendMsg(
           id: const Uuid().v4(),
-          msg: msgController.text,
+          content: "-",
           mediaUrl: p.basename(info.file!.path),
+          category: "-",
           lat: context.read<LocationProvider>().getCurrentLat,
-          lng: context.read<LocationProvider>().getCurrentLng
+          lng: context.read<LocationProvider>().getCurrentLng,
+          status: "sent"
         );
-        await context.read<VideoProvider>().insertSos(context, 
+        await context.read<VideoProvider>().insertSos(context,
+          id: const Uuid().v4(), 
+          content: "-",
           mediaUrl: p.basename(info.file!.path), 
           category: "-",
-          content: "-",
           lat: context.read<LocationProvider>().getCurrentLat.toString(),
-          lng: context.read<LocationProvider>().getCurrentLng.toString()
+          lng: context.read<LocationProvider>().getCurrentLng.toString(),
+          status: "sent",
+          duration: duration.toString(),
+          thumbnail: thumbnail!
         );
         if(mounted) {
           setState(() {
@@ -201,11 +210,14 @@ class _RecordScreenState extends State<RecordScreen> with WidgetsBindingObserver
     showInSnackBar('Error: ${e.code}\n${e.description}');
   }
 
-  Future<void> generateThumbnail(File file) async {
+  Future<void> generateByteThumbnail(File file) async {
     Uint8List? thumbnailBytes = await VideoCompress.getByteThumbnail(file.path);
-    setState(() {
-      thumbnail = thumbnailBytes;
-    });
+    setState(() => thumbnail = thumbnailBytes);
+  }
+
+  Future<void> generateFileThumbnail(File f) async {
+    File file = await VideoCompress.getFileThumbnail(f.path);
+    setState(() => fileThumbnail = file); 
   }
 
   Future<void> getVideoSize(File file) async {
@@ -250,8 +262,6 @@ class _RecordScreenState extends State<RecordScreen> with WidgetsBindingObserver
         await Permission.storage.request();
       } 
     });
-    
-    msgController = TextEditingController();
          
     subscription = VideoCompress.compressProgress$.subscribe((event) {
       setState(() {
@@ -279,7 +289,6 @@ class _RecordScreenState extends State<RecordScreen> with WidgetsBindingObserver
 
   @override 
   void dispose() {
-    msgController.dispose();
     controller!.dispose();
     subscription!.unsubscribe();
     SocketServices.shared.dispose();

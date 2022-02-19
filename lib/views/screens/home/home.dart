@@ -173,7 +173,10 @@ class _HomeScreenState extends State<HomeScreen> {
                       gestureRecognizers: {}..add(Factory<EagerGestureRecognizer>(() => EagerGestureRecognizer())),
                       myLocationEnabled: false,
                       initialCameraPosition: CameraPosition(
-                        target: LatLng(context.read<LocationProvider>().getCurrentLat, context.read<LocationProvider>().getCurrentLng),
+                        target: LatLng(
+                          context.read<LocationProvider>().getCurrentLat, 
+                          context.read<LocationProvider>().getCurrentLng
+                        ),
                         zoom: 15.0,
                       ),
                       markers: Set.from(context.read<LocationProvider>().markers),
