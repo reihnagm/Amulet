@@ -134,26 +134,28 @@ class _RecordScreenState extends State<RecordScreen> with WidgetsBindingObserver
       await GallerySaver.saveVideo(file!.path);
       MediaInfo? info = await VideoServices.compressVideo(file!);
       if(info != null) {
-        await context.read<VideoProvider>().uploadVideo(context, file: info.file!);
+        String? mediaUrl = await context.read<VideoProvider>().uploadVideo(context, file: info.file!);
         SocketServices.shared.sendMsg(
           id: const Uuid().v4(),
           content: "-",
-          mediaUrl: p.basename(info.file!.path),
+          mediaUrl: mediaUrl!,
           category: "-",
           lat: context.read<LocationProvider>().getCurrentLat,
           lng: context.read<LocationProvider>().getCurrentLng,
-          status: "sent"
+          status: "sent",
+          duration: (Duration(microseconds: (videoCompressInfo!.duration! * 1000).toInt())).toString(),
+          thumbnail: thumbnail!
         );
         await context.read<VideoProvider>().insertSos(context,
           id: const Uuid().v4(), 
           content: "-",
-          mediaUrl: p.basename(info.file!.path), 
+          mediaUrl: mediaUrl, 
           category: "-",
           lat: context.read<LocationProvider>().getCurrentLat.toString(),
           lng: context.read<LocationProvider>().getCurrentLng.toString(),
           status: "sent",
-          duration: duration.toString(),
-          thumbnail: thumbnail!
+          duration: (Duration(microseconds: (videoCompressInfo!.duration! * 1000).toInt())).toString(),
+          thumbnail: thumbnail
         );
         if(mounted) {
           setState(() {
