@@ -508,8 +508,10 @@ class _CategoryScreenState extends State<CategoryScreen> {
                                                                                     s(() {
                                                                                       loading = false;
                                                                                     });
+                                                                                    Navigator.of(context).pop();
                                                                                   } catch(e) {
                                                                                     debugPrint(e.toString());
+                                                                                    Navigator.of(context).pop();
                                                                                   }
                                                                                 }, 
                                                                                 height: 30.0,
