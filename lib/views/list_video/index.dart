@@ -189,15 +189,33 @@ class _ListVideoScreenState extends State<ListVideoScreen> {
                                               crossAxisAlignment: CrossAxisAlignment.start,
                                               mainAxisSize: MainAxisSize.min,
                                               children: [
-                                                ClipRRect(
-                                                  borderRadius: BorderRadius.circular(10.0),
-                                                  child: CachedNetworkImage(
-                                                    imageUrl: videoProvider.sosData[i].thumbnail.toString(),
-                                                    width: 50.0,
-                                                    height: 50.0,
-                                                    fit: BoxFit.cover,
-                                                  ),
+                                                Stack(
+                                                  clipBehavior: Clip.none,
+                                                  children: [
+                                                    ClipRRect(
+                                                      borderRadius: BorderRadius.circular(10.0),
+                                                      child: CachedNetworkImage(
+                                                        imageUrl: videoProvider.sosData[i].thumbnail.toString(),
+                                                        width: 50.0,
+                                                        height: 50.0,
+                                                        fit: BoxFit.cover,
+                                                      ),
+                                                    ),
+
+                                                    const Positioned.fill(
+                                                      left: 0.0,
+                                                      right: 0.0,
+                                                      child: Align(
+                                                        alignment: Alignment.center,
+                                                        child: Icon(
+                                                          Icons.arrow_circle_right_outlined,
+                                                          color: ColorResources.white,
+                                                        ),
+                                                      )
+                                                    ),
+                                                  ],
                                                 )
+                                             
                                               ],
                                             ) 
                                           ),
@@ -246,7 +264,7 @@ class _ListVideoScreenState extends State<ListVideoScreen> {
                                                   color: ColorResources.transparent,
                                                   child: InkWell(
                                                     onTap: () {
-                                                
+                                                      
                                                     },
                                                     child: const Padding(
                                                       padding: EdgeInsets.all(8.0),
