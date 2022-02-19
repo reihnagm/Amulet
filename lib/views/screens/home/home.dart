@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
+import 'package:panic_button/providers/videos.dart';
 import 'package:panic_button/services/navigation.dart';
 import 'package:provider/provider.dart';
 import 'package:slide_to_confirm/slide_to_confirm.dart';
@@ -30,10 +31,25 @@ class _HomeScreenState extends State<HomeScreen> {
 
   late AuthProvider authProvider;
   late LocationProvider locationProvider;
+  late VideoProvider videoProvider;
   late NavigationService navigationService;
 
   void openRecord() {
     navigationService.pushNav(context,  RecordScreen(key: UniqueKey()));
+  }
+
+  @override 
+  void initState() {
+    super.initState();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if(mounted) {
+        locationProvider.getCurrentPosition(context);
+      }
+      if(mounted) {
+        videoProvider.initFcm(context);
+      }
+    });
   }
 
   @override
@@ -46,6 +62,7 @@ class _HomeScreenState extends State<HomeScreen> {
       builder: (context) {
         authProvider = context.read<AuthProvider>();
         locationProvider = context.read<LocationProvider>();
+        videoProvider = context.read<VideoProvider>();
         navigationService = NavigationService();
         return Scaffold(
           resizeToAvoidBottomInset: false,
@@ -63,7 +80,10 @@ class _HomeScreenState extends State<HomeScreen> {
                       backgroundColor: ColorResources.white,
                       color: ColorResources.redPrimary,
                       onRefresh: () {
-                        return Future.sync(() {});
+                        return Future.sync(() {
+                          locationProvider.getCurrentPosition(context);
+                          videoProvider.initFcm(context);
+                        });
                       },
                       child: CustomScrollView(
                         physics: const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
@@ -123,7 +143,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                     child: const Text("Hello",
                                       style: TextStyle(
                                         fontWeight: FontWeight.bold,
-                                        fontSize: Dimensions.fontSizeOverLarge
+                                        fontSize: Dimensions.fontSizeLarge
                                       ),
                                     ),
                                   ),
@@ -134,7 +154,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                     child: Text(authProvider.getUserFullname(),
                                       style: const TextStyle(
                                         fontWeight: FontWeight.w500,
-                                        fontSize: Dimensions.fontSizeExtraLarge
+                                        fontSize: Dimensions.fontSizeOverLarge
                                       ),
                                     ),
                                   )

@@ -50,7 +50,7 @@ class AuthRepo {
     return prefs["placeOfBirth"];
   }
 
-  String getUserId() {
+  String? getUserId() {
     Map<String, dynamic> prefs = json.decode(sharedPreferences.getString("user")!);
     return prefs["userId"];
   }

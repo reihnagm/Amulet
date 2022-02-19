@@ -17,6 +17,10 @@ class SignUpScreen extends StatefulWidget {
 }
 
 class _SignUpScreenState extends State<SignUpScreen> {
+  GlobalKey<ScaffoldState> globalKey = GlobalKey<ScaffoldState>();
+
+  late AuthProvider authProvider;
+
   late TextEditingController noKtpC;
   late TextEditingController fullnameC;
   late TextEditingController addressC;
@@ -105,7 +109,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
     user.emailAddress = email;
     user.password = passwordC.text;
     try {
-      await context.read<AuthProvider>().register(context, user);
+      await authProvider.register(context, user);
     } catch(e) {
       debugPrint(e.toString());
     }
@@ -113,244 +117,358 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: ColorResources.backgroundColor,
-      body: LayoutBuilder(
-        builder: (BuildContext context, BoxConstraints constraints) {
-          return Stack(
-            children: [
+    return buildUI();
+  }
 
-              CustomScrollView(
-                physics: const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
-                slivers: [
-                  SliverAppBar(
-                    backgroundColor: ColorResources.transparent,
-                    leading: CupertinoNavigationBarBackButton(
-                      color: ColorResources.black,
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                      },
-                    )
+  Widget buildUI() {
+    return Builder(
+      builder: (BuildContext context) {
+        authProvider = context.read<AuthProvider>();
+        return Scaffold(
+          backgroundColor: ColorResources.backgroundColor,
+          key: globalKey,
+          body: LayoutBuilder(
+            builder: (BuildContext context, BoxConstraints constraints) {
+              return Stack(
+                children: [
+
+                  CustomScrollView(
+                    physics: const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
+                    slivers: [
+                      SliverAppBar(
+                        backgroundColor: ColorResources.transparent,
+                        leading: CupertinoNavigationBarBackButton(
+                          color: ColorResources.black,
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          },
+                        )
+                      ),
+                      SliverPadding(
+                        padding: const EdgeInsets.only(top: 20.0, bottom: 80.0),
+                        sliver: SliverList(
+                          delegate: SliverChildListDelegate([
+                            
+                            Container(
+                              margin: const EdgeInsets.only(
+                                top: Dimensions.marginSizeDefault,
+                                left: Dimensions.marginSizeDefault, 
+                                right: Dimensions.marginSizeDefault,
+                                bottom: Dimensions.marginSizeDefault
+                              ),       
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: const [
+                                  Text("Daftar Akun",
+                                    style: TextStyle(
+                                      fontSize: Dimensions.fontSizeLarge,
+                                      fontWeight: FontWeight.bold,
+                                      color: ColorResources.black,
+                                    ),
+                                  )
+                                ],
+                              ),
+                            ),
+                            
+                            Container(
+                              margin: const EdgeInsets.only(
+                                top:  Dimensions.marginSizeSmall,
+                                left: Dimensions.marginSizeDefault, 
+                                right: Dimensions.marginSizeDefault,
+                                bottom: Dimensions.marginSizeDefault
+                              ),
+                              child: TextField(
+                                controller: noKtpC,
+                                style: const TextStyle(
+                                  fontSize: Dimensions.fontSizeDefault
+                                ),
+                                maxLength: 16,
+                                decoration: const InputDecoration(
+                                  hintText: "",
+                                  floatingLabelBehavior: FloatingLabelBehavior.always,
+                                  labelText: "Nomor KTP", 
+                                  labelStyle: TextStyle(
+                                    color: ColorResources.black,
+                                    fontSize: Dimensions.fontSizeDefault
+                                  ),
+                                  border: UnderlineInputBorder(
+                                    borderSide: BorderSide(
+                                      color: ColorResources.black
+                                    )
+                                  ),
+                                  focusedBorder: UnderlineInputBorder(
+                                    borderSide: BorderSide(
+                                      color: ColorResources.black
+                                    )
+                                  )
+                                )
+                              ),
+                            ),
+
+                            Container(
+                              margin: const EdgeInsets.only(
+                                top: Dimensions.marginSizeSmall,
+                                left: Dimensions.marginSizeDefault, 
+                                right: Dimensions.marginSizeDefault,
+                                bottom: Dimensions.marginSizeDefault
+                              ),
+                              child: TextField(
+                                controller: fullnameC,
+                                style: const TextStyle(
+                                  fontSize: Dimensions.fontSizeDefault
+                                ),
+                                cursorColor: ColorResources.black,
+                                decoration: const InputDecoration(
+                                  hintText: "",
+                                  floatingLabelBehavior: FloatingLabelBehavior.always,
+                                  labelText: "Nama Lengkap *", 
+                                  labelStyle: TextStyle(
+                                    color: ColorResources.black,
+                                    fontSize: Dimensions.fontSizeDefault
+                                  ),
+                                  border: UnderlineInputBorder(
+                                    borderSide: BorderSide(
+                                      color: ColorResources.black
+                                    )
+                                  ),
+                                  focusedBorder: UnderlineInputBorder(
+                                    borderSide: BorderSide(
+                                      color: ColorResources.black
+                                    )
+                                  )
+                                )
+                              ),
+                            ),
+
+                            Container(
+                              margin: const EdgeInsets.only(
+                                top: Dimensions.marginSizeSmall, 
+                                left: Dimensions.marginSizeDefault, 
+                                right: Dimensions.marginSizeDefault,
+                                bottom: Dimensions.marginSizeDefault
+                              ),
+                              child: TextField(
+                                controller: addressC,
+                                maxLines: 2,
+                                style: const TextStyle(
+                                  fontSize: Dimensions.fontSizeDefault
+                                ),
+                                cursorColor: ColorResources.black,
+                                decoration: const InputDecoration(
+                                  hintText: "",
+                                  floatingLabelBehavior: FloatingLabelBehavior.always,
+                                  labelText: "Alamat", 
+                                  labelStyle: TextStyle(
+                                    color: ColorResources.black,
+                                    fontSize: Dimensions.fontSizeDefault
+                                  ),
+                                  border: UnderlineInputBorder(
+                                    borderSide: BorderSide(
+                                      color: ColorResources.black
+                                    )
+                                  ),
+                                  focusedBorder: UnderlineInputBorder(
+                                    borderSide: BorderSide(
+                                      color: ColorResources.black
+                                    )
+                                  )
+                                )
+                              ),
+                            ),
+
+                            Container(
+                              margin: const EdgeInsets.only(
+                                top: Dimensions.marginSizeSmall, 
+                                left: Dimensions.marginSizeDefault, 
+                                right: Dimensions.marginSizeDefault,
+                                bottom: Dimensions.marginSizeDefault
+                              ),
+                              child: TextField(
+                                controller: noHpC,
+                                style: const TextStyle(
+                                  fontSize: Dimensions.fontSizeDefault
+                                ),
+                                cursorColor: ColorResources.black,
+                                keyboardType: TextInputType.phone,
+                                decoration: const InputDecoration(
+                                  hintText: "",
+                                  floatingLabelBehavior: FloatingLabelBehavior.always,
+                                  labelText: "No HP *", 
+                                  labelStyle: TextStyle(
+                                    color: ColorResources.black,
+                                    fontSize: Dimensions.fontSizeDefault
+                                  ),
+                                  border: UnderlineInputBorder(
+                                    borderSide: BorderSide(
+                                      color: ColorResources.black
+                                    )
+                                  ),
+                                  focusedBorder: UnderlineInputBorder(
+                                    borderSide: BorderSide(
+                                      color: ColorResources.black
+                                    )
+                                  )
+                                )
+                              ),
+                            ),
+
+                            Container(
+                              margin: const EdgeInsets.only(
+                                top: Dimensions.marginSizeSmall,
+                                left: Dimensions.marginSizeDefault,
+                                right: Dimensions.marginSizeDefault,
+                                bottom: Dimensions.marginSizeDefault
+                              ),
+                              child: TextField(
+                                controller: emailAddressC,
+                                style: const TextStyle(
+                                  fontSize: Dimensions.fontSizeDefault
+                                ),
+                                cursorColor: ColorResources.black,
+                                keyboardType: TextInputType.emailAddress,
+                                decoration: const InputDecoration(
+                                  hintText: "",
+                                  floatingLabelBehavior: FloatingLabelBehavior.always,
+                                  labelText: "Alamat E-mail *", 
+                                  labelStyle: TextStyle(
+                                    color: ColorResources.black,
+                                    fontSize: Dimensions.fontSizeDefault
+                                  ),
+                                  border: UnderlineInputBorder(
+                                    borderSide: BorderSide(
+                                      color: ColorResources.black
+                                    )
+                                  ),
+                                  focusedBorder: UnderlineInputBorder(
+                                    borderSide: BorderSide(
+                                      color: ColorResources.black
+                                    )
+                                  )
+                                )
+                              ),
+                            ),
+
+                            Container(
+                              margin: const EdgeInsets.only(
+                                top: Dimensions.marginSizeSmall, 
+                                left: Dimensions.marginSizeDefault, 
+                                right: Dimensions.marginSizeDefault,
+                                bottom: Dimensions.marginSizeDefault
+                              ),
+                              child: TextField(
+                                controller: passwordC,
+                                style: const TextStyle(
+                                  fontSize: Dimensions.fontSizeDefault
+                                ),
+                                cursorColor: ColorResources.black,
+                                maxLength: 8,
+                                obscureText: passwordObscure,
+                                decoration: InputDecoration(
+                                  suffixIcon: InkWell(
+                                    onTap: () {
+                                      setState(() => passwordObscure = !passwordObscure);
+                                    },
+                                    child: passwordObscure 
+                                    ? const Icon(Icons.visibility) 
+                                    : const Icon(Icons.visibility_off),
+                                  ),
+                                  hintText: "",
+                                  floatingLabelBehavior: FloatingLabelBehavior.always,
+                                  labelText: "Kata Sandi *", 
+                                  labelStyle: const TextStyle(
+                                    color: ColorResources.black,
+                                    fontSize: Dimensions.fontSizeDefault
+                                  ),
+                                  border: const UnderlineInputBorder(
+                                    borderSide: BorderSide(
+                                      color: ColorResources.black
+                                    )
+                                  ),
+                                  focusedBorder: const UnderlineInputBorder(
+                                    borderSide: BorderSide(
+                                      color: ColorResources.black
+                                    )
+                                  )
+                                )
+                              ),
+                            ),
+
+                            Container(
+                              margin: const EdgeInsets.only(
+                                top: Dimensions.marginSizeSmall,
+                                left: Dimensions.marginSizeDefault, 
+                                right: Dimensions.marginSizeDefault
+                              ),
+                              child: TextField(
+                                controller: passwordConfirmC,
+                                style: const TextStyle(
+                                  fontSize:  Dimensions.fontSizeDefault
+                                ),
+                                cursorColor: ColorResources.black,
+                                maxLength: 8,
+                                obscureText: passwordConfirmObscure,
+                                decoration: InputDecoration(
+                                  suffixIcon: InkWell(
+                                    onTap: () {
+                                      setState(() => passwordConfirmObscure = !passwordConfirmObscure);
+                                    },
+                                    child: Icon(
+                                      passwordConfirmObscure 
+                                      ? Icons.visibility 
+                                      : Icons.visibility_off
+                                    ),
+                                  ),
+                                  hintText: "",
+                                  floatingLabelBehavior: FloatingLabelBehavior.always,
+                                  labelText: "Konfirmasi Kata Sandi *", 
+                                  labelStyle: const TextStyle(
+                                    color: ColorResources.black,
+                                    fontSize: Dimensions.fontSizeDefault
+                                  ),
+                                  border: const UnderlineInputBorder(
+                                    borderSide: BorderSide(
+                                      color: ColorResources.black
+                                    )
+                                  ),
+                                  focusedBorder: const UnderlineInputBorder(
+                                    borderSide: BorderSide(
+                                      color: ColorResources.black
+                                    )
+                                  )
+                                )
+                              ),
+                            ),
+
+                          ])
+                        )
+                      )
+                    ],
                   ),
-                  SliverPadding(
-                    padding: const EdgeInsets.only(top: 20.0, bottom: 80.0),
-                    sliver: SliverList(
-                      delegate: SliverChildListDelegate([
-                        
-                        Container(
-                          margin: const EdgeInsets.only(
-                            top: Dimensions.marginSizeDefault,
-                            left: Dimensions.marginSizeDefault, 
-                            right: Dimensions.marginSizeDefault,
-                            bottom: Dimensions.marginSizeDefault
-                          ),       
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: const [
-                              Text("Daftar Akun",
-                                style: TextStyle(
-                                  fontSize: Dimensions.fontSizeLarge,
-                                  fontWeight: FontWeight.bold,
-                                  color: ColorResources.black,
-                                ),
-                              )
-                            ],
-                          ),
-                        ),
-                        
-                        Container(
-                          margin: const EdgeInsets.only(
-                            top:  Dimensions.marginSizeSmall,
-                            left: Dimensions.marginSizeDefault, 
-                            right: Dimensions.marginSizeDefault,
-                            bottom: Dimensions.marginSizeDefault
-                          ),
-                          child: TextField(
-                            controller: noKtpC,
-                            style: const TextStyle(
-                              fontSize: Dimensions.fontSizeDefault
-                            ),
-                            maxLength: 16,
-                            decoration: const InputDecoration(
-                              hintText: "",
-                              floatingLabelBehavior: FloatingLabelBehavior.always,
-                              labelText: "Nomor KTP", 
-                            )
-                          ),
-                        ),
 
-                        Container(
-                          margin: const EdgeInsets.only(
-                            top: Dimensions.marginSizeSmall,
-                            left: Dimensions.marginSizeDefault, 
-                            right: Dimensions.marginSizeDefault,
-                            bottom: Dimensions.marginSizeDefault
-                          ),
-                          child: TextField(
-                            controller: fullnameC,
-                            style: const TextStyle(
-                              fontSize: Dimensions.fontSizeDefault
-                            ),
-                            decoration: const InputDecoration(
-                              hintText: "",
-                              floatingLabelBehavior: FloatingLabelBehavior.always,
-                              labelText: "Nama Lengkap", 
-                            )
-                          ),
-                        ),
+                  Align(
+                    alignment: Alignment.bottomCenter,
+                    child: CustomButton(
+                      onTap: register,
+                      height: 56.0, 
+                      btnTxt: "Lanjutkan",
+                      btnColor: ColorResources.redPrimary,
+                      btnTextColor: ColorResources.white,
+                      isLoading:  context.watch<AuthProvider>().registerStatus == RegisterStatus.loading 
+                      ? true  
+                      : false,
+                      isBorder: false,
+                      isBorderRadius: false,
+                      isBoxShadow: true,
+                    ),
+                  ),
 
-                        Container(
-                          margin: const EdgeInsets.only(
-                            top: Dimensions.marginSizeSmall, 
-                            left: Dimensions.marginSizeDefault, 
-                            right: Dimensions.marginSizeDefault,
-                            bottom: Dimensions.marginSizeDefault
-                          ),
-                          child: TextField(
-                            controller: addressC,
-                            maxLines: 2,
-                            style: const TextStyle(
-                              fontSize: Dimensions.fontSizeDefault
-                            ),
-                            decoration: const InputDecoration(
-                              hintText: "",
-                              floatingLabelBehavior: FloatingLabelBehavior.always,
-                              labelText: "Alamat", 
-                            )
-                          ),
-                        ),
-
-                        Container(
-                          margin: const EdgeInsets.only(
-                            top: Dimensions.marginSizeSmall, 
-                            left: Dimensions.marginSizeDefault, 
-                            right: Dimensions.marginSizeDefault,
-                            bottom: Dimensions.marginSizeDefault
-                          ),
-                          child: TextField(
-                            controller: noHpC,
-                            style: const TextStyle(
-                              fontSize: Dimensions.fontSizeDefault
-                            ),
-                            keyboardType: TextInputType.phone,
-                            decoration: const InputDecoration(
-                              hintText: "",
-                              floatingLabelBehavior: FloatingLabelBehavior.always,
-                              labelText: "No HP", 
-                            )
-                          ),
-                        ),
-
-                        Container(
-                          margin: const EdgeInsets.only(
-                            top: Dimensions.marginSizeSmall,
-                            left: Dimensions.marginSizeDefault,
-                            right: Dimensions.marginSizeDefault,
-                            bottom: Dimensions.marginSizeDefault
-                          ),
-                          child: TextField(
-                            controller: emailAddressC,
-                            style: const TextStyle(
-                              fontSize: Dimensions.fontSizeDefault
-                            ),
-                            keyboardType: TextInputType.emailAddress,
-                            decoration: const InputDecoration(
-                              hintText: "",
-                              floatingLabelBehavior: FloatingLabelBehavior.always,
-                              labelText: "Alamat E-mail", 
-                            )
-                          ),
-                        ),
-
-                        Container(
-                          margin: const EdgeInsets.only(
-                            top: Dimensions.marginSizeSmall, 
-                            left: Dimensions.marginSizeDefault, 
-                            right: Dimensions.marginSizeDefault,
-                            bottom: Dimensions.marginSizeDefault
-                          ),
-                          child: TextField(
-                            controller: passwordC,
-                            style: const TextStyle(
-                              fontSize: Dimensions.fontSizeDefault
-                            ),
-                            maxLength: 8,
-                            obscureText: passwordObscure,
-                            decoration: InputDecoration(
-                              suffixIcon: InkWell(
-                                onTap: () {
-                                  setState(() => passwordObscure = !passwordObscure);
-                                },
-                                child: passwordObscure 
-                                ? const Icon(Icons.visibility) 
-                                : const Icon(Icons.visibility_off),
-                              ),
-                              hintText: "",
-                              floatingLabelBehavior: FloatingLabelBehavior.always,
-                              labelText: "Kata Sandi", 
-                            )
-                          ),
-                        ),
-
-                        Container(
-                          margin: const EdgeInsets.only(
-                            top: Dimensions.marginSizeSmall,
-                            left: Dimensions.marginSizeDefault, 
-                            right: Dimensions.marginSizeDefault
-                          ),
-                          child: TextField(
-                            controller: passwordConfirmC,
-                            style: const TextStyle(
-                              fontSize:  Dimensions.fontSizeDefault
-                            ),
-                            maxLength: 8,
-                            obscureText: passwordConfirmObscure,
-                            decoration: InputDecoration(
-                              suffixIcon: InkWell(
-                                onTap: () {
-                                  setState(() => passwordConfirmObscure = !passwordConfirmObscure);
-                                },
-                                child: Icon(
-                                  passwordConfirmObscure 
-                                  ? Icons.visibility 
-                                  : Icons.visibility_off
-                                ),
-                              ),
-                              hintText: "",
-                              floatingLabelBehavior: FloatingLabelBehavior.always,
-                              labelText: "Konfirmasi Kata Sandi", 
-                            )
-                          ),
-                        ),
-
-                      ])
-                    )
-                  )
                 ],
-              ),
-
-              Align(
-                alignment: Alignment.bottomCenter,
-                child: CustomButton(
-                  onTap: register,
-                  height: 56.0, 
-                  btnTxt: "Lanjutkan",
-                  btnColor: ColorResources.redPrimary,
-                  btnTextColor: ColorResources.white,
-                  isLoading: context.watch<AuthProvider>().registerStatus == RegisterStatus.loading 
-                  ? true  
-                  : false,
-                  isBorder: false,
-                  isBorderRadius: false,
-                  isBoxShadow: true,
-                ),
-              ),
-
-            ],
-          );
-        },
-      )
+              );
+            },
+          )
+        );
+      }, 
     );
   }
 }

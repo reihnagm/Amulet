@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:panic_button/providers/location.dart';
+import 'package:panic_button/providers/videos.dart';
 import 'package:panic_button/utils/dimensions.dart';
 import 'package:provider/provider.dart';
 
@@ -21,6 +22,9 @@ class SplashScreen extends StatefulWidget {
 class _SplashScreenState extends State<SplashScreen> {
   GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
 
+  late VideoProvider videoProvider;
+  late LocationProvider locationProvider;
+
   PackageInfo? packageInfo;
 
   @override
@@ -35,9 +39,6 @@ class _SplashScreenState extends State<SplashScreen> {
       }
     });
     (() async {
-      if(mounted) {
-        await context.read<LocationProvider>().getCurrentPosition(context);
-      }
       PackageInfo p = await PackageInfo.fromPlatform();
       setState(() {      
         packageInfo = PackageInfo(
@@ -48,53 +49,71 @@ class _SplashScreenState extends State<SplashScreen> {
         );
       });
     })();
+    WidgetsBinding.instance.addPersistentFrameCallback((_) async {
+      if(mounted) {
+        await locationProvider.getCurrentPosition(context);
+      }
+      if(mounted) {
+        await videoProvider.initFcm(context);
+      }
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      // resizeToAvoidBottomInset: false,
-      backgroundColor: ColorResources.backgroundColor,
-      key: scaffoldKey,
-      body: Stack(
-        fit: StackFit.expand,
-        children: [
+    return buildUI();
+  }
 
-          Align(
-            alignment: Alignment.topCenter,
-            child: Container(
-              margin: const EdgeInsets.only(top: 50.0),
-              child: Image.asset("assets/images/logo.png",
-                width: 180.0,
-                height: 180.0,
-                fit: BoxFit.scaleDown,
-              ),
-            ),
-          ),
+  Widget buildUI() {
+    return Builder(
+      builder: (BuildContext context) {
+        locationProvider = context.read<LocationProvider>();
+        videoProvider = context.read<VideoProvider>();
+        return Scaffold(
+          resizeToAvoidBottomInset: false,
+          backgroundColor: ColorResources.backgroundColor,
+          key: scaffoldKey,
+          body: Stack(
+            fit: StackFit.expand,
+            children: [
 
-          Align(
-            alignment: Alignment.bottomCenter,
-            child: Image.asset("assets/images/decoration.png"),
-          ),
-
-          Align(
-            alignment: Alignment.bottomCenter,
-            child: Container(
-              margin: const EdgeInsets.only(bottom: 40.0),
-              child: packageInfo == null 
-              ? const Text("") 
-              : Text("Version ${packageInfo?.version} + ${packageInfo?.buildNumber}",
-                style: const TextStyle(
-                  fontSize: Dimensions.fontSizeDefault,
-                  fontWeight: FontWeight.normal,
-                  color: ColorResources.white
+              Align(
+                alignment: Alignment.topCenter,
+                child: Container(
+                  margin: const EdgeInsets.only(top: 50.0),
+                  child: Image.asset("assets/images/logo.png",
+                    width: 180.0,
+                    height: 180.0,
+                    fit: BoxFit.scaleDown,
+                  ),
                 ),
-              ) 
-            ),
-          ),
+              ),
 
-        ],
-      )
+              Align(
+                alignment: Alignment.bottomCenter,
+                child: Image.asset("assets/images/decoration.png"),
+              ),
+
+              Align(
+                alignment: Alignment.bottomCenter,
+                child: Container(
+                  margin: const EdgeInsets.only(bottom: 40.0),
+                  child: packageInfo == null 
+                  ? const Text("") 
+                  : Text("Version ${packageInfo?.version} + ${packageInfo?.buildNumber}",
+                    style: const TextStyle(
+                      fontSize: Dimensions.fontSizeDefault,
+                      fontWeight: FontWeight.normal,
+                      color: ColorResources.white
+                    ),
+                  ) 
+                ),
+              ),
+
+            ],
+          )
+        );
+      },
     );
   }
 }

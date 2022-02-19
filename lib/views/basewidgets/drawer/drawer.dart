@@ -5,7 +5,7 @@ import 'package:panic_button/utils/color_resources.dart';
 import 'package:panic_button/utils/dimensions.dart';
 import 'package:panic_button/views/basewidgets/dialog/animated/animated.dart';
 import 'package:panic_button/views/basewidgets/dialog/logout/logout.dart';
-import 'package:panic_button/views/list_video/index.dart';
+import 'package:panic_button/views/reports/index.dart';
 import 'package:panic_button/views/screens/home/home.dart';
 
 class DrawerWidget extends StatefulWidget {
@@ -139,7 +139,7 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                       color: ColorResources.transparent,
                       child: InkWell(
                         onTap: () {
-                          navigationService.pushNav(context, ListVideoScreen(key: UniqueKey()));
+                          navigationService.pushNav(context, ReportsScreen(key: UniqueKey()));
                         },
                         child: const Padding(
                           padding: EdgeInsets.all(8.0),

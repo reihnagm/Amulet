@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:panic_button/data/repository/auth/auth.dart';
+import 'package:panic_button/services/navigation.dart';
 import 'package:panic_button/views/screens/home/home.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -17,9 +18,11 @@ enum RegisterStatus { idle, loading, loaded, empty, error }
 
 class AuthProvider with ChangeNotifier {
   final AuthRepo authRepo;
+  final NavigationService navigationService;
   final SharedPreferences sharedPreferences;
   AuthProvider({
     required this.authRepo,
+    required this.navigationService,
     required this.sharedPreferences
   });
 
@@ -28,7 +31,6 @@ class AuthProvider with ChangeNotifier {
 
   RegisterStatus _registerStatus = RegisterStatus.idle;
   RegisterStatus get registerStatus => _registerStatus;
-
 
   void setStateLoginStatus(LoginStatus loginStatus) {
     _loginStatus = loginStatus;
@@ -45,7 +47,7 @@ class AuthProvider with ChangeNotifier {
   }
 
   String getUserId() {
-    return authRepo.getUserId();
+    return authRepo.getUserId()!;
   }
 
   bool isLoggedIn() {
@@ -93,20 +95,7 @@ class AuthProvider with ChangeNotifier {
       UserModel userModel = UserModel.fromJson(resData);
       UserData userData = userModel.userData!;
       writeData(userData);
-      Navigator.pushReplacement(context,
-      PageRouteBuilder(pageBuilder: (context, animation, secondaryAnimation) {
-        return HomeScreen(key: UniqueKey());
-      },
-      transitionsBuilder: (context, animation, secondaryAnimation, child) {
-        const begin = Offset(1.0, 0.0);
-        const end = Offset.zero;
-        const curve = Curves.ease;
-        var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
-        return SlideTransition(
-          position: animation.drive(tween),
-          child: child,
-        );
-      }));
+      navigationService.pushNavReplacement(context, HomeScreen(key: UniqueKey()));
       setStateLoginStatus(LoginStatus.loaded);
     } on DioError catch(e) {  
       if(
@@ -123,7 +112,6 @@ class AuthProvider with ChangeNotifier {
       || e.response!.statusCode == 504
       || e.response!.statusCode == 505
     ) {
-      debugPrint("masuk sini");
         ShowSnackbar.snackbar(context, "(${e.response!.statusCode.toString()}) : Internal Server Error", "", ColorResources.error);
       }
       setStateLoginStatus(LoginStatus.error);
@@ -151,6 +139,7 @@ class AuthProvider with ChangeNotifier {
       UserModel userModel = UserModel.fromJson(resData);
       UserData userData = userModel.userData!;
       writeData(userData);
+      navigationService.pushNavReplacement(context, HomeScreen(key: UniqueKey()));
       setStateRegisterStatus(RegisterStatus.loaded);
     } on DioError catch(e) {  
       if(
@@ -167,7 +156,6 @@ class AuthProvider with ChangeNotifier {
         || e.response!.statusCode == 504
         || e.response!.statusCode == 505
       ) {
-        debugPrint(e.response!.data);
         ShowSnackbar.snackbar(context, "(${e.response!.statusCode.toString()}) : Internal Server Error", "", ColorResources.error);
       }
       setStateRegisterStatus(RegisterStatus.error);

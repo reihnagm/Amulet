@@ -1,8 +1,11 @@
 import 'dart:io';
 
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:panic_button/providers/auth.dart';
+import 'package:panic_button/providers/location.dart';
 import 'package:path/path.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -18,8 +21,12 @@ import 'package:video_player/video_player.dart';
 enum ListenVStatus { idle, loading, loaded, empty, error }
 
 class VideoProvider with ChangeNotifier {
+  final AuthProvider authProvider;
+  final LocationProvider locationProvider;
   final SharedPreferences sharedPreferences;
   VideoProvider({
+    required this.authProvider,
+    required this.locationProvider,
     required this.sharedPreferences
   });
 
@@ -238,6 +245,40 @@ class VideoProvider with ChangeNotifier {
       String f = data["fcm_secret"];
       _fcm  = f;
       return _fcm;
+    } on DioError catch(e) {
+      if(
+        e.response!.statusCode == 400
+        || e.response!.statusCode == 401
+        || e.response!.statusCode == 402 
+        || e.response!.statusCode == 403
+        || e.response!.statusCode == 404 
+        || e.response!.statusCode == 405 
+        || e.response!.statusCode == 500 
+        || e.response!.statusCode == 501
+        || e.response!.statusCode == 502
+        || e.response!.statusCode == 503
+        || e.response!.statusCode == 504
+        || e.response!.statusCode == 505
+      ) {
+        ShowSnackbar.snackbar(context, "(${e.response!.statusCode.toString()}) : Internal Server Error", "", ColorResources.error);
+      }
+    } catch(e) {
+      debugPrint(e.toString());
+    }
+    return fcm;
+  }
+
+  Future<String?> initFcm(BuildContext context) async {
+    try {
+      Dio dio = Dio();
+      await dio.post('${AppConstants.baseUrl}/init-fcm',
+         data: {  
+           "user_id": authProvider.getUserId(),
+           "lat": locationProvider.getCurrentLat,
+           "lng": locationProvider.getCurrentLng,
+           "fcm_secret": await FirebaseMessaging.instance.getToken()
+         }
+      );
     } on DioError catch(e) {
       if(
         e.response!.statusCode == 400

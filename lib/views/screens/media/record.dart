@@ -302,6 +302,7 @@ class _RecordScreenState extends State<RecordScreen> with WidgetsBindingObserver
     subscription!.unsubscribe();
     SocketServices.shared.dispose();
     VideoCompress.cancelCompression();
+    VideoCompress.dispose();
     super.dispose();
   }
 
@@ -354,12 +355,12 @@ class _RecordScreenState extends State<RecordScreen> with WidgetsBindingObserver
                               const SizedBox(height: 10.0),
                               Text("${progressBar.toString()} %",
                                 style: const TextStyle(
-                                  fontSize: 14.0
+                                  fontSize: Dimensions.fontSizeDefault
                                 ),
                               )
                             ]
                           ),
-                      )
+                        )
                       : Stack(
                         clipBehavior: Clip.none,
                         children: [
@@ -372,7 +373,7 @@ class _RecordScreenState extends State<RecordScreen> with WidgetsBindingObserver
                               color: Colors.black,
                               border: Border.all(
                                 color: controller != null && controller!.value.isRecordingVideo
-                                ? Colors.redAccent
+                                ? ColorResources.redPrimary
                                 : Colors.grey,
                                 width: 3.0,
                               ),
@@ -398,11 +399,6 @@ class _RecordScreenState extends State<RecordScreen> with WidgetsBindingObserver
                                   );
                                 },
                                 stateBuilder: (time, state) {
-                                  if(state == CustomTimerState.paused) {
-                                    const Text("The timer is paused",
-                                      style: TextStyle(fontSize: 24.0)
-                                    );
-                                  }
                                   return null;
                                 },
                                 animationBuilder: (Widget child) {
@@ -426,7 +422,7 @@ class _RecordScreenState extends State<RecordScreen> with WidgetsBindingObserver
                               ),
                               child: IconButton(
                                 icon: const Icon(Icons.stop),
-                                color: Colors.red,
+                                color: ColorResources.redPrimary,
                                 onPressed: controller != null &&
                                 controller!.value.isInitialized &&
                                 controller!.value.isRecordingVideo

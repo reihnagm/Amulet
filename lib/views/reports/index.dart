@@ -10,14 +10,14 @@ import 'package:panic_button/utils/color_resources.dart';
 import 'package:panic_button/utils/dimensions.dart';
 import 'package:panic_button/views/basewidgets/drawer/drawer.dart';
 
-class ListVideoScreen extends StatefulWidget {
-  const ListVideoScreen({ Key? key }) : super(key: key);
+class ReportsScreen extends StatefulWidget {
+  const ReportsScreen({ Key? key }) : super(key: key);
 
   @override
-  _ListVideoScreenState createState() => _ListVideoScreenState();
+  _ReportsScreenState createState() => _ReportsScreenState();
 }
 
-class _ListVideoScreenState extends State<ListVideoScreen> {
+class _ReportsScreenState extends State<ReportsScreen> {
   GlobalKey<ScaffoldState> globalKey = GlobalKey<ScaffoldState>();
 
   late VideoProvider videoProvider;
@@ -113,7 +113,7 @@ class _ListVideoScreenState extends State<ListVideoScreen> {
                                 children: const [
                                   Expanded(
                                     flex: 6,
-                                    child: Text("Thumbnail",
+                                    child: Text("Berkas",
                                       style: TextStyle(
                                         fontSize: Dimensions.fontSizeDefault,
                                         fontWeight: FontWeight.w500
@@ -122,7 +122,7 @@ class _ListVideoScreenState extends State<ListVideoScreen> {
                                   ),
                                   Expanded(
                                     flex: 6,
-                                    child: Text("Keterangan",
+                                    child: Text("Kasus",
                                       style: TextStyle(
                                         fontSize: Dimensions.fontSizeDefault,
                                         fontWeight: FontWeight.w500
@@ -321,7 +321,7 @@ class _ListVideoScreenState extends State<ListVideoScreen> {
                                                                     children: [
                                                                       const Expanded(
                                                                         flex: 4,
-                                                                        child: Text("Keterangan",
+                                                                        child: Text("Kasus",
                                                                           style: TextStyle(
                                                                             fontWeight: FontWeight.w500,
                                                                             fontSize: Dimensions.fontSizeDefault

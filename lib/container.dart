@@ -14,9 +14,17 @@ Future<void> init() async {
   getIt.registerLazySingleton(() => AuthRepo(sharedPreferences: getIt()));
   getIt.registerLazySingleton(() => NavigationService());
 
-  getIt.registerFactory(() => AuthProvider(authRepo: getIt(), sharedPreferences: getIt()));
+  getIt.registerFactory(() => AuthProvider(
+    authRepo: getIt(), 
+    navigationService: getIt(), 
+    sharedPreferences: getIt()
+  ));
   getIt.registerFactory(() => NetworkProvider(sharedPreferences: getIt()));
-  getIt.registerFactory(() => VideoProvider(sharedPreferences: getIt()));
+  getIt.registerFactory(() => VideoProvider(
+    authProvider: getIt(),
+    locationProvider: getIt(),
+    sharedPreferences: getIt()
+  ));
   getIt.registerFactory(() => FirebaseProvider(sharedPreferences: getIt()));
   getIt.registerFactory(() => LocationProvider(sharedPreferences: getIt()));
 

@@ -7,6 +7,7 @@ import 'package:gallery_saver/gallery_saver.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
+import 'package:filesize/filesize.dart';
 import 'package:video_compress/video_compress.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -42,7 +43,6 @@ class _CategoryScreenState extends State<CategoryScreen> {
   File? file;
   MediaInfo? videoCompressInfo;
   Duration? duration;
-  double? progress;
   int? videoSize;
 
   late TextEditingController msgC;
@@ -125,13 +125,20 @@ class _CategoryScreenState extends State<CategoryScreen> {
   @override 
   void initState() {
     super.initState();
-    msgC = TextEditingController();
 
+    msgC = TextEditingController();
+    
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if(mounted) {
         SocketServices.shared.connect(context);
       }
     });
+  }
+
+  @override 
+  void dispose() {
+    VideoCompress.dispose();
+    super.dispose();
   }
 
   @override
@@ -141,7 +148,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
 
   Widget buildUI() {
     return Builder(
-      builder: (BuildContext context) {
+      builder: (BuildContext context) { 
         authProvider = context.read<AuthProvider>();
         videoProvider = context.read<VideoProvider>();
         locationProvider = context.read<LocationProvider>();
@@ -212,7 +219,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
                                         alignment: Alignment.centerLeft,
                                         child: const Text("Hello",
                                           style: TextStyle(
-                                            fontWeight: FontWeight.w400,
+                                            fontWeight: FontWeight.bold,
                                             fontSize: Dimensions.fontSizeLarge
                                           ),
                                         ),
@@ -221,8 +228,8 @@ class _CategoryScreenState extends State<CategoryScreen> {
                                       Container(
                                         margin: const EdgeInsets.only(left: Dimensions.marginSizeDefault),
                                         alignment: Alignment.centerLeft,
-                                        child: const Text("Edwin",
-                                          style: TextStyle(
+                                        child: Text(authProvider.getUserFullname(),
+                                          style: const TextStyle(
                                             fontWeight: FontWeight.w500,
                                             fontSize: Dimensions.fontSizeOverLarge
                                           ),
@@ -352,8 +359,8 @@ class _CategoryScreenState extends State<CategoryScreen> {
                                                                       ),
                                                                       const SizedBox(height: 10.0),
                                                                       Row(
-                                                                        children: const [
-                                                                          Expanded(
+                                                                        children: [
+                                                                          const Expanded(
                                                                             flex: 20,
                                                                             child: Text("Lokasi",
                                                                               style: TextStyle(
@@ -362,7 +369,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
                                                                               ),
                                                                             ),
                                                                           ),
-                                                                          Expanded(
+                                                                          const Expanded(
                                                                             flex: 6,
                                                                             child: Text(":",
                                                                               style: TextStyle(
@@ -373,8 +380,8 @@ class _CategoryScreenState extends State<CategoryScreen> {
                                                                           ),
                                                                           Expanded(
                                                                             flex: 100,
-                                                                            child: Text("Jl. Kemang Timur No.1 RT.003/RW.002",
-                                                                              style: TextStyle(
+                                                                            child: Text(locationProvider.getCurrentNameAddress,
+                                                                              style: const TextStyle(
                                                                                 fontWeight: FontWeight.w500,
                                                                                 fontSize: Dimensions.fontSizeDefault
                                                                               ),
@@ -412,7 +419,55 @@ class _CategoryScreenState extends State<CategoryScreen> {
                                                                     ),
                                                                   ),
 
-                                                                  isCompressed ? Text("Lagi Compress") : Text(""),
+                                                                  isCompressed 
+                                                                  ? Container(
+                                                                      margin: const EdgeInsets.all(Dimensions.marginSizeDefault),
+                                                                      child: const Center(
+                                                                        child: SpinKitThreeBounce(
+                                                                          size: 20.0,
+                                                                          color: Colors.black87,
+                                                                        ),
+                                                                      ),
+                                                                    ) 
+                                                                  : videoCompressInfo == null 
+                                                                  ? Container()
+                                                                  : Container(
+                                                                      margin: const EdgeInsets.all(Dimensions.marginSizeDefault),
+                                                                      child: Column(
+                                                                        crossAxisAlignment: CrossAxisAlignment.center,
+                                                                        mainAxisSize: MainAxisSize.min,
+                                                                        children: [
+                                                                        Image.memory(thumbnail!, height: 100.0),
+                                                                        const SizedBox(height: 12.0),
+                                                                        Text("Besar Berkas : ${filesize(videoSize)}",
+                                                                          style: const TextStyle(
+                                                                            fontSize: 16.0
+                                                                          ),
+                                                                        ),
+                                                                        const SizedBox(height: 12.0),
+                                                                        Text("Durasi : ${duration!.inHours}:${duration!.inMinutes.remainder(60)}:${(duration!.inSeconds.remainder(60))}",
+                                                                          style: const TextStyle(
+                                                                            fontSize: 16.0
+                                                                          ),
+                                                                        ),
+                                                                        const  SizedBox(height: 12.0),
+                                                                        CustomButton(
+                                                                          onTap: () {
+                                                                            s(() {
+                                                                              videoCompressInfo = null;
+                                                                            });
+                                                                          }, 
+                                                                          height: 30.0,
+                                                                          isBorder: false,
+                                                                          isBorderRadius: false,
+                                                                          isBoxShadow: true,
+                                                                          btnColor: ColorResources.redPrimary,
+                                                                          btnTextColor: ColorResources.white,
+                                                                          btnTxt: "Batal"
+                                                                        )
+                                                                      ],
+                                                                    ),
+                                                                  ),
 
                                                                   Container(
                                                                     margin: const EdgeInsets.only(top: Dimensions.marginSizeLarge),
@@ -451,6 +506,9 @@ class _CategoryScreenState extends State<CategoryScreen> {
                                                                             children: [
                                                                               CustomButton(
                                                                                 onTap: () {
+                                                                                  setState(() {
+                                                                                    selectedIndex = -1;
+                                                                                  });
                                                                                   Navigator.of(context).pop();
                                                                                 }, 
                                                                                 height: 30.0,
@@ -472,6 +530,10 @@ class _CategoryScreenState extends State<CategoryScreen> {
                                                                             children: [
                                                                               CustomButton(
                                                                                 onTap: () async {
+                                                                                  if(videoCompressInfo == null) {
+                                                                                    Navigator.of(context).pop();
+                                                                                    return;
+                                                                                  }
                                                                                   s(() {
                                                                                     loading = true;
                                                                                   });
@@ -532,8 +594,6 @@ class _CategoryScreenState extends State<CategoryScreen> {
                                                                       ],
                                                                     )
                                                                   )
-                                                              
-                                                              
                                                                 ],
                                                               ),
                                                             ),

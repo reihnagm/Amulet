@@ -48,11 +48,14 @@ android {
         targetSdkVersion 31
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
+        proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
     }
 
     buildTypes {
         release {
             signingConfig signingConfigs.debug
+            shrinkResources true
+            useProguard true
         }
     }
 }
