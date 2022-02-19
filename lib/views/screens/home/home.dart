@@ -7,6 +7,8 @@ import 'package:slide_to_confirm/slide_to_confirm.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
+import 'package:panic_button/providers/location.dart';
+import 'package:panic_button/views/screens/media/record.dart';
 import 'package:panic_button/views/basewidgets/drawer/drawer.dart';
 import 'package:panic_button/providers/auth.dart';
 import 'package:panic_button/views/screens/notification/notification.dart';
@@ -25,6 +27,24 @@ class _HomeScreenState extends State<HomeScreen> {
   GlobalKey<ScaffoldState> globalKey = GlobalKey<ScaffoldState>();
   Completer<GoogleMapController> mapsController = Completer();
 
+  void openRecord() {
+    Navigator.push(context,
+      PageRouteBuilder(pageBuilder: (context, animation, secondaryAnimation) {
+        return RecordScreen(key: UniqueKey());
+      },
+      transitionsBuilder: (context, animation, secondaryAnimation, child) {
+        const begin = Offset(1.0, 0.0);
+        const end = Offset.zero;
+        const curve = Curves.ease;
+        var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+        return SlideTransition(
+          position: animation.drive(tween),
+          child: child,
+        );
+      })
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -36,6 +56,7 @@ class _HomeScreenState extends State<HomeScreen> {
         child: LayoutBuilder(
           builder: (BuildContext context, BoxConstraints constraints) {
             return Stack(
+              clipBehavior: Clip.none,
               children: [
 
                 RefreshIndicator(
@@ -125,7 +146,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 margin: const EdgeInsets.only(left: Dimensions.marginSizeDefault),
                                 alignment: Alignment.centerLeft,
                                 child: Text(context.read<AuthProvider>().getUserFullname(),
-                                  style: TextStyle(
+                                  style: const TextStyle(
                                     fontWeight: FontWeight.w500,
                                     fontSize: Dimensions.fontSizeExtraLarge
                                   ),
@@ -151,13 +172,14 @@ class _HomeScreenState extends State<HomeScreen> {
                       mapType: MapType.normal,
                       gestureRecognizers: {}..add(Factory<EagerGestureRecognizer>(() => EagerGestureRecognizer())),
                       myLocationEnabled: false,
-                      initialCameraPosition: const CameraPosition(
-                        target: LatLng(-6.175392, 106.827153),
+                      initialCameraPosition: CameraPosition(
+                        target: LatLng(context.read<LocationProvider>().getCurrentLat, context.read<LocationProvider>().getCurrentLng),
                         zoom: 15.0,
                       ),
-                      markers: const {},
+                      markers: Set.from(context.read<LocationProvider>().markers),
                       onMapCreated: (GoogleMapController controller) {
                         mapsController.complete(controller);
+                        context.read<LocationProvider>().controller = controller;
                       },
                     ),
                   )
@@ -210,19 +232,15 @@ class _HomeScreenState extends State<HomeScreen> {
                   alignment: Alignment.bottomCenter,
                   child: Container(
                     margin: const EdgeInsets.only(
-                      top: 50.0, 
-                      bottom: 110.0,
-                      left: Dimensions.marginSizeDefault,
-                      right: Dimensions.marginSizeDefault,
+                      bottom: 100.0,
                     ),
                     child: ConfirmationSlider(
                       foregroundShape: BorderRadius.circular(10.0),
                       backgroundShape:BorderRadius.circular(10.0) ,
                       foregroundColor: ColorResources.redPrimary,
                       text: "Slide to Send Alert",
-                      width: double.infinity,
                       height: 60.0,
-                      onConfirmation: () {},
+                      onConfirmation: () => openRecord()
                     ),
                   ),
                 ),

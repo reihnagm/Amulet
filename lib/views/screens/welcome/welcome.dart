@@ -15,14 +15,13 @@ class WelcomeScreen extends StatefulWidget {
 }
 
 class _WelcomeScreenState extends State<WelcomeScreen> {
-  GlobalKey<ScaffoldState> scaffoldKey = GlobalKey();
+  GlobalKey<ScaffoldState> globalKey = GlobalKey();
 
   PackageInfo? packageInfo;
 
   @override
   void initState() {
     super.initState();
-  
     (() async {
       PackageInfo p = await PackageInfo.fromPlatform();
       setState(() {      
@@ -39,10 +38,10 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      key: scaffoldKey,
+      resizeToAvoidBottomInset: false,
+      key: globalKey,
       backgroundColor: ColorResources.backgroundColor,
       body: Stack(
-        fit: StackFit.expand,
         children: [
 
           Align(
@@ -57,11 +56,9 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
             ),
           ),
 
-          Positioned.fill(
-            child: Align(
-              alignment: Alignment.bottomCenter,
-                child: Image.asset("assets/images/decoration.png", 
-              ),
+          Align(
+            alignment: Alignment.bottomCenter,
+              child: Image.asset("assets/images/decoration.png", 
             ),
           ),
 

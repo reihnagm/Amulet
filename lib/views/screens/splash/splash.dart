@@ -2,6 +2,8 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+import 'package:panic_button/providers/location.dart';
+import 'package:panic_button/utils/dimensions.dart';
 import 'package:provider/provider.dart';
 
 import 'package:panic_button/providers/auth.dart';
@@ -17,13 +19,7 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
-  GlobalKey<ScaffoldState> scaffoldKey = GlobalKey();
-
-   void showSnack(String text) {
-    if (scaffoldKey.currentContext != null) {
-      ScaffoldMessenger.of(scaffoldKey.currentContext!).showSnackBar(SnackBar(content: Text(text)));
-    }
-  }
+  GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
 
   PackageInfo? packageInfo;
 
@@ -39,6 +35,9 @@ class _SplashScreenState extends State<SplashScreen> {
       }
     });
     (() async {
+      if(mounted) {
+        await context.read<LocationProvider>().getCurrentPosition(context);
+      }
       PackageInfo p = await PackageInfo.fromPlatform();
       setState(() {      
         packageInfo = PackageInfo(
@@ -54,7 +53,7 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      resizeToAvoidBottomInset: false,
+      // resizeToAvoidBottomInset: false,
       backgroundColor: ColorResources.backgroundColor,
       key: scaffoldKey,
       body: Stack(
@@ -73,30 +72,27 @@ class _SplashScreenState extends State<SplashScreen> {
             ),
           ),
 
-          Positioned.fill(
-            bottom: 0.0,
-            child: Align(
-              alignment: Alignment.bottomCenter,
-              child: Image.asset("assets/images/decoration.png", 
-              ),
-            ),
+          Align(
+            alignment: Alignment.bottomCenter,
+            child: Image.asset("assets/images/decoration.png"),
           ),
 
           Align(
             alignment: Alignment.bottomCenter,
             child: Container(
-              margin: const EdgeInsets.only(bottom: 80.0),
+              margin: const EdgeInsets.only(bottom: 40.0),
               child: packageInfo == null 
-              ? const Text("") : Text("Version ${packageInfo!.version} + ${packageInfo!.buildNumber}",
+              ? const Text("") 
+              : Text("Version ${packageInfo?.version} + ${packageInfo?.buildNumber}",
                 style: const TextStyle(
-                  fontSize: 14,
+                  fontSize: Dimensions.fontSizeDefault,
                   fontWeight: FontWeight.normal,
-                  color: Colors.white
+                  color: ColorResources.white
                 ),
               ) 
             ),
           ),
-         
+
         ],
       )
     );
