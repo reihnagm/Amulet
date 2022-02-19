@@ -143,7 +143,7 @@ class _RecordScreenState extends State<RecordScreen> with WidgetsBindingObserver
           lat: context.read<LocationProvider>().getCurrentLat,
           lng: context.read<LocationProvider>().getCurrentLng,
           status: "sent",
-          duration: (Duration(microseconds: (videoCompressInfo!.duration! * 1000).toInt())).toString(),
+          duration: (Duration(microseconds: (info.duration! * 1000).toInt())).toString(),
           thumbnail: thumbnail!
         );
         await context.read<VideoProvider>().insertSos(context,
@@ -154,7 +154,7 @@ class _RecordScreenState extends State<RecordScreen> with WidgetsBindingObserver
           lat: context.read<LocationProvider>().getCurrentLat.toString(),
           lng: context.read<LocationProvider>().getCurrentLng.toString(),
           status: "sent",
-          duration: (Duration(microseconds: (videoCompressInfo!.duration! * 1000).toInt())).toString(),
+          duration: (Duration(microseconds: (info.duration! * 1000).toInt())).toString(),
           thumbnail: thumbnail
         );
         if(mounted) {

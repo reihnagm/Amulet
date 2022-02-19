@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
+import 'package:panic_button/services/navigation.dart';
 import 'package:provider/provider.dart';
 import 'package:slide_to_confirm/slide_to_confirm.dart';
 import 'package:flutter/material.dart';
@@ -27,232 +28,219 @@ class _HomeScreenState extends State<HomeScreen> {
   GlobalKey<ScaffoldState> globalKey = GlobalKey<ScaffoldState>();
   Completer<GoogleMapController> mapsController = Completer();
 
+  late AuthProvider authProvider;
+  late LocationProvider locationProvider;
+  late NavigationService navigationService;
+
   void openRecord() {
-    Navigator.push(context,
-      PageRouteBuilder(pageBuilder: (context, animation, secondaryAnimation) {
-        return RecordScreen(key: UniqueKey());
-      },
-      transitionsBuilder: (context, animation, secondaryAnimation, child) {
-        const begin = Offset(1.0, 0.0);
-        const end = Offset.zero;
-        const curve = Curves.ease;
-        var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
-        return SlideTransition(
-          position: animation.drive(tween),
-          child: child,
-        );
-      })
-    );
+    navigationService.pushNav(context,  RecordScreen(key: UniqueKey()));
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      resizeToAvoidBottomInset: false,
-      key: globalKey,
-      drawer: DrawerWidget(key: UniqueKey()),
-      backgroundColor: ColorResources.white,
-      body: SafeArea(
-        child: LayoutBuilder(
-          builder: (BuildContext context, BoxConstraints constraints) {
-            return Stack(
-              clipBehavior: Clip.none,
-              children: [
+    return buildUI();
+  }
 
-                RefreshIndicator(
-                  backgroundColor: ColorResources.white,
-                  color: ColorResources.redPrimary,
-                  onRefresh: () {
-                    return Future.sync(() {});
-                  },
-                  child: CustomScrollView(
-                    physics: const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
-                    slivers: [
-                      
-                      SliverAppBar(
-                        toolbarHeight: 80.0,
-                        backgroundColor: ColorResources.transparent,
-                        title: Image.asset('assets/images/logo.png',
-                          width: 70.0,
-                          height: 70.0,
-                          fit: BoxFit.scaleDown,
-                        ),
-                        centerTitle: true,
-                        iconTheme: const IconThemeData(
-                          color: ColorResources.black
-                        ),
-                        leading: Container(
-                          margin: const EdgeInsets.only(left: Dimensions.marginSizeDefault),
-                          child: InkWell(
-                            onTap: () {
-                              globalKey.currentState!.openDrawer();
-                            },
-                            child: const Icon(
-                              Icons.menu,
-                              color: ColorResources.black,
+  Widget buildUI() {
+    return Builder(
+      builder: (context) {
+        authProvider = context.read<AuthProvider>();
+        locationProvider = context.read<LocationProvider>();
+        navigationService = NavigationService();
+        return Scaffold(
+          resizeToAvoidBottomInset: false,
+          key: globalKey,
+          drawer: DrawerWidget(key: UniqueKey()),
+          backgroundColor: ColorResources.white,
+          body: SafeArea(
+            child: LayoutBuilder(
+              builder: (BuildContext context, BoxConstraints constraints) {
+                return Stack(
+                  clipBehavior: Clip.none,
+                  children: [
+
+                    RefreshIndicator(
+                      backgroundColor: ColorResources.white,
+                      color: ColorResources.redPrimary,
+                      onRefresh: () {
+                        return Future.sync(() {});
+                      },
+                      child: CustomScrollView(
+                        physics: const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
+                        slivers: [
+                          
+                          SliverAppBar(
+                            toolbarHeight: 80.0,
+                            backgroundColor: ColorResources.transparent,
+                            title: Image.asset('assets/images/logo.png',
+                              width: 70.0,
+                              height: 70.0,
+                              fit: BoxFit.scaleDown,
                             ),
-                          )
-                        ),
-                        actions: [
-                          Container(
-                            margin: const EdgeInsets.only(right: Dimensions.marginSizeDefault),
-                            child: Material(
-                              color: ColorResources.transparent,
+                            centerTitle: true,
+                            iconTheme: const IconThemeData(
+                              color: ColorResources.black
+                            ),
+                            leading: Container(
+                              margin: const EdgeInsets.only(left: Dimensions.marginSizeDefault),
                               child: InkWell(
                                 onTap: () {
-                                  Navigator.push(context,
-                                    PageRouteBuilder(pageBuilder: (BuildContext context, Animation<double> animation, Animation<double> secondaryAnimation) {
-                                      return NotificationScreen(key: UniqueKey());
-                                    },
-                                    transitionsBuilder: (context, animation, secondaryAnimation, child) {
-                                      Offset begin = const Offset(1.0, 0.0);
-                                      Offset end = Offset.zero;
-                                      Cubic curve = Curves.ease;
-                                      Animatable<Offset> tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
-                                      return SlideTransition(
-                                        position: animation.drive(tween),
-                                        child: child,
-                                      );
-                                    })
-                                  );
+                                  globalKey.currentState!.openDrawer();
                                 },
-                                child: const Padding(
-                                  padding: EdgeInsets.all(8.0),
-                                  child: Icon(
-                                    Icons.notifications,
-                                    size: 25.0,
-                                    color: ColorResources.black,
-                                  ),
+                                child: const Icon(
+                                  Icons.menu,
+                                  color: ColorResources.black,
                                 ),
-                              ),
+                              )
                             ),
-                          )
-                        ],
-                        bottom: PreferredSize(
-                          child:  Column(
-                            children: [
+                            actions: [
                               Container(
-                                margin: const EdgeInsets.only(left: Dimensions.marginSizeDefault),
-                                alignment: Alignment.centerLeft,
-                                child: const Text("Hello",
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: Dimensions.fontSizeOverLarge
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(height: 5.0),
-                              Container(
-                                margin: const EdgeInsets.only(left: Dimensions.marginSizeDefault),
-                                alignment: Alignment.centerLeft,
-                                child: Text(context.read<AuthProvider>().getUserFullname(),
-                                  style: const TextStyle(
-                                    fontWeight: FontWeight.w500,
-                                    fontSize: Dimensions.fontSizeExtraLarge
+                                margin: const EdgeInsets.only(right: Dimensions.marginSizeDefault),
+                                child: Material(
+                                  color: ColorResources.transparent,
+                                  child: InkWell(
+                                    onTap: () {
+                                      navigationService.pushNav(context, NotificationScreen(key: UniqueKey()));
+                                    },
+                                    child: const Padding(
+                                      padding: EdgeInsets.all(8.0),
+                                      child: Icon(
+                                        Icons.notifications,
+                                        size: 25.0,
+                                        color: ColorResources.black,
+                                      ),
+                                    ),
                                   ),
                                 ),
                               )
                             ],
+                            bottom: PreferredSize(
+                              child:  Column(
+                                children: [
+                                  Container(
+                                    margin: const EdgeInsets.only(left: Dimensions.marginSizeDefault),
+                                    alignment: Alignment.centerLeft,
+                                    child: const Text("Hello",
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: Dimensions.fontSizeOverLarge
+                                      ),
+                                    ),
+                                  ),
+                                  const SizedBox(height: 5.0),
+                                  Container(
+                                    margin: const EdgeInsets.only(left: Dimensions.marginSizeDefault),
+                                    alignment: Alignment.centerLeft,
+                                    child: Text(authProvider.getUserFullname(),
+                                      style: const TextStyle(
+                                        fontWeight: FontWeight.w500,
+                                        fontSize: Dimensions.fontSizeExtraLarge
+                                      ),
+                                    ),
+                                  )
+                                ],
+                              ),
+                              preferredSize: const Size.fromHeight(60.0) 
+                            ),
                           ),
-                          preferredSize: const Size.fromHeight(60.0) 
-                        ),
+                          
+                    
+                        ],
                       ),
-                      
-                
-                    ],
-                  ),
-                ),
+                    ),
 
-                Align(
-                  alignment: Alignment.bottomCenter,
-                  child: Container(
-                    width: double.infinity,
-                    margin: const EdgeInsets.only(top: 160.0),
-                    child: GoogleMap(
-                      mapType: MapType.normal,
-                      gestureRecognizers: {}..add(Factory<EagerGestureRecognizer>(() => EagerGestureRecognizer())),
-                      myLocationEnabled: false,
-                      initialCameraPosition: CameraPosition(
-                        target: LatLng(
-                          context.read<LocationProvider>().getCurrentLat, 
-                          context.read<LocationProvider>().getCurrentLng
-                        ),
-                        zoom: 15.0,
-                      ),
-                      markers: Set.from(context.read<LocationProvider>().markers),
-                      onMapCreated: (GoogleMapController controller) {
-                        mapsController.complete(controller);
-                        context.read<LocationProvider>().controller = controller;
-                      },
-                    ),
-                  )
-                ),
-
-                Align(
-                  alignment: Alignment.topLeft,
-                  child: Container(
-                    margin: const EdgeInsets.only(
-                      top: 175.0,
-                      left: Dimensions.marginSizeDefault, 
-                      right: Dimensions.marginSizeDefault
-                    ),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10.0),
-                      color: ColorResources.redPrimary
-                    ),
-                    child: InkWell(
-                      onTap: () { 
-                        Navigator.push(context,
-                          PageRouteBuilder(pageBuilder: (BuildContext context, Animation<double> animation, Animation<double> secondaryAnimation) {
-                            return CategoryScreen(key: UniqueKey());
+                    Align(
+                      alignment: Alignment.bottomCenter,
+                      child: Container(
+                        width: double.infinity,
+                        margin: const EdgeInsets.only(top: 160.0),
+                        child: GoogleMap(
+                          mapType: MapType.normal,
+                          gestureRecognizers: {}..add(Factory<EagerGestureRecognizer>(() => EagerGestureRecognizer())),
+                          myLocationEnabled: false,
+                          initialCameraPosition: CameraPosition(
+                            target: LatLng(
+                              locationProvider.getCurrentLat, 
+                              locationProvider.getCurrentLng
+                            ),
+                            zoom: 10.0,
+                          ),
+                          markers: Set.from(locationProvider.markers),
+                          onMapCreated: (GoogleMapController controller) {
+                            mapsController.complete(controller);
+                            locationProvider.controller = controller;
                           },
-                          transitionsBuilder: (context, animation, secondaryAnimation, child) {
-                            Offset begin = const Offset(1.0, 0.0);
-                            Offset end = Offset.zero;
-                            Cubic curve = Curves.ease;
-                            Animatable<Offset> tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
-                            return SlideTransition(
-                              position: animation.drive(tween),
-                              child: child,
+                        ),
+                      )
+                    ),
+
+                    Align(
+                      alignment: Alignment.topLeft,
+                      child: Container(
+                        margin: const EdgeInsets.only(
+                          top: 175.0,
+                          left: Dimensions.marginSizeDefault, 
+                          right: Dimensions.marginSizeDefault
+                        ),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10.0),
+                          color: ColorResources.redPrimary
+                        ),
+                        child: InkWell(
+                          onTap: () { 
+                            Navigator.push(context,
+                              PageRouteBuilder(pageBuilder: (BuildContext context, Animation<double> animation, Animation<double> secondaryAnimation) {
+                                return CategoryScreen(key: UniqueKey());
+                              },
+                              transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                                Offset begin = const Offset(1.0, 0.0);
+                                Offset end = Offset.zero;
+                                Cubic curve = Curves.ease;
+                                Animatable<Offset> tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+                                return SlideTransition(
+                                  position: animation.drive(tween),
+                                  child: child,
+                                );
+                              })
                             );
-                          })
-                        );
-                      },
-                      child: const Padding(
-                        padding: EdgeInsets.all(8.0),
-                        child: Text("Kategori",
-                          style: TextStyle(
-                            fontSize: Dimensions.fontSizeSmall,
-                            color: ColorResources.white
+                          },
+                          child: const Padding(
+                            padding: EdgeInsets.all(8.0),
+                            child: Text("Kategori",
+                              style: TextStyle(
+                                fontSize: Dimensions.fontSizeSmall,
+                                color: ColorResources.white
+                              ),
+                            ),
                           ),
+                        )
+                      ),
+                    ),
+                                    
+                    Align(
+                      alignment: Alignment.bottomCenter,
+                      child: Container(
+                        margin: const EdgeInsets.only(
+                          bottom: 100.0,
+                        ),
+                        child: ConfirmationSlider(
+                          foregroundShape: BorderRadius.circular(10.0),
+                          backgroundShape:BorderRadius.circular(10.0) ,
+                          foregroundColor: ColorResources.redPrimary,
+                          text: "Slide to Send Alert",
+                          height: 60.0,
+                          onConfirmation: () => openRecord()
                         ),
                       ),
-                    )
-                  ),
-                ),
-                                
-                Align(
-                  alignment: Alignment.bottomCenter,
-                  child: Container(
-                    margin: const EdgeInsets.only(
-                      bottom: 100.0,
                     ),
-                    child: ConfirmationSlider(
-                      foregroundShape: BorderRadius.circular(10.0),
-                      backgroundShape:BorderRadius.circular(10.0) ,
-                      foregroundColor: ColorResources.redPrimary,
-                      text: "Slide to Send Alert",
-                      height: 60.0,
-                      onConfirmation: () => openRecord()
-                    ),
-                  ),
-                ),
 
-              ],
-            );
-          },
-        ),
-      ),
+                  ],
+                );
+              },
+            ),
+          ),
+        );
+      },
     );
   }
 }
