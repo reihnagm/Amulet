@@ -238,23 +238,6 @@ class _RecordScreenState extends State<RecordScreen> with WidgetsBindingObserver
     showInSnackBar('Error: ${e.code}\n${e.description}');
   }
 
-  // Future<void> generateByteThumbnail(File file) async {
-  //   Uint8List? thumbnailBytes = await VideoCompress.getByteThumbnail(file.path);
-  //   setState(() => thumbnail = thumbnailBytes);
-  // }
-
-  // Future<void> generateFileThumbnail(File f) async {
-  //   File file = await VideoCompress.getFileThumbnail(f.path);
-  //   setState(() => fileThumbnail = file); 
-  // }
-
-  // Future<void> getVideoSize(File file) async {
-  //   int size = await file.length(); 
-  //   setState(() {
-  //     videoSize = size;
-  //   });
-  // }
-
   Widget cameraPreviewWidget() {
     if (controller == null || !controller!.value.isInitialized) {
       return Container();

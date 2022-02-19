@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 import 'package:panic_button/providers/network.dart';
@@ -111,7 +112,7 @@ class _ListVideoScreenState extends State<ListVideoScreen> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: const [
                                   Expanded(
-                                    flex: 5,
+                                    flex: 6,
                                     child: Text("Thumbnail",
                                       style: TextStyle(
                                         fontSize: Dimensions.fontSizeDefault,
@@ -120,7 +121,7 @@ class _ListVideoScreenState extends State<ListVideoScreen> {
                                     )
                                   ),
                                   Expanded(
-                                    flex: 5,
+                                    flex: 6,
                                     child: Text("Keterangan",
                                       style: TextStyle(
                                         fontSize: Dimensions.fontSizeDefault,
@@ -129,7 +130,7 @@ class _ListVideoScreenState extends State<ListVideoScreen> {
                                     )
                                   ),
                                   Expanded(
-                                    flex: 5,
+                                    flex: 6,
                                     child: Text("Pengirim",
                                       style: TextStyle(
                                         fontSize: Dimensions.fontSizeDefault,
@@ -309,7 +310,7 @@ class _ListVideoScreenState extends State<ListVideoScreen> {
                                                                     imageUrl: videoProvider.sosData[i].thumbnail!,
                                                                   ),
                                                                 ),
-                                                                const SizedBox(height: 20.0),
+                                                                const SizedBox(height: 30.0),
                                                                 Container(
                                                                   margin: const EdgeInsets.only(
                                                                     left: Dimensions.marginSizeDefault,
@@ -582,6 +583,46 @@ class _ListVideoScreenState extends State<ListVideoScreen> {
                                                                     ],
                                                                   ),
                                                                 ),
+                                                                const SizedBox(height: 15.0),
+                                                                Container(
+                                                                  margin: const EdgeInsets.only(
+                                                                    left: Dimensions.marginSizeDefault,
+                                                                    right: Dimensions.marginSizeDefault
+                                                                  ),
+                                                                  child: Row(
+                                                                    mainAxisSize: MainAxisSize.max,
+                                                                    children: [
+                                                                      const Expanded(
+                                                                        flex: 4,
+                                                                        child: Text("Tanggal",
+                                                                          style: TextStyle(
+                                                                            fontWeight: FontWeight.w500,
+                                                                            fontSize: Dimensions.fontSizeDefault
+                                                                          ),
+                                                                        ),
+                                                                      ),
+                                                                      const Expanded(
+                                                                        flex: 1,
+                                                                        child: Text(":",
+                                                                          style: TextStyle(
+                                                                            fontWeight: FontWeight.w500,
+                                                                            fontSize: Dimensions.fontSizeDefault
+                                                                          ),
+                                                                        ),
+                                                                      ),
+                                                                      Expanded(
+                                                                        flex: 11,
+                                                                        child: Text(DateFormat.yMMMMEEEEd().add_jms().format(videoProvider.sosData[i].createdAt!.toLocal()),
+                                                                          style: const TextStyle(
+                                                                            fontWeight: FontWeight.w500,
+                                                                            fontSize: Dimensions.fontSizeDefault
+                                                                          ),
+                                                                        ),
+                                                                      ),
+                                                                    ],
+                                                                  ),
+                                                                ),
+                                                                const SizedBox(height: 30.0),
                                                               ],
                                                             ),
                                                           );
