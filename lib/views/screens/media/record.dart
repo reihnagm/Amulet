@@ -59,7 +59,6 @@ class _RecordScreenState extends State<RecordScreen> with WidgetsBindingObserver
   Uint8List? thumbnail;
   File? fileThumbnail;
   File? file;
-  File? fx;
   MediaInfo? videoCompressInfo;
   Duration? duration;
   double? progress;
@@ -139,9 +138,9 @@ class _RecordScreenState extends State<RecordScreen> with WidgetsBindingObserver
           });
         }
         File fileThumbnail = await VideoCompress.getFileThumbnail(f.path); 
-        String? thumbnail = await videoProvider.uploadThumbnail(context, file: fileThumbnail);
-        await generateByteThumbnail(file!);
-        await getVideoSize(file!);
+        String? thumbnailUploaded = await videoProvider.uploadThumbnail(context, file: fileThumbnail);
+        Uint8List thumbnailGenerate = await VideoServices.generateByteThumbnail(file!);
+        int sizeVideo = await VideoServices.getVideoSize(file!);
         await GallerySaver.saveVideo(file!.path);
         MediaInfo? info = await VideoServices.compressVideo(file!);
         if(info != null) {
@@ -156,7 +155,7 @@ class _RecordScreenState extends State<RecordScreen> with WidgetsBindingObserver
             address: locationProvider.getCurrentNameAddress,
             status: "sent",
             duration: (Duration(microseconds: (info.duration! * 1000).toInt())).toString(),
-            thumbnail: thumbnail!,
+            thumbnail: thumbnailUploaded!,
             userId: authProvider.getUserId()
           );
           await videoProvider.insertSos(context,
@@ -169,11 +168,13 @@ class _RecordScreenState extends State<RecordScreen> with WidgetsBindingObserver
             address: locationProvider.getCurrentNameAddress,
             status: "sent",
             duration: (Duration(microseconds: (info.duration! * 1000).toInt())).toString(),
-            thumbnail: thumbnail,
+            thumbnail: thumbnailUploaded,
             userId: authProvider.getUserId(),
           );
           if(mounted) {
             setState(() {
+              thumbnail = thumbnailGenerate;
+              videoSize = sizeVideo;
               isCompressed = false;
               videoCompressInfo = info;
               duration = Duration(microseconds: (videoCompressInfo!.duration! * 1000).toInt());
@@ -237,22 +238,22 @@ class _RecordScreenState extends State<RecordScreen> with WidgetsBindingObserver
     showInSnackBar('Error: ${e.code}\n${e.description}');
   }
 
-  Future<void> generateByteThumbnail(File file) async {
-    Uint8List? thumbnailBytes = await VideoCompress.getByteThumbnail(file.path);
-    setState(() => thumbnail = thumbnailBytes);
-  }
+  // Future<void> generateByteThumbnail(File file) async {
+  //   Uint8List? thumbnailBytes = await VideoCompress.getByteThumbnail(file.path);
+  //   setState(() => thumbnail = thumbnailBytes);
+  // }
 
-  Future<void> generateFileThumbnail(File f) async {
-    File file = await VideoCompress.getFileThumbnail(f.path);
-    setState(() => fileThumbnail = file); 
-  }
+  // Future<void> generateFileThumbnail(File f) async {
+  //   File file = await VideoCompress.getFileThumbnail(f.path);
+  //   setState(() => fileThumbnail = file); 
+  // }
 
-  Future<void> getVideoSize(File file) async {
-    int size = await file.length(); 
-    setState(() {
-      videoSize = size;
-    });
-  }
+  // Future<void> getVideoSize(File file) async {
+  //   int size = await file.length(); 
+  //   setState(() {
+  //     videoSize = size;
+  //   });
+  // }
 
   Widget cameraPreviewWidget() {
     if (controller == null || !controller!.value.isInitialized) {

@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:panic_button/providers/network.dart';
 import 'package:provider/provider.dart';
 
+import 'package:panic_button/providers/network.dart';
 import 'package:panic_button/providers/videos.dart';
 import 'package:panic_button/utils/color_resources.dart';
 import 'package:panic_button/utils/dimensions.dart';
 import 'package:panic_button/views/basewidgets/drawer/drawer.dart';
-import 'package:video_player/video_player.dart';
 
 class ListVideoScreen extends StatefulWidget {
   const ListVideoScreen({ Key? key }) : super(key: key);
