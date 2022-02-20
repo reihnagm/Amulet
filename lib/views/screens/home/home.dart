@@ -42,12 +42,15 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
 
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+    Future.delayed((Duration.zero), () {
       if(mounted) {
         locationProvider.getCurrentPosition(context);
       }
       if(mounted) {
         videoProvider.initFcm(context);
+      }
+      if(mounted) {
+        videoProvider.fetchFcm(context);
       }
     });
   }
@@ -83,6 +86,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         return Future.sync(() {
                           locationProvider.getCurrentPosition(context);
                           videoProvider.initFcm(context);
+                          videoProvider.fetchFcm(context);
                         });
                       },
                       child: CustomScrollView(
@@ -169,29 +173,37 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                     ),
 
-                    Align(
-                      alignment: Alignment.bottomCenter,
-                      child: Container(
-                        width: double.infinity,
-                        margin: const EdgeInsets.only(top: 160.0),
-                        child: GoogleMap(
-                          mapType: MapType.normal,
-                          gestureRecognizers: {}..add(Factory<EagerGestureRecognizer>(() => EagerGestureRecognizer())),
-                          myLocationEnabled: false,
-                          initialCameraPosition: CameraPosition(
-                            target: LatLng(
-                              locationProvider.getCurrentLat, 
-                              locationProvider.getCurrentLng
+                    Consumer<VideoProvider>(
+                      builder: (BuildContext context, VideoProvider vp, Widget? child) {
+                        if(vp.fcmStatus == FcmStatus.loading) {
+                          return Container();
+                        }
+                        
+                        return Align(
+                          alignment: Alignment.bottomCenter,
+                          child: Container(
+                            width: double.infinity,
+                            margin: const EdgeInsets.only(top: 160.0),
+                            child: GoogleMap(
+                              mapType: MapType.normal,
+                              gestureRecognizers: {}..add(Factory<EagerGestureRecognizer>(() => EagerGestureRecognizer())),
+                              myLocationEnabled: false,
+                              initialCameraPosition: CameraPosition(
+                                target: LatLng(
+                                  locationProvider.getCurrentLat, 
+                                  locationProvider.getCurrentLng
+                                ),
+                                zoom: 10.0,
+                              ),
+                              markers: Set.from(vp.markers),
+                              onMapCreated: (GoogleMapController controller) {
+                                mapsController.complete(controller);
+                                locationProvider.controller = controller;
+                              },
                             ),
-                            zoom: 10.0,
-                          ),
-                          markers: Set.from(locationProvider.markers),
-                          onMapCreated: (GoogleMapController controller) {
-                            mapsController.complete(controller);
-                            locationProvider.controller = controller;
-                          },
-                        ),
-                      )
+                          )
+                        );
+                      },
                     ),
 
                     Align(

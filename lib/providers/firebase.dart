@@ -19,17 +19,17 @@ class FirebaseProvider with ChangeNotifier {
   }) async {
     Map<String, dynamic> data = {};
     data = {
-      "to": await context.read<VideoProvider>().fetchFcm(context),
+      "to": [],
       "collapse_key" : "Broadcast SOS",
       "priority":"high",
       "notification": {
         "title": title,
         "body": body,
-        "sound":"sos.mp3",
+        "sound":"default",
       },
       "android": {
         "notification": {
-          "channel_id": "sos",
+          "channel_id": "panicbutton",
         }
       },
       "data": {

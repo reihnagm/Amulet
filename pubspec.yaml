@@ -11,6 +11,8 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  flutter_localizations:
+    sdk: flutter
     
   # C
   cloud_firestore: ^3.1.4
@@ -83,3 +85,5 @@ flutter:
 
   assets: 
     - assets/images/
+    - assets/language/
+    - assets/icons/

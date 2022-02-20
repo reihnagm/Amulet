@@ -87,7 +87,7 @@ class AuthProvider with ChangeNotifier {
       Dio dio = Dio();
       Response res = await dio.post("${AppConstants.baseUrlAmulet}/api-amulet/v1/auth/login", 
         data: {
-          "phoneNumber": user.phoneNumber,
+          "phoneNumber": user.emailAddress,
           "password": user.password
         }
       );
@@ -112,7 +112,7 @@ class AuthProvider with ChangeNotifier {
       || e.response!.statusCode == 504
       || e.response!.statusCode == 505
     ) {
-        ShowSnackbar.snackbar(context, "(${e.response!.statusCode.toString()}) : Internal Server Error", "", ColorResources.error);
+        ShowSnackbar.snackbar(context, "(${e.response!.statusCode.toString()}) : Internal Server Error ( ${e.response?.data["error"]} )", "", ColorResources.purpleDark);
       }
       setStateLoginStatus(LoginStatus.error);
     } catch(e) {
@@ -156,7 +156,7 @@ class AuthProvider with ChangeNotifier {
         || e.response!.statusCode == 504
         || e.response!.statusCode == 505
       ) {
-        ShowSnackbar.snackbar(context, "(${e.response!.statusCode.toString()}) : Internal Server Error", "", ColorResources.error);
+        ShowSnackbar.snackbar(context, "(${e.response!.statusCode.toString()}) : Internal Server Error ( ${e.response?.data["error"]} )", "", ColorResources.purpleDark);
       }
       setStateRegisterStatus(RegisterStatus.error);
     } catch(e) {

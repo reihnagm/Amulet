@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import 'package:panic_button/localization/language_constraints.dart';
 import 'package:panic_button/views/basewidgets/button/custom.dart';
 import 'package:panic_button/views/basewidgets/snackbar/snackbar.dart';
 import 'package:panic_button/data/models/user/user.dart';
@@ -66,38 +67,43 @@ class _SignUpScreenState extends State<SignUpScreen> {
     String passwordConfirm = passwordConfirmC.text;
   
     if(fullname.trim().isEmpty) {
-      ShowSnackbar.snackbar(context, "", "", ColorResources.error);
+      ShowSnackbar.snackbar(context, getTranslated("FULLNAME_MUST_BE_REQUIRED", context), "", ColorResources.purpleDark);
       return;
     }
 
     if(phone.trim().isEmpty) {
-      ShowSnackbar.snackbar(context, "", "", ColorResources.error);
+      ShowSnackbar.snackbar(context, getTranslated("PHONE_MUST_BE_REQUIRED", context), "", ColorResources.purpleDark);
       return;
     }
 
     if(phone.trim().length < 6) {
-      ShowSnackbar.snackbar(context, "", "", ColorResources.error);
+      ShowSnackbar.snackbar(context, getTranslated("", context), "", ColorResources.purpleDark);
       return;
     }
 
     bool emailValid = RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+").hasMatch(email);
     if(!emailValid) {
-      ShowSnackbar.snackbar(context, "", "", ColorResources.error);
+      ShowSnackbar.snackbar(context, getTranslated("EMAIL_IS_INVALID", context), "", ColorResources.purpleDark);
       return;
     }    
 
     if(password.trim().isEmpty) {
-      ShowSnackbar.snackbar(context, "", "", ColorResources.error);
+      ShowSnackbar.snackbar(context, getTranslated("PASSWORD_MUST_BE_REQUIRED", context), "", ColorResources.purpleDark);
       return;
     }
 
     if(password.trim().length < 8) {
-      ShowSnackbar.snackbar(context, "", "", ColorResources.error);
+      ShowSnackbar.snackbar(context, getTranslated("PASSWORD_8_REQUIRED", context), "", ColorResources.purpleDark);
+      return;
+    }
+
+    if(passwordConfirm.trim().length < 8) {
+      ShowSnackbar.snackbar(context, getTranslated("PASSWORD_8_REQUIRED", context), "", ColorResources.purpleDark);
       return;
     }
 
     if(password != passwordConfirm) {
-      ShowSnackbar.snackbar(context, "", "", ColorResources.error);
+      ShowSnackbar.snackbar(context, getTranslated("PASSWORD_CONFIRM_DOES_NOT_MATCH", context), "", ColorResources.purpleDark);
       return;
     }
 
@@ -159,9 +165,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
                               child: Column(
                                 mainAxisSize: MainAxisSize.min,
                                 crossAxisAlignment: CrossAxisAlignment.start,
-                                children: const [
-                                  Text("Daftar Akun",
-                                    style: TextStyle(
+                                children: [
+                                  Text(getTranslated("REGISTER", context),
+                                    style: const TextStyle(
                                       fontSize: Dimensions.fontSizeLarge,
                                       fontWeight: FontWeight.bold,
                                       color: ColorResources.black,
@@ -184,20 +190,20 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                   fontSize: Dimensions.fontSizeDefault
                                 ),
                                 maxLength: 16,
-                                decoration: const InputDecoration(
+                                decoration: InputDecoration(
                                   hintText: "",
                                   floatingLabelBehavior: FloatingLabelBehavior.always,
-                                  labelText: "Nomor KTP", 
-                                  labelStyle: TextStyle(
+                                  labelText: getTranslated("ID_CARD_NUMBER", context), 
+                                  labelStyle: const TextStyle(
                                     color: ColorResources.black,
                                     fontSize: Dimensions.fontSizeDefault
                                   ),
-                                  border: UnderlineInputBorder(
+                                  border: const UnderlineInputBorder(
                                     borderSide: BorderSide(
                                       color: ColorResources.black
                                     )
                                   ),
-                                  focusedBorder: UnderlineInputBorder(
+                                  focusedBorder: const UnderlineInputBorder(
                                     borderSide: BorderSide(
                                       color: ColorResources.black
                                     )
@@ -219,20 +225,20 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                   fontSize: Dimensions.fontSizeDefault
                                 ),
                                 cursorColor: ColorResources.black,
-                                decoration: const InputDecoration(
+                                decoration: InputDecoration(
                                   hintText: "",
                                   floatingLabelBehavior: FloatingLabelBehavior.always,
-                                  labelText: "Nama Lengkap *", 
-                                  labelStyle: TextStyle(
+                                  labelText: "${getTranslated("FULLNAME", context)} *", 
+                                  labelStyle: const TextStyle(
                                     color: ColorResources.black,
                                     fontSize: Dimensions.fontSizeDefault
                                   ),
-                                  border: UnderlineInputBorder(
+                                  border: const UnderlineInputBorder(
                                     borderSide: BorderSide(
                                       color: ColorResources.black
                                     )
                                   ),
-                                  focusedBorder: UnderlineInputBorder(
+                                  focusedBorder: const UnderlineInputBorder(
                                     borderSide: BorderSide(
                                       color: ColorResources.black
                                     )
@@ -255,20 +261,20 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                   fontSize: Dimensions.fontSizeDefault
                                 ),
                                 cursorColor: ColorResources.black,
-                                decoration: const InputDecoration(
+                                decoration: InputDecoration(
                                   hintText: "",
                                   floatingLabelBehavior: FloatingLabelBehavior.always,
-                                  labelText: "Alamat", 
-                                  labelStyle: TextStyle(
+                                  labelText: getTranslated("ADDRESS", context), 
+                                  labelStyle: const TextStyle(
                                     color: ColorResources.black,
                                     fontSize: Dimensions.fontSizeDefault
                                   ),
-                                  border: UnderlineInputBorder(
+                                  border: const UnderlineInputBorder(
                                     borderSide: BorderSide(
                                       color: ColorResources.black
                                     )
                                   ),
-                                  focusedBorder: UnderlineInputBorder(
+                                  focusedBorder: const UnderlineInputBorder(
                                     borderSide: BorderSide(
                                       color: ColorResources.black
                                     )
@@ -291,20 +297,20 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                 ),
                                 cursorColor: ColorResources.black,
                                 keyboardType: TextInputType.phone,
-                                decoration: const InputDecoration(
+                                decoration: InputDecoration(
                                   hintText: "",
                                   floatingLabelBehavior: FloatingLabelBehavior.always,
-                                  labelText: "No HP *", 
-                                  labelStyle: TextStyle(
+                                  labelText: "${getTranslated("PHONE_NUMBER", context)} *", 
+                                  labelStyle: const TextStyle(
                                     color: ColorResources.black,
                                     fontSize: Dimensions.fontSizeDefault
                                   ),
-                                  border: UnderlineInputBorder(
+                                  border: const UnderlineInputBorder(
                                     borderSide: BorderSide(
                                       color: ColorResources.black
                                     )
                                   ),
-                                  focusedBorder: UnderlineInputBorder(
+                                  focusedBorder: const UnderlineInputBorder(
                                     borderSide: BorderSide(
                                       color: ColorResources.black
                                     )
@@ -327,20 +333,20 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                 ),
                                 cursorColor: ColorResources.black,
                                 keyboardType: TextInputType.emailAddress,
-                                decoration: const InputDecoration(
+                                decoration: InputDecoration(
                                   hintText: "",
                                   floatingLabelBehavior: FloatingLabelBehavior.always,
-                                  labelText: "Alamat E-mail *", 
-                                  labelStyle: TextStyle(
+                                  labelText: "${getTranslated("EMAIL", context)} *", 
+                                  labelStyle: const TextStyle(
                                     color: ColorResources.black,
                                     fontSize: Dimensions.fontSizeDefault
                                   ),
-                                  border: UnderlineInputBorder(
+                                  border: const UnderlineInputBorder(
                                     borderSide: BorderSide(
                                       color: ColorResources.black
                                     )
                                   ),
-                                  focusedBorder: UnderlineInputBorder(
+                                  focusedBorder: const UnderlineInputBorder(
                                     borderSide: BorderSide(
                                       color: ColorResources.black
                                     )
@@ -375,7 +381,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                   ),
                                   hintText: "",
                                   floatingLabelBehavior: FloatingLabelBehavior.always,
-                                  labelText: "Kata Sandi *", 
+                                  labelText: "${getTranslated("PASSWORD", context)} *", 
                                   labelStyle: const TextStyle(
                                     color: ColorResources.black,
                                     fontSize: Dimensions.fontSizeDefault
@@ -421,7 +427,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                   ),
                                   hintText: "",
                                   floatingLabelBehavior: FloatingLabelBehavior.always,
-                                  labelText: "Konfirmasi Kata Sandi *", 
+                                  labelText: "${getTranslated("PASSWORD_CONFIRM", context)} *", 
                                   labelStyle: const TextStyle(
                                     color: ColorResources.black,
                                     fontSize: Dimensions.fontSizeDefault
@@ -451,7 +457,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     child: CustomButton(
                       onTap: register,
                       height: 56.0, 
-                      btnTxt: "Lanjutkan",
+                      btnTxt: getTranslated("NEXT", context),
                       btnColor: ColorResources.redPrimary,
                       btnTextColor: ColorResources.white,
                       isLoading:  context.watch<AuthProvider>().registerStatus == RegisterStatus.loading 

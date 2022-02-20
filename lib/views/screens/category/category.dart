@@ -128,7 +128,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
 
     msgC = TextEditingController();
     
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+    Future.delayed((Duration.zero), (){
       if(mounted) {
         SocketServices.shared.connect(context);
       }

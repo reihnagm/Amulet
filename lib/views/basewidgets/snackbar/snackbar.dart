@@ -15,6 +15,7 @@ class ShowSnackbar {
             color: ColorResources.white
           )
         ),
+        behavior: SnackBarBehavior.floating,
         action: SnackBarAction(
           textColor: Colors.white,
           label: label,

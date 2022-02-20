@@ -269,7 +269,7 @@ class _RecordScreenState extends State<RecordScreen> with WidgetsBindingObserver
       }); 
     });
 
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
+    Future.delayed((Duration.zero), () async {
       await onInitCamera();
       await startVideoRecording();
 

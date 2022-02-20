@@ -1,6 +1,12 @@
+import 'package:panic_button/views/basewidgets/snackbar/snackbar.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 
+import 'package:panic_button/localization/language_constraints.dart';
+import 'package:panic_button/providers/localization.dart';
+import 'package:panic_button/utils/constant.dart';
+import 'package:panic_button/views/basewidgets/dialog/animated/animated.dart';
+import 'package:panic_button/views/basewidgets/dialog/language/language.dart';
 import 'package:panic_button/views/basewidgets/button/custom.dart';
 import 'package:panic_button/data/models/user/user.dart';
 import 'package:panic_button/providers/auth.dart';
@@ -21,7 +27,7 @@ class _SignInScreenState extends State<SignInScreen> {
 
   late AuthProvider authProvider;
 
-  late TextEditingController noHpC;
+  late TextEditingController emailC;
   late TextEditingController passwordC;
 
   bool passwordObscure = true;
@@ -29,23 +35,36 @@ class _SignInScreenState extends State<SignInScreen> {
   @override 
   void initState() {
     super.initState();
-    noHpC = TextEditingController();
+    emailC = TextEditingController();
     passwordC = TextEditingController();
   }
 
   @override 
   void dispose() {
-    noHpC.dispose();
+    emailC.dispose();
     passwordC.dispose();
     super.dispose();
   }
 
   Future<void> login() async {
-    String phoneNumber = noHpC.text;
+    String email = emailC.text;
     String pass = passwordC.text;
     User user = User();
-    user.phoneNumber = phoneNumber;
+    user.emailAddress = email;
     user.password = pass;
+    if(email.trim().isEmpty) {
+      ShowSnackbar.snackbar(context, getTranslated("EMAIL_MUST_BE_REQUIRED", context), "", ColorResources.purpleDark);
+      return;
+    }
+    bool emailValid = RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+").hasMatch(email);
+    if(!emailValid) {
+      ShowSnackbar.snackbar(context,  getTranslated("EMAIL_IS_INVALID", context), "", ColorResources.purpleDark);
+      return;
+    }   
+    if(pass.trim().isEmpty) {
+      ShowSnackbar.snackbar(context,  getTranslated("PASSWORD_MUST_BE_REQUIRED", context), "", ColorResources.purpleDark);
+      return;
+    }   
     try {
       await authProvider.login(context, user);
     } catch(e) {
@@ -114,15 +133,15 @@ class _SignInScreenState extends State<SignInScreen> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
-                                  const Text("No Ponsel",
-                                    style: TextStyle(
+                                  Text(getTranslated("EMAIL", context),
+                                    style: const TextStyle(
                                       color: ColorResources.white,
                                       fontSize: Dimensions.fontSizeDefault
                                     ),
                                   ),
                                   const SizedBox(height: 12.0),
                                   TextField(
-                                    controller: noHpC,
+                                    controller: emailC,
                                     style: const TextStyle(
                                       fontSize: Dimensions.fontSizeDefault
                                     ),
@@ -160,8 +179,8 @@ class _SignInScreenState extends State<SignInScreen> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
-                                  const Text("Kata Sandi",
-                                    style: TextStyle(
+                                  Text(getTranslated("PASSWORD", context),
+                                    style: const TextStyle(
                                       color: ColorResources.white,
                                       fontSize: Dimensions.fontSizeDefault
                                     ),
@@ -223,7 +242,7 @@ class _SignInScreenState extends State<SignInScreen> {
                               child: CustomButton(
                                 onTap: login, 
                                 height: 40.0,
-                                btnTxt: "Masuk",
+                                btnTxt: getTranslated("LOGIN", context),
                                 loadingColor: ColorResources.redPrimary,
                                 isLoading: context.watch<AuthProvider>().loginStatus == LoginStatus.loading 
                                 ? true 
@@ -266,10 +285,10 @@ class _SignInScreenState extends State<SignInScreen> {
                                           })
                                         );
                                       },
-                                      child: const Padding(
-                                        padding: EdgeInsets.all(8.0),
-                                        child: Text("Daftar Akun",
-                                          style: TextStyle(
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: Text(getTranslated("REGISTER", context),
+                                          style: const TextStyle(
                                             color: ColorResources.white,
                                             fontSize: Dimensions.fontSizeDefault
                                           ),
@@ -297,10 +316,10 @@ class _SignInScreenState extends State<SignInScreen> {
                                           })
                                         );
                                       },
-                                      child: const Padding(
-                                        padding: EdgeInsets.all(8.0),
-                                        child: Text("Lupa Kata Sandi ?",
-                                          style: TextStyle(
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: Text(getTranslated("FORGET_PASSWORD", context),
+                                          style: const TextStyle(
                                             color: ColorResources.white,
                                             fontSize: Dimensions.fontSizeDefault
                                           ),
@@ -310,7 +329,44 @@ class _SignInScreenState extends State<SignInScreen> {
                                   ),
                                 ],
                               ) 
-                            )
+                            ),
+
+                            Container(
+                              margin: const EdgeInsets.only(
+                                left: Dimensions.marginSizeDefault,
+                                right: Dimensions.marginSizeDefault
+                              ),
+                              child: TextButton(
+                                onPressed: () {
+                                  showAnimatedDialog(context, const LanguageDialog());
+                                },
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: [
+                                    Text(getTranslated("CHOOSE_LANGUAGE", context),
+                                      style: const TextStyle(
+                                        color: ColorResources.white,
+                                        fontSize:  Dimensions.fontSizeDefault,
+                                      ), 
+                                    ), 
+                                    const SizedBox(width: 5.0),
+                                    const Text("-",
+                                      style: TextStyle(
+                                        color: ColorResources.white,
+                                        fontSize: Dimensions.fontSizeDefault
+                                      ), 
+                                    ),  
+                                    const SizedBox(width: 5.0),
+                                    Text(AppConstants.languages[context.read<LocalizationProvider>().languageIndex].languageName!,
+                                      style: const TextStyle(
+                                        color: ColorResources.white,
+                                        fontSize:  Dimensions.fontSizeDefault,
+                                      ), 
+                                    ), 
+                                  ]
+                                ),
+                              ),
+                            ),
                   
                           ],
                         ),

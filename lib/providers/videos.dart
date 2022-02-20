@@ -4,10 +4,13 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:panic_button/data/models/fcm/fcm.dart';
 import 'package:panic_button/providers/auth.dart';
 import 'package:panic_button/providers/location.dart';
 import 'package:path/path.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:video_player/video_player.dart';
 
 import 'package:panic_button/data/models/sos/sos.dart';
 import 'package:panic_button/views/basewidgets/button/custom.dart';
@@ -16,8 +19,8 @@ import 'package:panic_button/utils/dimensions.dart';
 import 'package:panic_button/views/basewidgets/dialog/animated/animated.dart';
 import 'package:panic_button/views/basewidgets/snackbar/snackbar.dart';
 import 'package:panic_button/utils/constant.dart';
-import 'package:video_player/video_player.dart';
 
+enum FcmStatus { idle, loading, loaded, empty, error }
 enum ListenVStatus { idle, loading, loaded, empty, error }
 
 class VideoProvider with ChangeNotifier {
@@ -33,8 +36,16 @@ class VideoProvider with ChangeNotifier {
   ListenVStatus _listenVStatus = ListenVStatus.idle;
   ListenVStatus get listenVStatus => _listenVStatus;
 
+  FcmStatus _fcmStatus = FcmStatus.idle;
+  FcmStatus get fcmStatus => _fcmStatus;
+
   void setStateListenVStatus(ListenVStatus listenVStatus) {
     _listenVStatus = listenVStatus;
+    Future.delayed(Duration.zero, () => notifyListeners());
+  }
+
+  void setStateFcmStatus(FcmStatus fcmStatus) {
+    _fcmStatus = fcmStatus;
     Future.delayed(Duration.zero, () => notifyListeners());
   }
 
@@ -42,8 +53,15 @@ class VideoProvider with ChangeNotifier {
 
   late VideoPlayerController vid;
 
+  late BitmapDescriptor myCurrentPosition;
+
+  List<Marker> markers = [];
+
   List<SosData> _sosData = [];
   List<SosData> get sosData => [..._sosData];
+
+  List<FcmData> _fcmData = [];
+  List<FcmData> get fcmData => [..._fcmData];
 
   String _videoUrl = "";
   String get videoUrl => _videoUrl;
@@ -240,14 +258,36 @@ class VideoProvider with ChangeNotifier {
     }
   }
 
-  Future<String?> fetchFcm(BuildContext context) async {
+  Future<void> fetchFcm(BuildContext context) async {
+    setStateFcmStatus(FcmStatus.loading);
     try {
       Dio dio = Dio();
       Response res = await dio.get('${AppConstants.baseUrl}/fetch-fcm');
       Map<String, dynamic> data = res.data;
-      String f = data["fcm_secret"];
-      _fcm  = f;
-      return _fcm;
+      FcmModel fcmModel = FcmModel.fromJson(data);
+      _fcmData = [];
+      markers = [];
+      List<FcmData> fcmData = fcmModel.data!;
+      _fcmData.addAll(fcmData);
+      setStateFcmStatus(FcmStatus.loaded);
+      for (FcmData fcm in fcmData) {
+        markers.add(
+          Marker(
+            markerId: MarkerId(fcm.uid!),
+            position: LatLng(double.parse(fcm.lat!), double.parse(fcm.lng!)),
+            infoWindow: InfoWindow(
+              title: fcm.fullname
+            ),
+            icon: fcm.uid == authProvider.getUserId() 
+            ? BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueOrange) 
+            : BitmapDescriptor.defaultMarker,
+          )
+        );
+      } 
+      if(_fcmData.isEmpty) {
+        markers = [];
+        setStateFcmStatus(FcmStatus.empty);
+      }
     } on DioError catch(e) {
       if(
         e.response!.statusCode == 400
@@ -265,10 +305,11 @@ class VideoProvider with ChangeNotifier {
       ) {
         ShowSnackbar.snackbar(context, "(${e.response!.statusCode.toString()}) : Internal Server Error", "", ColorResources.error);
       }
+      setStateFcmStatus(FcmStatus.error);
     } catch(e) {
       debugPrint(e.toString());
+      setStateFcmStatus(FcmStatus.error);
     }
-    return fcm;
   }
 
   Future<String?> initFcm(BuildContext context) async {

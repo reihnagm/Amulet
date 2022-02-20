@@ -2,7 +2,10 @@ import 'package:flutter/material.dart';
 
 import 'package:package_info_plus/package_info_plus.dart';
 
+import 'package:panic_button/localization/language_constraints.dart';
+import 'package:panic_button/services/navigation.dart';
 import 'package:panic_button/utils/color_resources.dart';
+import 'package:panic_button/utils/dimensions.dart';
 import 'package:panic_button/views/basewidgets/button/custom.dart';
 import 'package:panic_button/views/screens/auth/sign_in.dart';
 import 'package:panic_button/views/screens/auth/sign_up.dart';
@@ -15,13 +18,15 @@ class WelcomeScreen extends StatefulWidget {
 }
 
 class _WelcomeScreenState extends State<WelcomeScreen> {
-  GlobalKey<ScaffoldState> globalKey = GlobalKey();
+  GlobalKey<ScaffoldState> globalKey = GlobalKey<ScaffoldState>();
+  late NavigationService navigationService;
 
   PackageInfo? packageInfo;
 
   @override
   void initState() {
     super.initState();
+    navigationService = NavigationService();
     (() async {
       PackageInfo p = await PackageInfo.fromPlatform();
       setState(() {      
@@ -68,24 +73,10 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
               margin: const EdgeInsets.only(left: 16.0, right: 16.0, bottom: 140.0),
               child: CustomButton(
                 onTap: () {
-                  Navigator.push(context,
-                    PageRouteBuilder(pageBuilder: (BuildContext context, Animation<double> animation, Animation<double> secondaryAnimation) {
-                      return SignUpScreen(key: UniqueKey());
-                    },
-                    transitionsBuilder: (context, animation, secondaryAnimation, child) {
-                      const begin = Offset(1.0, 0.0);
-                      const end = Offset.zero;
-                      const curve = Curves.ease;
-                      var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
-                      return SlideTransition(
-                        position: animation.drive(tween),
-                        child: child,
-                      );
-                    })
-                  );
+                  navigationService.pushNav(context, SignUpScreen(key: UniqueKey()));
                 }, 
                 height: 40.0,
-                btnTxt: "Daftar",
+                btnTxt: getTranslated("REGISTER", context),
                 isBorder: false,
                 isBorderRadius: false,
                 isBoxShadow: true,
@@ -101,24 +92,10 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
               margin: const EdgeInsets.only(left: 16.0, right: 16.0, top: 30.0, bottom: 90.0),
               child: CustomButton(
                 onTap: () {
-                  Navigator.push(context,
-                    PageRouteBuilder(pageBuilder: (BuildContext context, Animation<double> animation, Animation<double> secondaryAnimation) {
-                      return SignInScreen(key: UniqueKey());
-                    },
-                    transitionsBuilder: (context, animation, secondaryAnimation, child) {
-                      const begin = Offset(1.0, 0.0);
-                      const end = Offset.zero;
-                      const curve = Curves.ease;
-                      var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
-                      return SlideTransition(
-                        position: animation.drive(tween),
-                        child: child,
-                      );
-                    })
-                  );
+                  navigationService.pushNav(context, SignInScreen(key: UniqueKey()));
                 }, 
                 height: 40.0,
-                btnTxt: "Masuk",
+                btnTxt: getTranslated("LOGIN", context),
                 isBorder: false,
                 isBorderRadius: false,
                 isBoxShadow: true,
@@ -133,11 +110,12 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
             child: Container(
               margin: const EdgeInsets.only(bottom: 40.0),
               child: packageInfo == null 
-              ? const Text("") : Text("Version ${packageInfo!.version} + ${packageInfo!.buildNumber}",
+              ? const Text("") 
+              : Text("${getTranslated("VERSION", context)} ${packageInfo!.version} + ${packageInfo!.buildNumber}",
                 style: const TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.normal,
-                  color: Colors.white
+                  fontSize: Dimensions.fontSizeDefault,
+                  fontWeight: FontWeight.w500,
+                  color: ColorResources.white
                 ),
               ) 
             ),

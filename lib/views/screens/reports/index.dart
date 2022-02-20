@@ -26,7 +26,7 @@ class _ReportsScreenState extends State<ReportsScreen> {
   @override 
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
+    Future.delayed((Duration.zero), () async {
       if(mounted) {
         networkProvider.checkConnection(context);
       }
