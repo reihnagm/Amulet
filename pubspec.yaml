@@ -72,6 +72,8 @@ dependencies:
   uuid: ^3.0.5
   url_launcher: ^6.0.20
   intl: ^0.17.0
+  flutter_switch: ^0.3.2
+  expandable: ^5.0.1
    
 dev_dependencies:
   flutter_test:

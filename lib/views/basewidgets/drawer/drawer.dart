@@ -8,6 +8,7 @@ import 'package:panic_button/views/basewidgets/dialog/animated/animated.dart';
 import 'package:panic_button/views/basewidgets/dialog/logout/logout.dart';
 import 'package:panic_button/views/screens/reports/index.dart';
 import 'package:panic_button/views/screens/home/home.dart';
+import 'package:panic_button/views/screens/settings/settings.dart';
 
 class DrawerWidget extends StatefulWidget {
   const DrawerWidget({ Key? key }) : super(key: key);
@@ -80,10 +81,21 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                   ),
                   Container(
                     padding: const EdgeInsets.all(Dimensions.paddingSizeSmall),
-                    child: Text(getTranslated("SETTINGS", context),
-                      style: const TextStyle(
-                        fontWeight: FontWeight.w500,
-                        fontSize: Dimensions.fontSizeDefault
+                    child: Material(
+                      color: ColorResources.transparent,
+                      child: InkWell(
+                        onTap: () {
+                          navigationService.pushNav(context, SettingsScreen(key: UniqueKey()));
+                        },
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Text(getTranslated("SETTINGS", context),
+                            style: const TextStyle(
+                              fontWeight: FontWeight.w500,
+                              fontSize: Dimensions.fontSizeDefault
+                            ),
+                          ),
+                        ),
                       ),
                     ),
                   ),
@@ -142,10 +154,10 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                         onTap: () {
                           navigationService.pushNav(context, ReportsScreen(key: UniqueKey()));
                         },
-                        child: const Padding(
-                          padding: EdgeInsets.all(8.0),
-                          child: Text("Daftar Video",
-                            style: TextStyle(
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Text(getTranslated("LIST_REPORT", context),
+                            style: const TextStyle(
                               fontWeight: FontWeight.w500,
                               fontSize: Dimensions.fontSizeDefault
                             ),

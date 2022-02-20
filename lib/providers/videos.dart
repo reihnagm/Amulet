@@ -199,6 +199,11 @@ class VideoProvider with ChangeNotifier {
     setStateListenVStatus(ListenVStatus.loaded);
   }
 
+  Future<void> scrollNextPage(int limit) async {
+    page += limit;
+    notifyListeners();
+  }
+
   Future<void> fetchSos(BuildContext context) async {
     try {
       Dio dio = Dio();
@@ -462,7 +467,9 @@ class VideoProvider with ChangeNotifier {
       await context.read<FirebaseProvider>().sendNotification(
         context, 
         title: "Info", 
-        body: "Rekaman berhasil terkirim kepada Public Service dan Emergency Contact", 
+        body:  tokens.contains(authProvider.getUserId()) 
+        ? "Rekaman Anda berhasil terkirim kepada Public Service dan Emergency Contact" 
+        : "- Laporan baru telah masuk -",  
         tokens: tokens
       );
       
@@ -498,7 +505,7 @@ class VideoProvider with ChangeNotifier {
                         crossAxisAlignment: CrossAxisAlignment.center,
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          const Text("Rekaman berhasil terkirim kepada Public Service dan Emergency Contact",
+                          const Text("Rekaman Anda berhasil terkirim kepada Public Service dan Emergency Contact",
                             textAlign: TextAlign.center,
                             style: TextStyle(
                               height: 1.5,
