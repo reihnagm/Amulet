@@ -375,9 +375,9 @@ class VideoProvider with ChangeNotifier {
       );
 
       await context.read<InboxProvider>().insertInbox(context, 
-        userId: authProvider.getUserId(),
         title: "Info",
-        content: "Rekaman Anda berhasil terkirim kepada Public Service dan Emergency Contact"
+        content: "Rekaman Anda berhasil terkirim kepada Public Service dan Emergency Contact",
+        userId: authProvider.getUserId(),
       );
       
       Navigator.of(context).pop();

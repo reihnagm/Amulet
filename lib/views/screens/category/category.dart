@@ -1,14 +1,11 @@
 import 'dart:async';
 import 'dart:io';
 import 'dart:typed_data';
+import 'package:badges/badges.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:gallery_saver/gallery_saver.dart';
 import 'package:intl/intl.dart';
-import 'package:panic_button/localization/language_constraints.dart';
-import 'package:panic_button/services/navigation.dart';
-import 'package:panic_button/views/basewidgets/snackbar/snackbar.dart';
-import 'package:panic_button/views/screens/notification/notification.dart';
 import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
 import 'package:filesize/filesize.dart';
@@ -16,6 +13,11 @@ import 'package:video_compress/video_compress.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
+import 'package:panic_button/localization/language_constraints.dart';
+import 'package:panic_button/providers/inbox.dart';
+import 'package:panic_button/services/navigation.dart';
+import 'package:panic_button/views/basewidgets/snackbar/snackbar.dart';
+import 'package:panic_button/views/screens/notification/notification.dart';
 import 'package:panic_button/providers/network.dart';
 import 'package:panic_button/providers/auth.dart';
 import 'package:panic_button/services/socket.dart';
@@ -207,24 +209,80 @@ class _CategoryScreenState extends State<CategoryScreen> {
                                   )
                                 ),
                                 actions: [
-                                  Container(
-                                    margin: const EdgeInsets.only(right: Dimensions.marginSizeDefault),
-                                    child: Material(
-                                      color: ColorResources.transparent,
-                                      child: InkWell(
-                                        onTap: () {
-                                          navigationService.pushNav(context, NotificationScreen(key: UniqueKey()));
-                                        },
-                                        child: const Padding(
-                                          padding: EdgeInsets.all(8.0),
-                                          child: Icon(
-                                            Icons.notifications,
-                                            size: 25.0,
-                                            color: ColorResources.black,
+                                  Consumer<InboxProvider>(
+                                    builder: (BuildContext context, InboxProvider ip, Widget? child) {
+                                      if(ip.inboxStatus == InboxStatus.loading) {
+                                        return Container(
+                                          margin: const EdgeInsets.only(right: Dimensions.marginSizeDefault),
+                                          child: InkWell(
+                                            onTap: () {
+                                              navigationService.pushNav(context, NotificationScreen(key: UniqueKey()));
+                                            },
+                                            child: Padding(
+                                              padding: EdgeInsets.all(8.0),
+                                              child: Icon(
+                                                Icons.notifications,
+                                                size: 25.0,
+                                                color: ColorResources.black,
+                                              ),
+                                            ),
+                                          ),
+                                        );
+                                      }
+                                      if(ip.inboxStatus == InboxStatus.empty) {
+                                        return Container(
+                                          margin: const EdgeInsets.only(right: Dimensions.marginSizeDefault),
+                                          child: InkWell(
+                                            onTap: () {
+                                              navigationService.pushNav(context, NotificationScreen(key: UniqueKey()));
+                                            },
+                                            child: Padding(
+                                              padding: EdgeInsets.all(8.0),
+                                              child: Icon(
+                                                Icons.notifications,
+                                                size: 25.0,
+                                                color: ColorResources.black,
+                                              ),
+                                            ),
+                                          ),
+                                        );
+                                      }
+                                      return Container(
+                                        margin: const EdgeInsets.only(right: Dimensions.marginSizeDefault),
+                                        child: Material(
+                                          color: ColorResources.transparent,
+                                          child: InkWell(
+                                            onTap: () {
+                                              navigationService.pushNav(context, NotificationScreen(key: UniqueKey()));
+                                            },
+                                            child: Padding(
+                                              padding: EdgeInsets.all(8.0),
+                                              child: ip.totalUnread == 0 
+                                              ? Icon(
+                                                  Icons.notifications,
+                                                  size: 25.0,
+                                                  color: ColorResources.black,
+                                                )
+                                              : Badge(
+                                                position: BadgePosition.topEnd(top: 12.0, end: -12),
+                                                animationDuration: Duration.zero,
+                                                badgeContent: Text(ip.totalUnread.toString(),
+                                                  style: TextStyle(
+                                                    fontSize: Dimensions.fontSizeSmall,
+                                                    color: ColorResources.white
+                                                  ),
+                                                ),
+                                                child: Icon(
+                                                  Icons.notifications,
+                                                  size: 25.0,
+                                                  color: ColorResources.black,
+                                                ),
+                                              ),
+                                            ),
                                           ),
                                         ),
-                                      ),
-                                    ),
+                                      );
+                                    },
                                   )
                                 ],
                                 bottom: PreferredSize(
