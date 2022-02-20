@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:panic_button/services/navigation.dart';
+import 'package:panic_button/localization/language_constraints.dart';
 
+import 'package:panic_button/services/navigation.dart';
 import 'package:panic_button/utils/color_resources.dart';
 import 'package:panic_button/utils/dimensions.dart';
 import 'package:panic_button/views/basewidgets/dialog/animated/animated.dart';
@@ -56,10 +57,10 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                         onTap: () {
                           navigationService.pushNav(context, HomeScreen(key: UniqueKey()));
                         },
-                        child: const Padding(
-                          padding: EdgeInsets.all(8.0),
-                          child: Text("Beranda",
-                            style: TextStyle(
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Text(getTranslated("HOME", context),
+                            style: const TextStyle(
                               fontWeight: FontWeight.w500,
                               fontSize: Dimensions.fontSizeDefault
                             ),
@@ -79,8 +80,8 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                   ),
                   Container(
                     padding: const EdgeInsets.all(Dimensions.paddingSizeSmall),
-                    child: const Text("Settings",
-                      style: TextStyle(
+                    child: Text(getTranslated("SETTINGS", context),
+                      style: const TextStyle(
                         fontWeight: FontWeight.w500,
                         fontSize: Dimensions.fontSizeDefault
                       ),
@@ -116,8 +117,8 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                   ),
                   Container(
                     padding: const EdgeInsets.all(Dimensions.paddingSizeSmall),
-                    child: const Text("Kontak Darurat",
-                      style: TextStyle(
+                    child: Text(getTranslated("CONTACT_EMERGENCY", context),
+                      style: const TextStyle(
                         fontWeight: FontWeight.w500,
                         fontSize: Dimensions.fontSizeDefault,
                         decoration: TextDecoration.lineThrough
@@ -164,8 +165,8 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                   ),
                   Container(
                     padding: const EdgeInsets.all(Dimensions.paddingSizeSmall),
-                    child: const Text("Berlangganan",
-                      style: TextStyle(
+                    child: Text(getTranslated("SUBSCRIPTION", context),
+                      style: const TextStyle(
                         fontWeight: FontWeight.w500,
                         fontSize: Dimensions.fontSizeDefault,
                         decoration: TextDecoration.lineThrough
@@ -193,10 +194,10 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                             isFlip: true
                           );
                         },
-                        child: const Padding(
-                          padding: EdgeInsets.all(8.0),
-                          child: Text("Log out",
-                            style: TextStyle(
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Text(getTranslated("LOGOUT", context),
+                            style: const TextStyle(
                               color: ColorResources.redPrimary,
                               fontWeight: FontWeight.w500,
                               fontSize: Dimensions.fontSizeDefault

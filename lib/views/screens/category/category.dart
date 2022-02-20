@@ -5,6 +5,10 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:gallery_saver/gallery_saver.dart';
 import 'package:intl/intl.dart';
+import 'package:panic_button/localization/language_constraints.dart';
+import 'package:panic_button/services/navigation.dart';
+import 'package:panic_button/views/basewidgets/snackbar/snackbar.dart';
+import 'package:panic_button/views/screens/notification/notification.dart';
 import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
 import 'package:filesize/filesize.dart';
@@ -47,6 +51,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
 
   late TextEditingController msgC;
 
+  late NavigationService navigationService;
   late AuthProvider authProvider;
   late VideoProvider videoProvider;
   late LocationProvider locationProvider;
@@ -152,6 +157,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
         authProvider = context.read<AuthProvider>();
         videoProvider = context.read<VideoProvider>();
         locationProvider = context.read<LocationProvider>();
+        navigationService = NavigationService();
         return Scaffold(
           resizeToAvoidBottomInset: false,
           key: globalKey,
@@ -203,10 +209,21 @@ class _CategoryScreenState extends State<CategoryScreen> {
                                 actions: [
                                   Container(
                                     margin: const EdgeInsets.only(right: Dimensions.marginSizeDefault),
-                                    child: const Icon(
-                                      Icons.notifications,
-                                      size: 25.0,
-                                      color: ColorResources.black,
+                                    child: Material(
+                                      color: ColorResources.transparent,
+                                      child: InkWell(
+                                        onTap: () {
+                                          navigationService.pushNav(context, NotificationScreen(key: UniqueKey()));
+                                        },
+                                        child: const Padding(
+                                          padding: EdgeInsets.all(8.0),
+                                          child: Icon(
+                                            Icons.notifications,
+                                            size: 25.0,
+                                            color: ColorResources.black,
+                                          ),
+                                        ),
+                                      ),
                                     ),
                                   )
                                 ],
@@ -217,7 +234,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
                                       Container(
                                         margin: const EdgeInsets.only(left: Dimensions.marginSizeDefault),
                                         alignment: Alignment.centerLeft,
-                                        child: const Text("Hello",
+                                        child: const Text("Halo",
                                           style: TextStyle(
                                             fontWeight: FontWeight.bold,
                                             fontSize: Dimensions.fontSizeLarge
@@ -482,11 +499,13 @@ class _CategoryScreenState extends State<CategoryScreen> {
                                                                               Image.asset("assets/images/sound-record.png",
                                                                                 width: 30.0,
                                                                                 height: 30.0,
+                                                                                color: ColorResources.grey,
                                                                               ),
                                                                               const SizedBox(width: 14.0),
                                                                               Image.asset("assets/images/camera.png",
                                                                                 width: 30.0,
                                                                                 height: 30.0,
+                                                                                color: ColorResources.grey,
                                                                               ),
                                                                               const SizedBox(width: 14.0),
                                                                               InkWell(
@@ -531,7 +550,11 @@ class _CategoryScreenState extends State<CategoryScreen> {
                                                                               CustomButton(
                                                                                 onTap: () async {
                                                                                   if(videoCompressInfo == null) {
+                                                                                    ShowSnackbar.snackbar(context, getTranslated("FILE_IS_REQUIRED", context), "", ColorResources.purpleDark);
                                                                                     Navigator.of(context).pop();
+                                                                                    setState(() {
+                                                                                      selectedIndex = -1;
+                                                                                    });
                                                                                     return;
                                                                                   }
                                                                                   s(() {
