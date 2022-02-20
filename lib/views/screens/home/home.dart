@@ -1,16 +1,18 @@
 import 'dart:async';
 
+import 'package:badges/badges.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
-import 'package:panic_button/providers/videos.dart';
-import 'package:panic_button/services/navigation.dart';
-import 'package:panic_button/views/basewidgets/snackbar/snackbar.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:slide_to_confirm/slide_to_confirm.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
+import 'package:panic_button/providers/inbox.dart';
+import 'package:panic_button/providers/videos.dart';
+import 'package:panic_button/services/navigation.dart';
+import 'package:panic_button/views/basewidgets/snackbar/snackbar.dart';
 import 'package:panic_button/views/screens/media/record.dart';
 import 'package:panic_button/providers/location.dart';
 import 'package:panic_button/views/basewidgets/drawer/drawer.dart';
@@ -33,6 +35,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
 
   late AuthProvider authProvider;
   late LocationProvider locationProvider;
+  late InboxProvider inboxProvider;
   late VideoProvider videoProvider;
   late NavigationService navigationService;
 
@@ -115,6 +118,9 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
       if(mounted) {
         videoProvider.fetchFcm(context);
       }
+      if(mounted) {
+        inboxProvider.fetchInbox(context);
+      }
     });
   }
 
@@ -181,24 +187,80 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                               )
                             ),
                             actions: [
-                              Container(
-                                margin: const EdgeInsets.only(right: Dimensions.marginSizeDefault),
-                                child: Material(
-                                  color: ColorResources.transparent,
-                                  child: InkWell(
-                                    onTap: () {
-                                      navigationService.pushNav(context, NotificationScreen(key: UniqueKey()));
-                                    },
-                                    child: const Padding(
-                                      padding: EdgeInsets.all(8.0),
-                                      child: Icon(
-                                        Icons.notifications,
-                                        size: 25.0,
-                                        color: ColorResources.black,
+                              Consumer<InboxProvider>(
+                                builder: (BuildContext context, InboxProvider ip, Widget? child) {
+                                  if(ip.inboxStatus == InboxStatus.loading) {
+                                    return Container(
+                                      margin: const EdgeInsets.only(right: Dimensions.marginSizeDefault),
+                                       child: InkWell(
+                                        onTap: () {
+                                          navigationService.pushNav(context, NotificationScreen(key: UniqueKey()));
+                                        },
+                                        child: Padding(
+                                          padding: EdgeInsets.all(8.0),
+                                          child: Icon(
+                                            Icons.notifications,
+                                            size: 25.0,
+                                            color: ColorResources.black,
+                                          ),
+                                        ),
+                                      ),
+                                    );
+                                  }
+                                  if(ip.inboxStatus == InboxStatus.empty) {
+                                    return Container(
+                                      margin: const EdgeInsets.only(right: Dimensions.marginSizeDefault),
+                                       child: InkWell(
+                                        onTap: () {
+                                          navigationService.pushNav(context, NotificationScreen(key: UniqueKey()));
+                                        },
+                                        child: Padding(
+                                          padding: EdgeInsets.all(8.0),
+                                          child: Icon(
+                                            Icons.notifications,
+                                            size: 25.0,
+                                            color: ColorResources.black,
+                                          ),
+                                        ),
+                                      ),
+                                    );
+                                  }
+                                  return Container(
+                                    margin: const EdgeInsets.only(right: Dimensions.marginSizeDefault),
+                                    child: Material(
+                                      color: ColorResources.transparent,
+                                      child: InkWell(
+                                        onTap: () {
+                                          navigationService.pushNav(context, NotificationScreen(key: UniqueKey()));
+                                        },
+                                        child: Padding(
+                                          padding: EdgeInsets.all(8.0),
+                                          child: ip.totalUnread == 0 
+                                          ? Icon(
+                                              Icons.notifications,
+                                              size: 25.0,
+                                              color: ColorResources.black,
+                                            )
+                                          : Badge(
+                                            position: BadgePosition.topEnd(top: 12.0, end: -12),
+                                            animationDuration: Duration.zero,
+                                            badgeContent: Text(ip.totalUnread.toString(),
+                                              style: TextStyle(
+                                                fontSize: Dimensions.fontSizeSmall,
+                                                color: ColorResources.white
+                                              ),
+                                            ),
+                                            child: Icon(
+                                              Icons.notifications,
+                                              size: 25.0,
+                                              color: ColorResources.black,
+                                            ),
+                                          ),
+                                        ),
                                       ),
                                     ),
-                                  ),
-                                ),
+                                  );
+                                },
                               )
                             ],
                             bottom: PreferredSize(

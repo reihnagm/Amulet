@@ -1,8 +1,9 @@
-import 'package:panic_button/providers/localization.dart';
-import 'package:panic_button/providers/splash.dart';
 import 'package:provider/provider.dart';
 import 'package:provider/single_child_widget.dart';
 
+import 'package:panic_button/providers/inbox.dart';
+import 'package:panic_button/providers/localization.dart';
+import 'package:panic_button/providers/splash.dart';
 import 'package:panic_button/providers/auth.dart';
 import 'package:panic_button/providers/firebase.dart';
 import 'package:panic_button/providers/location.dart';
@@ -23,5 +24,6 @@ List<SingleChildWidget> independentServices = [
   ChangeNotifierProvider(create: (_) => c.getIt<LocationProvider>()),
   ChangeNotifierProvider(create: (_) => c.getIt<LocalizationProvider>()),
   ChangeNotifierProvider(create: (_) => c.getIt<FirebaseProvider>()),
+  ChangeNotifierProvider(create: (_) => c.getIt<InboxProvider>()),
   Provider.value(value: const <String, dynamic>{})
 ];

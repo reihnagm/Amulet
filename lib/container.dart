@@ -1,7 +1,9 @@
 import 'package:get_it/get_it.dart';
-import 'package:panic_button/services/notification.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'package:panic_button/data/repository/inbox/inbox.dart';
+import 'package:panic_button/providers/inbox.dart';
+import 'package:panic_button/services/notification.dart';
 import 'package:panic_button/data/repository/auth/auth.dart';
 import 'package:panic_button/data/repository/splash/splash.dart';
 import 'package:panic_button/providers/auth.dart';
@@ -21,6 +23,7 @@ Future<void> init() async {
 
   getIt.registerLazySingleton(() => AuthRepo(sharedPreferences: getIt()));
   getIt.registerLazySingleton(() => SplashRepo(sharedPreferences: getIt()));
+  getIt.registerLazySingleton(() => InboxRepo(sharedPreferences: getIt()));
 
   getIt.registerFactory(() => AuthProvider(
     authRepo: getIt(), 
@@ -32,11 +35,20 @@ Future<void> init() async {
   getIt.registerFactory(() => VideoProvider(
     authProvider: getIt(),
     locationProvider: getIt(),
-    sharedPreferences: getIt()
+    sharedPreferences: getIt(),
+    notificationService: getIt()
   ));
-  getIt.registerFactory(() => SplashProvider(sharedPreferences: getIt(), splashRepo: getIt()));
+  getIt.registerFactory(() => SplashProvider(
+    sharedPreferences: getIt(), 
+    splashRepo: getIt()
+  ));
   getIt.registerFactory(() => FirebaseProvider(sharedPreferences: getIt()));
   getIt.registerFactory(() => LocationProvider(sharedPreferences: getIt()));
+  getIt.registerFactory(() => InboxProvider(
+    authProvider: getIt(),
+    sharedPreferences: getIt(),
+    inboxRepo: getIt()
+  ));
 
   // External
   final sharedPreferences = await SharedPreferences.getInstance();

@@ -2,15 +2,17 @@ import 'dart:io';
 
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:panic_button/providers/inbox.dart';
 import 'package:provider/provider.dart';
 import 'package:dio/dio.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:panic_button/providers/firebase.dart';
 import 'package:path/path.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:video_player/video_player.dart';
 
+import 'package:panic_button/providers/firebase.dart';
+import 'package:panic_button/services/notification.dart';
+import 'package:panic_button/utils/helper.dart';
 import 'package:panic_button/data/models/fcm/fcm.dart';
 import 'package:panic_button/providers/auth.dart';
 import 'package:panic_button/providers/location.dart';
@@ -29,10 +31,12 @@ class VideoProvider with ChangeNotifier {
   final AuthProvider authProvider;
   final LocationProvider locationProvider;
   final SharedPreferences sharedPreferences;
+  final NotificationService notificationService;
   VideoProvider({
     required this.authProvider,
     required this.locationProvider,
-    required this.sharedPreferences
+    required this.sharedPreferences,
+    required this.notificationService
   });
 
   ListenVStatus _listenVStatus = ListenVStatus.idle;
@@ -70,113 +74,6 @@ class VideoProvider with ChangeNotifier {
 
   String _thumbnailUrl = "";
   String get thumbnailUrl => _thumbnailUrl;
-
-  void showPreviewThumbnail(BuildContext context, VideoPlayerController videoPlayerController) {
-    vid = videoPlayerController;
-    Future.delayed(Duration.zero, () => notifyListeners());
-    showModalBottomSheet(
-      isScrollControlled: true,
-      isDismissible: false,
-      context: context, 
-      builder: (BuildContext context) {
-        bool isPlay = false;
-        return StatefulBuilder(
-          builder: (BuildContext context, Function s) {
-            return Container(
-              padding: const EdgeInsets.all(Dimensions.paddingSizeSmall),
-              child: SingleChildScrollView(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    InkWell(
-                      onTap: () {
-                        s(() {
-                          vid.pause();
-                          Navigator.of(context).pop();
-                          isPlay = false;
-                        });
-                      },
-                      child: const Padding(
-                        padding: EdgeInsets.all(8.0),
-                        child: Icon(
-                          Icons.close,
-                          color: ColorResources.redPrimary,
-                          size: 30.0,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 15.0),
-                    vid.value.isInitialized
-                    ? Container(
-                        alignment: Alignment.topCenter, 
-                        child: Stack(
-                          children: [
-                            AspectRatio(
-                              aspectRatio: vid.value.aspectRatio,
-                              child: VideoPlayer(vid),
-                            ),
-                            Positioned.fill(
-                              child: GestureDetector(
-                                behavior: HitTestBehavior.opaque,
-                                onTap: () {
-                                  if(vid.value.isPlaying) {
-                                    vid.pause();
-                                    s(() {
-                                      isPlay = false;
-                                    });
-                                  } else {
-                                    s(() {
-                                      isPlay = true;
-                                    });
-                                    vid.play();
-                                  }
-                                },
-                                child: Stack(
-                                  children: [
-                                    isPlay
-                                    ? Container() 
-                                    : Container(
-                                        alignment: Alignment.center,
-                                        child: const Icon(
-                                          Icons.play_arrow,
-                                          color: Colors.white,
-                                          size: 80
-                                        ),
-                                      ),
-                                    Positioned(
-                                      bottom: 0.0,
-                                      left: 0.0,
-                                      right: 0.0,
-                                      child: VideoProgressIndicator(
-                                        vid,
-                                        allowScrubbing: true,
-                                      )
-                                    ),
-                                  ],
-                                ),
-                              )
-                            )
-                          ],
-                        )
-                      )
-                    : const SizedBox(
-                      height: 200,
-                      child: SpinKitThreeBounce(
-                        size: 20.0,
-                        color: Colors.black87,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            );
-          }, 
-        );
-      }
-    );
-    Future.delayed(Duration.zero, () => notifyListeners());
-  }
 
   void appendSos(dynamic data) {
     _sosData.add(
@@ -463,11 +360,24 @@ class VideoProvider with ChangeNotifier {
         }
       }
 
+      NotificationService.showNotification(
+        id: Helper.createUniqueId(),
+        title: "Info",
+        body: "Rekaman Anda berhasil terkirim kepada Public Service dan Emergency Contact",
+        payload: {},
+      );
+
       await context.read<FirebaseProvider>().sendNotification(
         context, 
         title: "Info", 
         body:"- Laporan baru telah masuk -",  
         tokens: tokens
+      );
+
+      await context.read<InboxProvider>().insertInbox(context, 
+        userId: authProvider.getUserId(),
+        title: "Info",
+        content: "Rekaman Anda berhasil terkirim kepada Public Service dan Emergency Contact"
       );
       
       Navigator.of(context).pop();

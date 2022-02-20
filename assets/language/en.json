@@ -389,6 +389,7 @@
     "REPLY": "Reply",
     "ONGOING": "Ongoing",
     "NOTIFICATION": "Notification",
+    "NOTIFICATION_DETAIL": "Notification Detail",
     "REPLY_COMMENT": "Reply Comment",
     "WRITE_REPLY": "Write Reply",
     "WRITE_COMMENT": "Write Comment",

@@ -73,6 +73,7 @@ class SocketServices {
     required String address,
     required String status,
     required String duration,
+    required String fullname,
     required String thumbnail,
     required String userId,
   }) {
@@ -86,6 +87,7 @@ class SocketServices {
       "address": address,
       "status": status,
       "duration": duration,
+      "fullname": fullname,
       "thumbnail": thumbnail,
       "user_id": userId
     }));

@@ -148,6 +148,7 @@ class _RecordScreenState extends State<RecordScreen> with WidgetsBindingObserver
             status: "sent",
             duration: (Duration(microseconds: (info.duration! * 1000).toInt())).toString(),
             thumbnail: thumbnailUploaded!,
+            fullname: authProvider.getUserFullname(),
             userId: authProvider.getUserId()
           );
           await videoProvider.insertSos(context,

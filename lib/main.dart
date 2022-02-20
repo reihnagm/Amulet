@@ -4,6 +4,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:panic_button/views/screens/media/record.dart';
+import 'package:panic_button/views/screens/reports/index.dart';
 import 'package:provider/provider.dart';
 
 import 'package:panic_button/utils/constant.dart';
@@ -56,7 +57,7 @@ class _MyAppState extends State<MyApp> {
   void onClickedNotification(String? payload) async {
     GlobalVariable.navState.currentState!.pushAndRemoveUntil(
       PageRouteBuilder(pageBuilder: (BuildContext context, Animation<double> animation, Animation<double> secondaryAnimation) {
-        return RecordScreen(key: UniqueKey());
+        return ReportsScreen(key: UniqueKey());
       },
       transitionsBuilder: (context, animation, secondaryAnimation, child) {
         const begin = Offset(1.0, 0.0);
@@ -71,7 +72,6 @@ class _MyAppState extends State<MyApp> {
       (Route<dynamic> route) => route.isFirst
     );
   }
-  
 
   @override
   Widget build(BuildContext context) {

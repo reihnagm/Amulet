@@ -575,6 +575,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
                                                                                       status: "sent",
                                                                                       duration: (Duration(microseconds: (videoCompressInfo!.duration! * 1000).toInt())).toString(),
                                                                                       thumbnail: thumbnailUploaded!,
+                                                                                      fullname: authProvider.getUserFullname(),
                                                                                       userId: authProvider.getUserId()
                                                                                     );
                                                                                     await videoProvider.insertSos(context,
