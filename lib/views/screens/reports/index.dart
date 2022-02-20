@@ -299,352 +299,354 @@ class _ReportsScreenState extends State<ReportsScreen> {
                                                                 right: Dimensions.marginSizeDefault
                                                               ),
                                                               padding: const EdgeInsets.all(Dimensions.paddingSizeDefault),
-                                                              child: Column(
-                                                                crossAxisAlignment: CrossAxisAlignment.start,
-                                                                mainAxisSize: MainAxisSize.min,
-                                                                children: [ 
-                                                                  Row(
-                                                                    mainAxisAlignment: MainAxisAlignment.end,
-                                                                    children: [
-                                                                      InkWell(
-                                                                        onTap: () {
-                                                                          Navigator.of(context).pop();
-                                                                        },
-                                                                        child: const Padding(
-                                                                          padding: EdgeInsets.all(8.0),
-                                                                          child: Icon(
-                                                                            Icons.close,
-                                                                            color: ColorResources.redPrimary,
-                                                                            size: 30.0,
+                                                              child: SingleChildScrollView(
+                                                                child: Column(
+                                                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                                                  mainAxisSize: MainAxisSize.min,
+                                                                  children: [ 
+                                                                    Row(
+                                                                      mainAxisAlignment: MainAxisAlignment.end,
+                                                                      children: [
+                                                                        InkWell(
+                                                                          onTap: () {
+                                                                            Navigator.of(context).pop();
+                                                                          },
+                                                                          child: const Padding(
+                                                                            padding: EdgeInsets.all(8.0),
+                                                                            child: Icon(
+                                                                              Icons.close,
+                                                                              color: ColorResources.redPrimary,
+                                                                              size: 30.0,
+                                                                            ),
                                                                           ),
                                                                         ),
+                                                                      ],
+                                                                    ),
+                                                                    const SizedBox(height: 15.0),
+                                                                    ClipRRect(
+                                                                      borderRadius: BorderRadius.circular(20.0),
+                                                                      child: CachedNetworkImage(
+                                                                        width: double.infinity,
+                                                                        height: 300.0,
+                                                                        fit: BoxFit.fitWidth,
+                                                                        imageUrl: videoProvider.sosData[i].thumbnail!,
                                                                       ),
-                                                                    ],
-                                                                  ),
-                                                                  const SizedBox(height: 15.0),
-                                                                  ClipRRect(
-                                                                    borderRadius: BorderRadius.circular(20.0),
-                                                                    child: CachedNetworkImage(
-                                                                      width: double.infinity,
-                                                                      height: 300.0,
-                                                                      fit: BoxFit.fitWidth,
-                                                                      imageUrl: videoProvider.sosData[i].thumbnail!,
                                                                     ),
-                                                                  ),
-                                                                  const SizedBox(height: 30.0),
-                                                                  Container(
-                                                                    margin: const EdgeInsets.only(
-                                                                      left: Dimensions.marginSizeDefault,
-                                                                      right: Dimensions.marginSizeDefault
+                                                                    const SizedBox(height: 30.0),
+                                                                    Container(
+                                                                      margin: const EdgeInsets.only(
+                                                                        left: Dimensions.marginSizeDefault,
+                                                                        right: Dimensions.marginSizeDefault
+                                                                      ),
+                                                                      child: Row(
+                                                                        mainAxisSize: MainAxisSize.max,
+                                                                        children: [
+                                                                          Expanded(
+                                                                            flex: 4,
+                                                                            child: Text(getTranslated("CASE", context),
+                                                                              style: const TextStyle(
+                                                                                fontWeight: FontWeight.w500,
+                                                                                fontSize: Dimensions.fontSizeDefault
+                                                                              ),
+                                                                            ),
+                                                                          ),
+                                                                          const Expanded(
+                                                                            flex: 1,
+                                                                            child: Text(":",
+                                                                              style: TextStyle(
+                                                                                fontWeight: FontWeight.w500,
+                                                                                fontSize: Dimensions.fontSizeDefault
+                                                                              ),
+                                                                            ),
+                                                                          ),
+                                                                          Expanded(
+                                                                            flex: 11,
+                                                                            child: Text(videoProvider.sosData[i].category.toString().split(".")[0],
+                                                                              style: const TextStyle(
+                                                                                fontWeight: FontWeight.w500,
+                                                                                fontSize: Dimensions.fontSizeDefault
+                                                                              ),
+                                                                            ),
+                                                                          ),
+                                                                        ],
+                                                                      ),
                                                                     ),
-                                                                    child: Row(
-                                                                      mainAxisSize: MainAxisSize.max,
-                                                                      children: [
-                                                                        Expanded(
-                                                                          flex: 4,
-                                                                          child: Text(getTranslated("CASE", context),
-                                                                            style: const TextStyle(
-                                                                              fontWeight: FontWeight.w500,
-                                                                              fontSize: Dimensions.fontSizeDefault
+                                                                    const SizedBox(height: 15.0),
+                                                                    Container(
+                                                                      margin: const EdgeInsets.only(
+                                                                        left: Dimensions.marginSizeDefault,
+                                                                        right: Dimensions.marginSizeDefault
+                                                                      ),
+                                                                      child: Row(
+                                                                        mainAxisSize: MainAxisSize.max,
+                                                                        children: [
+                                                                          Expanded(
+                                                                            flex: 4,
+                                                                            child: Text(getTranslated("MESSAGE", context),
+                                                                              style: const TextStyle(
+                                                                                fontWeight: FontWeight.w500,
+                                                                                fontSize: Dimensions.fontSizeDefault
+                                                                              ),
                                                                             ),
                                                                           ),
-                                                                        ),
-                                                                        const Expanded(
-                                                                          flex: 1,
-                                                                          child: Text(":",
-                                                                            style: TextStyle(
-                                                                              fontWeight: FontWeight.w500,
-                                                                              fontSize: Dimensions.fontSizeDefault
+                                                                          const Expanded(
+                                                                            flex: 1,
+                                                                            child: Text(":",
+                                                                              style: TextStyle(
+                                                                                fontWeight: FontWeight.w500,
+                                                                                fontSize: Dimensions.fontSizeDefault
+                                                                              ),
                                                                             ),
                                                                           ),
-                                                                        ),
-                                                                        Expanded(
-                                                                          flex: 11,
-                                                                          child: Text(videoProvider.sosData[i].category.toString().split(".")[0],
-                                                                            style: const TextStyle(
-                                                                              fontWeight: FontWeight.w500,
-                                                                              fontSize: Dimensions.fontSizeDefault
+                                                                          Expanded(
+                                                                            flex: 11,
+                                                                            child: Text(videoProvider.sosData[i].content.toString().split(".")[0],
+                                                                              style: const TextStyle(
+                                                                                fontWeight: FontWeight.w500,
+                                                                                fontSize: Dimensions.fontSizeDefault
+                                                                              ),
                                                                             ),
                                                                           ),
-                                                                        ),
-                                                                      ],
+                                                                        ],
+                                                                      ),
                                                                     ),
-                                                                  ),
-                                                                  const SizedBox(height: 15.0),
-                                                                  Container(
-                                                                    margin: const EdgeInsets.only(
-                                                                      left: Dimensions.marginSizeDefault,
-                                                                      right: Dimensions.marginSizeDefault
+                                                                    const SizedBox(height: 15.0),
+                                                                    Container(
+                                                                      margin: const EdgeInsets.only(
+                                                                        left: Dimensions.marginSizeDefault,
+                                                                        right: Dimensions.marginSizeDefault
+                                                                      ),
+                                                                      child: Row(
+                                                                        mainAxisSize: MainAxisSize.max,
+                                                                        children: [
+                                                                          Expanded(
+                                                                            flex: 4,
+                                                                            child: Text(getTranslated("DURATION", context),
+                                                                              style: const TextStyle(
+                                                                                fontWeight: FontWeight.w500,
+                                                                                fontSize: Dimensions.fontSizeDefault
+                                                                              ),
+                                                                            ),
+                                                                          ),
+                                                                          const Expanded(
+                                                                            flex: 1,
+                                                                            child: Text(":",
+                                                                              style: TextStyle(
+                                                                                fontWeight: FontWeight.w500,
+                                                                                fontSize: Dimensions.fontSizeDefault
+                                                                              ),
+                                                                            ),
+                                                                          ),
+                                                                          Expanded(
+                                                                            flex: 11,
+                                                                            child: Text(videoProvider.sosData[i].duration.toString().split(".")[0],
+                                                                              style: const TextStyle(
+                                                                                fontWeight: FontWeight.w500,
+                                                                                fontSize: Dimensions.fontSizeDefault
+                                                                              ),
+                                                                            ),
+                                                                          ),
+                                                                        ],
+                                                                      ),
                                                                     ),
-                                                                    child: Row(
-                                                                      mainAxisSize: MainAxisSize.max,
-                                                                      children: [
-                                                                        Expanded(
-                                                                          flex: 4,
-                                                                          child: Text(getTranslated("MESSAGE", context),
-                                                                            style: const TextStyle(
-                                                                              fontWeight: FontWeight.w500,
-                                                                              fontSize: Dimensions.fontSizeDefault
+                                                                    const SizedBox(height: 15.0),
+                                                                    Container(
+                                                                      margin: const EdgeInsets.only(
+                                                                        left: Dimensions.marginSizeDefault,
+                                                                        right: Dimensions.marginSizeDefault
+                                                                      ),
+                                                                      child: Row(
+                                                                        mainAxisSize: MainAxisSize.max,
+                                                                        children: [
+                                                                          Expanded(
+                                                                            flex: 4,
+                                                                            child: Text(getTranslated("ADDRESS", context),
+                                                                              style: const TextStyle(
+                                                                                fontWeight: FontWeight.w500,
+                                                                                fontSize: Dimensions.fontSizeDefault
+                                                                              ),
                                                                             ),
                                                                           ),
-                                                                        ),
-                                                                        const Expanded(
-                                                                          flex: 1,
-                                                                          child: Text(":",
-                                                                            style: TextStyle(
-                                                                              fontWeight: FontWeight.w500,
-                                                                              fontSize: Dimensions.fontSizeDefault
+                                                                          const Expanded(
+                                                                            flex: 1,
+                                                                            child: Text(":",
+                                                                              style: TextStyle(
+                                                                                fontWeight: FontWeight.w500,
+                                                                                fontSize: Dimensions.fontSizeDefault
+                                                                              ),
                                                                             ),
                                                                           ),
-                                                                        ),
-                                                                        Expanded(
-                                                                          flex: 11,
-                                                                          child: Text(videoProvider.sosData[i].content.toString().split(".")[0],
-                                                                            style: const TextStyle(
-                                                                              fontWeight: FontWeight.w500,
-                                                                              fontSize: Dimensions.fontSizeDefault
+                                                                          Expanded(
+                                                                            flex: 11,
+                                                                            child: Text(videoProvider.sosData[i].address.toString(),
+                                                                              style: const TextStyle(
+                                                                                fontWeight: FontWeight.w500,
+                                                                                fontSize: Dimensions.fontSizeDefault
+                                                                              ),
                                                                             ),
                                                                           ),
-                                                                        ),
-                                                                      ],
+                                                                        ],
+                                                                      ),
                                                                     ),
-                                                                  ),
-                                                                  const SizedBox(height: 15.0),
-                                                                  Container(
-                                                                    margin: const EdgeInsets.only(
-                                                                      left: Dimensions.marginSizeDefault,
-                                                                      right: Dimensions.marginSizeDefault
+                                                                    const SizedBox(height: 15.0),
+                                                                    Container(
+                                                                      margin: const EdgeInsets.only(
+                                                                        left: Dimensions.marginSizeDefault,
+                                                                        right: Dimensions.marginSizeDefault
+                                                                      ),
+                                                                      child: Row(
+                                                                        mainAxisSize: MainAxisSize.max,
+                                                                        children: [
+                                                                          const Expanded(
+                                                                            flex: 4,
+                                                                            child: Text("Lat",
+                                                                              style: TextStyle(
+                                                                                fontWeight: FontWeight.w500,
+                                                                                fontSize: Dimensions.fontSizeDefault
+                                                                              ),
+                                                                            ),
+                                                                          ),
+                                                                          const Expanded(
+                                                                            flex: 1,
+                                                                            child: Text(":",
+                                                                              style: TextStyle(
+                                                                                fontWeight: FontWeight.w500,
+                                                                                fontSize: Dimensions.fontSizeDefault
+                                                                              ),
+                                                                            ),
+                                                                          ),
+                                                                          Expanded(
+                                                                            flex: 11,
+                                                                            child: Text(videoProvider.sosData[i].lat.toString(),
+                                                                              style: const TextStyle(
+                                                                                fontWeight: FontWeight.w500,
+                                                                                fontSize: Dimensions.fontSizeDefault
+                                                                              ),
+                                                                            ),
+                                                                          ),
+                                                                        ],
+                                                                      ),
                                                                     ),
-                                                                    child: Row(
-                                                                      mainAxisSize: MainAxisSize.max,
-                                                                      children: [
-                                                                        Expanded(
-                                                                          flex: 4,
-                                                                          child: Text(getTranslated("DURATION", context),
-                                                                            style: const TextStyle(
-                                                                              fontWeight: FontWeight.w500,
-                                                                              fontSize: Dimensions.fontSizeDefault
+                                                                    const SizedBox(height: 15.0),
+                                                                    Container(
+                                                                      margin: const EdgeInsets.only(
+                                                                        left: Dimensions.marginSizeDefault,
+                                                                        right: Dimensions.marginSizeDefault
+                                                                      ),
+                                                                      child: Row(
+                                                                        mainAxisSize: MainAxisSize.max,
+                                                                        children: [
+                                                                          const Expanded(
+                                                                            flex: 4,
+                                                                            child: Text("Lng",
+                                                                              style: TextStyle(
+                                                                                fontWeight: FontWeight.w500,
+                                                                                fontSize: Dimensions.fontSizeDefault
+                                                                              ),
                                                                             ),
                                                                           ),
-                                                                        ),
-                                                                        const Expanded(
-                                                                          flex: 1,
-                                                                          child: Text(":",
-                                                                            style: TextStyle(
-                                                                              fontWeight: FontWeight.w500,
-                                                                              fontSize: Dimensions.fontSizeDefault
+                                                                          const Expanded(
+                                                                            flex: 1,
+                                                                            child: Text(":",
+                                                                              style: TextStyle(
+                                                                                fontWeight: FontWeight.w500,
+                                                                                fontSize: Dimensions.fontSizeDefault
+                                                                              ),
                                                                             ),
                                                                           ),
-                                                                        ),
-                                                                        Expanded(
-                                                                          flex: 11,
-                                                                          child: Text(videoProvider.sosData[i].duration.toString().split(".")[0],
-                                                                            style: const TextStyle(
-                                                                              fontWeight: FontWeight.w500,
-                                                                              fontSize: Dimensions.fontSizeDefault
+                                                                          Expanded(
+                                                                            flex: 11,
+                                                                            child: Text(videoProvider.sosData[i].lng.toString(),
+                                                                              style: const TextStyle(
+                                                                                fontWeight: FontWeight.w500,
+                                                                                fontSize: Dimensions.fontSizeDefault
+                                                                              ),
                                                                             ),
                                                                           ),
-                                                                        ),
-                                                                      ],
+                                                                        ],
+                                                                      ),
                                                                     ),
-                                                                  ),
-                                                                  const SizedBox(height: 15.0),
-                                                                  Container(
-                                                                    margin: const EdgeInsets.only(
-                                                                      left: Dimensions.marginSizeDefault,
-                                                                      right: Dimensions.marginSizeDefault
+                                                                    const SizedBox(height: 15.0),
+                                                                    Container(
+                                                                      margin: const EdgeInsets.only(
+                                                                        left: Dimensions.marginSizeDefault,
+                                                                        right: Dimensions.marginSizeDefault
+                                                                      ),
+                                                                      child: Row(
+                                                                        mainAxisSize: MainAxisSize.max,
+                                                                        children: [
+                                                                          Expanded(
+                                                                            flex: 4,
+                                                                            child: Text(getTranslated("SENDER", context),
+                                                                              style: const TextStyle(
+                                                                                fontWeight: FontWeight.w500,
+                                                                                fontSize: Dimensions.fontSizeDefault
+                                                                              ),
+                                                                            ),
+                                                                          ),
+                                                                          const Expanded(
+                                                                            flex: 1,
+                                                                            child: Text(":",
+                                                                              style: TextStyle(
+                                                                                fontWeight: FontWeight.w500,
+                                                                                fontSize: Dimensions.fontSizeDefault
+                                                                              ),
+                                                                            ),
+                                                                          ),
+                                                                          Expanded(
+                                                                            flex: 11,
+                                                                            child: Text(videoProvider.sosData[i].fullname.toString(),
+                                                                              style: const TextStyle(
+                                                                                fontWeight: FontWeight.w500,
+                                                                                fontSize: Dimensions.fontSizeDefault
+                                                                              ),
+                                                                            ),
+                                                                          ),
+                                                                        ],
+                                                                      ),
                                                                     ),
-                                                                    child: Row(
-                                                                      mainAxisSize: MainAxisSize.max,
-                                                                      children: [
-                                                                        Expanded(
-                                                                          flex: 4,
-                                                                          child: Text(getTranslated("ADDRESS", context),
-                                                                            style: const TextStyle(
-                                                                              fontWeight: FontWeight.w500,
-                                                                              fontSize: Dimensions.fontSizeDefault
+                                                                    const SizedBox(height: 15.0),
+                                                                    Container(
+                                                                      margin: const EdgeInsets.only(
+                                                                        left: Dimensions.marginSizeDefault,
+                                                                        right: Dimensions.marginSizeDefault
+                                                                      ),
+                                                                      child: Row(
+                                                                        mainAxisSize: MainAxisSize.max,
+                                                                        children: [
+                                                                          Expanded(
+                                                                            flex: 4,
+                                                                            child: Text(getTranslated("DATE", context),
+                                                                              style: const TextStyle(
+                                                                                fontWeight: FontWeight.w500,
+                                                                                fontSize: Dimensions.fontSizeDefault
+                                                                              ),
                                                                             ),
                                                                           ),
-                                                                        ),
-                                                                        const Expanded(
-                                                                          flex: 1,
-                                                                          child: Text(":",
-                                                                            style: TextStyle(
-                                                                              fontWeight: FontWeight.w500,
-                                                                              fontSize: Dimensions.fontSizeDefault
+                                                                          const Expanded(
+                                                                            flex: 1,
+                                                                            child: Text(":",
+                                                                              style: TextStyle(
+                                                                                fontWeight: FontWeight.w500,
+                                                                                fontSize: Dimensions.fontSizeDefault
+                                                                              ),
                                                                             ),
                                                                           ),
-                                                                        ),
-                                                                        Expanded(
-                                                                          flex: 11,
-                                                                          child: Text(videoProvider.sosData[i].address.toString(),
-                                                                            style: const TextStyle(
-                                                                              fontWeight: FontWeight.w500,
-                                                                              fontSize: Dimensions.fontSizeDefault
+                                                                          Expanded(
+                                                                            flex: 11,
+                                                                            child: Text(DateFormat.yMMMMEEEEd().add_jms().format(videoProvider.sosData[i].createdAt!.toLocal()),
+                                                                              style: const TextStyle(
+                                                                                fontWeight: FontWeight.w500,
+                                                                                fontSize: Dimensions.fontSizeDefault
+                                                                              ),
                                                                             ),
                                                                           ),
-                                                                        ),
-                                                                      ],
+                                                                        ],
+                                                                      ),
                                                                     ),
-                                                                  ),
-                                                                  const SizedBox(height: 15.0),
-                                                                  Container(
-                                                                    margin: const EdgeInsets.only(
-                                                                      left: Dimensions.marginSizeDefault,
-                                                                      right: Dimensions.marginSizeDefault
-                                                                    ),
-                                                                    child: Row(
-                                                                      mainAxisSize: MainAxisSize.max,
-                                                                      children: [
-                                                                        const Expanded(
-                                                                          flex: 4,
-                                                                          child: Text("Lat",
-                                                                            style: TextStyle(
-                                                                              fontWeight: FontWeight.w500,
-                                                                              fontSize: Dimensions.fontSizeDefault
-                                                                            ),
-                                                                          ),
-                                                                        ),
-                                                                        const Expanded(
-                                                                          flex: 1,
-                                                                          child: Text(":",
-                                                                            style: TextStyle(
-                                                                              fontWeight: FontWeight.w500,
-                                                                              fontSize: Dimensions.fontSizeDefault
-                                                                            ),
-                                                                          ),
-                                                                        ),
-                                                                        Expanded(
-                                                                          flex: 11,
-                                                                          child: Text(videoProvider.sosData[i].lat.toString(),
-                                                                            style: const TextStyle(
-                                                                              fontWeight: FontWeight.w500,
-                                                                              fontSize: Dimensions.fontSizeDefault
-                                                                            ),
-                                                                          ),
-                                                                        ),
-                                                                      ],
-                                                                    ),
-                                                                  ),
-                                                                  const SizedBox(height: 15.0),
-                                                                  Container(
-                                                                    margin: const EdgeInsets.only(
-                                                                      left: Dimensions.marginSizeDefault,
-                                                                      right: Dimensions.marginSizeDefault
-                                                                    ),
-                                                                    child: Row(
-                                                                      mainAxisSize: MainAxisSize.max,
-                                                                      children: [
-                                                                        const Expanded(
-                                                                          flex: 4,
-                                                                          child: Text("Lng",
-                                                                            style: TextStyle(
-                                                                              fontWeight: FontWeight.w500,
-                                                                              fontSize: Dimensions.fontSizeDefault
-                                                                            ),
-                                                                          ),
-                                                                        ),
-                                                                        const Expanded(
-                                                                          flex: 1,
-                                                                          child: Text(":",
-                                                                            style: TextStyle(
-                                                                              fontWeight: FontWeight.w500,
-                                                                              fontSize: Dimensions.fontSizeDefault
-                                                                            ),
-                                                                          ),
-                                                                        ),
-                                                                        Expanded(
-                                                                          flex: 11,
-                                                                          child: Text(videoProvider.sosData[i].lng.toString(),
-                                                                            style: const TextStyle(
-                                                                              fontWeight: FontWeight.w500,
-                                                                              fontSize: Dimensions.fontSizeDefault
-                                                                            ),
-                                                                          ),
-                                                                        ),
-                                                                      ],
-                                                                    ),
-                                                                  ),
-                                                                  const SizedBox(height: 15.0),
-                                                                  Container(
-                                                                    margin: const EdgeInsets.only(
-                                                                      left: Dimensions.marginSizeDefault,
-                                                                      right: Dimensions.marginSizeDefault
-                                                                    ),
-                                                                    child: Row(
-                                                                      mainAxisSize: MainAxisSize.max,
-                                                                      children: [
-                                                                        Expanded(
-                                                                          flex: 4,
-                                                                          child: Text(getTranslated("SENDER", context),
-                                                                            style: const TextStyle(
-                                                                              fontWeight: FontWeight.w500,
-                                                                              fontSize: Dimensions.fontSizeDefault
-                                                                            ),
-                                                                          ),
-                                                                        ),
-                                                                        const Expanded(
-                                                                          flex: 1,
-                                                                          child: Text(":",
-                                                                            style: TextStyle(
-                                                                              fontWeight: FontWeight.w500,
-                                                                              fontSize: Dimensions.fontSizeDefault
-                                                                            ),
-                                                                          ),
-                                                                        ),
-                                                                        Expanded(
-                                                                          flex: 11,
-                                                                          child: Text(videoProvider.sosData[i].fullname.toString(),
-                                                                            style: const TextStyle(
-                                                                              fontWeight: FontWeight.w500,
-                                                                              fontSize: Dimensions.fontSizeDefault
-                                                                            ),
-                                                                          ),
-                                                                        ),
-                                                                      ],
-                                                                    ),
-                                                                  ),
-                                                                  const SizedBox(height: 15.0),
-                                                                  Container(
-                                                                    margin: const EdgeInsets.only(
-                                                                      left: Dimensions.marginSizeDefault,
-                                                                      right: Dimensions.marginSizeDefault
-                                                                    ),
-                                                                    child: Row(
-                                                                      mainAxisSize: MainAxisSize.max,
-                                                                      children: [
-                                                                        Expanded(
-                                                                          flex: 4,
-                                                                          child: Text(getTranslated("DATE", context),
-                                                                            style: const TextStyle(
-                                                                              fontWeight: FontWeight.w500,
-                                                                              fontSize: Dimensions.fontSizeDefault
-                                                                            ),
-                                                                          ),
-                                                                        ),
-                                                                        const Expanded(
-                                                                          flex: 1,
-                                                                          child: Text(":",
-                                                                            style: TextStyle(
-                                                                              fontWeight: FontWeight.w500,
-                                                                              fontSize: Dimensions.fontSizeDefault
-                                                                            ),
-                                                                          ),
-                                                                        ),
-                                                                        Expanded(
-                                                                          flex: 11,
-                                                                          child: Text(DateFormat.yMMMMEEEEd().add_jms().format(videoProvider.sosData[i].createdAt!.toLocal()),
-                                                                            style: const TextStyle(
-                                                                              fontWeight: FontWeight.w500,
-                                                                              fontSize: Dimensions.fontSizeDefault
-                                                                            ),
-                                                                          ),
-                                                                        ),
-                                                                      ],
-                                                                    ),
-                                                                  ),
-                                                                  const SizedBox(height: 30.0),
-                                                                ],
+                                                                    const SizedBox(height: 30.0),
+                                                                  ],
+                                                                ),
                                                               ),
                                                             );
                                                           }

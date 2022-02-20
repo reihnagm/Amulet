@@ -73,6 +73,7 @@ class VideoProvider with ChangeNotifier {
 
   void showPreviewThumbnail(BuildContext context, VideoPlayerController videoPlayerController) {
     vid = videoPlayerController;
+    Future.delayed(Duration.zero, () => notifyListeners());
     showModalBottomSheet(
       isScrollControlled: true,
       isDismissible: false,
@@ -458,16 +459,18 @@ class VideoProvider with ChangeNotifier {
         }
       );
 
+      List<String> userIds = [];
       List<String> tokens = [];
 
       for (FcmData fcm in fcmData) {
+        userIds.add(fcm.uid!);
         tokens.add(fcm.fcmSecret!);
       }
 
       await context.read<FirebaseProvider>().sendNotification(
         context, 
         title: "Info", 
-        body:  tokens.contains(authProvider.getUserId()) 
+        body:  userIds.contains(authProvider.getUserId()) 
         ? "Rekaman Anda berhasil terkirim kepada Public Service dan Emergency Contact" 
         : "- Laporan baru telah masuk -",  
         tokens: tokens
