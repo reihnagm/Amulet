@@ -94,7 +94,7 @@ class _RecordScreenState extends State<RecordScreen> with WidgetsBindingObserver
     } on CameraException catch (e) {
       _showCameraException(e);
     }
-    if (mounted) {
+    if(mounted) {
       setState(() {});
     }
   }
@@ -250,6 +250,36 @@ class _RecordScreenState extends State<RecordScreen> with WidgetsBindingObserver
           }),
         ),
       );
+    }
+  }
+
+   @override 
+  void didChangeAppLifecycleState(AppLifecycleState state) async {
+    super.didChangeAppLifecycleState(state); 
+    /* Lifecycle */
+    // - Resumed (App in Foreground)
+    // - Inactive (App Partially Visible - App not focused)
+    // - Paused (App in Background)
+    // - Detached (View Destroyed - App Closed)
+    if(state == AppLifecycleState.resumed) {
+      debugPrint("=== APP RESUME ===");
+      await onInitCamera();
+      await startVideoRecording(); 
+    }
+    if(state == AppLifecycleState.inactive) {
+      debugPrint("=== APP INACTIVE ===");
+      onStopButtonPressed(context);
+      timer!.cancel();
+    }
+    if(state == AppLifecycleState.paused) {
+      debugPrint("=== APP PAUSED ===");
+      onStopButtonPressed(context);
+      timer!.cancel();
+    }
+    if(state == AppLifecycleState.detached) {
+      debugPrint("=== APP CLOSED ===");
+      onStopButtonPressed(context);
+      timer!.cancel();
     }
   }
   
@@ -411,7 +441,10 @@ class _RecordScreenState extends State<RecordScreen> with WidgetsBindingObserver
                                 onPressed: controller != null &&
                                 controller!.value.isInitialized &&
                                 controller!.value.isRecordingVideo
-                                ? () => onStopButtonPressed(context)
+                                ? () { 
+                                  onStopButtonPressed(context);
+                                  timer!.cancel();
+                                }
                                 : null,
                               ),
                             ),

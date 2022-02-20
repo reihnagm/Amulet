@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:panic_button/providers/videos.dart';
 import 'package:provider/provider.dart';
 import 'package:socket_io_client/socket_io_client.dart' as io;
 
@@ -23,6 +24,11 @@ class SocketServices {
     socket.on("connect", (_) {
       debugPrint("=== SOCKET IS CONNECTED ===");
       context.read<NetworkProvider>().turnOnSocket();
+       socket.on("message", (data) {
+        final r = data as dynamic;
+        final d = r as Map<String, dynamic>;
+        context.read<VideoProvider>().appendSos(d);
+      });
     });
     socket.on("disconnect", (_) {
       debugPrint("=== SOCKET IS DISCONNECTED  ===");

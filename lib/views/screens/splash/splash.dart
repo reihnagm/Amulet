@@ -47,10 +47,6 @@ class _SplashScreenState extends State<SplashScreen> {
       });
     });
     (() async {      
-      PermissionStatus permissionStorage = await Permission.storage.status;
-      if(!permissionStorage.isGranted) {
-        await Permission.storage.request();
-      } 
       PackageInfo p = await PackageInfo.fromPlatform();
       setState(() {      
         packageInfo = PackageInfo(

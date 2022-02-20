@@ -3,6 +3,8 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:intl/intl.dart';
 import 'package:panic_button/localization/language_constraints.dart';
+import 'package:panic_button/services/navigation.dart';
+import 'package:panic_button/views/screens/media/preview_file.dart';
 import 'package:provider/provider.dart';
 
 import 'package:panic_button/providers/network.dart';
@@ -21,6 +23,7 @@ class ReportsScreen extends StatefulWidget {
 class _ReportsScreenState extends State<ReportsScreen> {
   GlobalKey<ScaffoldState> globalKey = GlobalKey<ScaffoldState>();
 
+  late NavigationService navigationService;
   late VideoProvider videoProvider;
   late NetworkProvider networkProvider;
 
@@ -47,6 +50,7 @@ class _ReportsScreenState extends State<ReportsScreen> {
       builder:(BuildContext context) {
         videoProvider = context.read<VideoProvider>();
         networkProvider = context.read<NetworkProvider>();
+        navigationService = NavigationService();
         return Scaffold(
           resizeToAvoidBottomInset: false,
           key: globalKey,
@@ -229,7 +233,11 @@ class _ReportsScreenState extends State<ReportsScreen> {
                                                         child: Align(
                                                           alignment: Alignment.center,
                                                           child: InkWell(
-                                                            onTap: () => videoProvider.showPreviewThumbnail(context, videoProvider.sosData[i].mediaUrl),
+                                                            onTap: () {
+                                                              navigationService.pushNav(context, PreviewFileScreen(
+                                                                mediaUrl: videoProvider.sosData[i].mediaUrl
+                                                              ));
+                                                            },
                                                             child: const Icon(
                                                               Icons.arrow_circle_right_outlined,
                                                               color: ColorResources.white,

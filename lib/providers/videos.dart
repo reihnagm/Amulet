@@ -209,7 +209,6 @@ class VideoProvider with ChangeNotifier {
     try {
       Dio dio = Dio();
       Response res = await dio.get("${AppConstants.baseUrl}/fetch-sos?page=$page");
-      setStateListenVStatus(ListenVStatus.loaded);
       Map<String, dynamic> resData = res.data;
       SosModel sosModel = SosModel.fromJson(resData);
       _sosData = [];
@@ -225,11 +224,7 @@ class VideoProvider with ChangeNotifier {
           fullname: sos.fullname,
           lat: sos.lat,
           lng: sos.lng,
-          mediaUrl: VideoPlayerController
-          .network(sos.mediaUrl!)
-          ..addListener(() { notifyListeners(); })
-          ..setLooping(false)
-          ..initialize(),
+          mediaUrl: sos.mediaUrl,
           status: sos.status,
           thumbnail: sos.thumbnail,
           uid: sos.uid,
@@ -238,6 +233,7 @@ class VideoProvider with ChangeNotifier {
         ));
       }
       _sosData = sosDataAssign;
+      setStateListenVStatus(ListenVStatus.loaded);
       if(_sosData.isEmpty) {
         setStateListenVStatus(ListenVStatus.empty);
       }
@@ -459,20 +455,18 @@ class VideoProvider with ChangeNotifier {
         }
       );
 
-      List<String> userIds = [];
       List<String> tokens = [];
 
       for (FcmData fcm in fcmData) {
-        userIds.add(fcm.uid!);
-        tokens.add(fcm.fcmSecret!);
+        if(authProvider.getUserId() != fcm.uid) {
+          tokens.add(fcm.fcmSecret!);
+        }
       }
 
       await context.read<FirebaseProvider>().sendNotification(
         context, 
         title: "Info", 
-        body:  userIds.contains(authProvider.getUserId()) 
-        ? "Rekaman Anda berhasil terkirim kepada Public Service dan Emergency Contact" 
-        : "- Laporan baru telah masuk -",  
+        body:"- Laporan baru telah masuk -",  
         tokens: tokens
       );
       

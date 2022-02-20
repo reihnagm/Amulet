@@ -4,6 +4,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:panic_button/providers/videos.dart';
 import 'package:panic_button/services/navigation.dart';
+import 'package:panic_button/views/basewidgets/snackbar/snackbar.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:slide_to_confirm/slide_to_confirm.dart';
 import 'package:flutter/material.dart';
@@ -25,7 +27,7 @@ class HomeScreen extends StatefulWidget {
   _HomeScreenState createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   GlobalKey<ScaffoldState> globalKey = GlobalKey<ScaffoldState>();
   Completer<GoogleMapController> mapsController = Completer();
 
@@ -39,9 +41,70 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   @override 
+  void didChangeAppLifecycleState(AppLifecycleState state) async {
+    super.didChangeAppLifecycleState(state); 
+    /* Lifecycle */
+    // - Resumed (App in Foreground)
+    // - Inactive (App Partially Visible - App not focused)
+    // - Paused (App in Background)
+    // - Detached (View Destroyed - App Closed)
+    if(state == AppLifecycleState.resumed) {
+      debugPrint("=== APP RESUME ===");
+      bool storageIsDenied = await Permission.storage.isDenied;
+      bool microphoneIsDenied = await Permission.microphone.isDenied;
+      bool cameraIsDenied = await Permission.camera.isDenied;
+      if(cameraIsDenied) {
+        ShowSnackbar.snackbar(context, "Please granted permission Camera", "", ColorResources.error);
+        await openAppSettings();
+      } 
+      if(microphoneIsDenied) {
+        ShowSnackbar.snackbar(context, "Please granted permission Microphone", "", ColorResources.error);
+        await openAppSettings();
+      }
+      if(storageIsDenied) {
+        ShowSnackbar.snackbar(context, "Please granted permission Storage", "", ColorResources.error);
+        await openAppSettings();
+      }
+    }
+    if(state == AppLifecycleState.inactive) {
+      debugPrint("=== APP INACTIVE ===");
+    }
+    if(state == AppLifecycleState.paused) {
+      debugPrint("=== APP PAUSED ===");
+    }
+    if(state == AppLifecycleState.detached) {
+      debugPrint("=== APP CLOSED ===");
+    }
+  }
+
+  @override 
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
 
+    (() async {   
+      bool storageIsDenied = await Permission.storage.isDenied;
+      bool microphoneIsDenied = await Permission.microphone.isDenied;
+      bool cameraIsDenied = await Permission.camera.isDenied;
+      if(cameraIsDenied) {
+        ShowSnackbar.snackbar(context, "Please granted permission Camera", "", ColorResources.error);
+        await openAppSettings();
+      } else {
+        await Permission.camera.request();
+      }
+      if(microphoneIsDenied) {
+        ShowSnackbar.snackbar(context, "Please granted permission Microphone", "", ColorResources.error);
+        await openAppSettings();
+      } else {
+        await Permission.microphone.request();
+      }
+      if(storageIsDenied) {
+        ShowSnackbar.snackbar(context, "Please granted permission Storage", "", ColorResources.error);
+        await openAppSettings();
+      } else {
+        await Permission.storage.request();
+      }
+    })();
     Future.delayed((Duration.zero), () {
       if(mounted) {
         locationProvider.getCurrentPosition(context);

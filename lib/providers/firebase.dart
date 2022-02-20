@@ -5,6 +5,8 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:rxdart/rxdart.dart';
 
+import 'package:panic_button/utils/color_resources.dart';
+import 'package:panic_button/views/basewidgets/snackbar/snackbar.dart';
 import 'package:panic_button/services/notification.dart';
 import 'package:panic_button/utils/global.dart';
 import 'package:panic_button/utils/helper.dart';
@@ -111,9 +113,22 @@ class FirebaseProvider with ChangeNotifier {
         )
       );
     } on DioError catch(e) {
-      debugPrint(e.response!.data.toString());
-      debugPrint(e.response!.statusMessage.toString());
-      debugPrint(e.response!.statusCode.toString());
+      if(
+        e.response!.statusCode == 400
+        || e.response!.statusCode == 401
+        || e.response!.statusCode == 402 
+        || e.response!.statusCode == 403
+        || e.response!.statusCode == 404 
+        || e.response!.statusCode == 405 
+        || e.response!.statusCode == 500 
+        || e.response!.statusCode == 501
+        || e.response!.statusCode == 502
+        || e.response!.statusCode == 503
+        || e.response!.statusCode == 504
+        || e.response!.statusCode == 505
+      ) {
+        ShowSnackbar.snackbar(context, "(${e.response!.statusCode.toString()}) : Internal Server Error", "", ColorResources.error);
+      }
     }
   }
 
