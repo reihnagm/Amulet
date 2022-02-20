@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:panic_button/views/screens/media/record.dart';
 import 'package:provider/provider.dart';
 
 import 'package:panic_button/utils/constant.dart';
@@ -10,6 +11,8 @@ import 'package:panic_button/localization/app_localization.dart';
 import 'package:panic_button/providers/localization.dart';
 import 'package:panic_button/views/screens/splash/splash.dart';
 import 'package:panic_button/utils/global.dart';
+import 'package:panic_button/providers/firebase.dart';
+import 'package:panic_button/services/notification.dart';
 import 'package:panic_button/providers.dart';
 import 'package:panic_button/container.dart' as core;
 
@@ -23,8 +26,52 @@ Future<void> main() async {
   ));
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({Key? key}) : super(key: key);
+
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  late FirebaseProvider firebaseProvider;
+
+  @override 
+  void initState() {
+    super.initState();
+
+    firebaseProvider = context.read<FirebaseProvider>();
+
+    Future.delayed(Duration.zero, () async {
+      await firebaseProvider.init();
+      await NotificationService.init();
+      await firebaseProvider.setupInteractedMessage(context);
+    });
+    firebaseProvider.listenNotification(context);
+    listenOnClickNotifications();
+  }
+
+  void listenOnClickNotifications() => NotificationService.onNotifications.stream.listen(onClickedNotification);
+  
+  void onClickedNotification(String? payload) async {
+    GlobalVariable.navState.currentState!.pushAndRemoveUntil(
+      PageRouteBuilder(pageBuilder: (BuildContext context, Animation<double> animation, Animation<double> secondaryAnimation) {
+        return RecordScreen(key: UniqueKey());
+      },
+      transitionsBuilder: (context, animation, secondaryAnimation, child) {
+        const begin = Offset(1.0, 0.0);
+        const end = Offset.zero;
+        const curve = Curves.ease;
+        var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+        return SlideTransition(
+          position: animation.drive(tween),
+          child: child,
+        );
+      }),
+      (Route<dynamic> route) => route.isFirst
+    );
+  }
+  
 
   @override
   Widget build(BuildContext context) {

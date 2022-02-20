@@ -3,8 +3,17 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:custom_timer/custom_timer.dart';
-import 'package:panic_button/providers/auth.dart';
+import 'package:camera/camera.dart';
+import 'package:flutter/foundation.dart';
+import 'package:gallery_saver/gallery_saver.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:uuid/uuid.dart';
+import 'package:video_compress/video_compress.dart';
+import 'package:video_player/video_player.dart';
 
+import 'package:panic_button/providers/auth.dart';
 import 'package:panic_button/providers/location.dart';
 import 'package:panic_button/providers/network.dart';
 import 'package:panic_button/providers/videos.dart';
@@ -12,24 +21,9 @@ import 'package:panic_button/services/socket.dart';
 import 'package:panic_button/services/video.dart';
 import 'package:panic_button/utils/color_resources.dart';
 import 'package:panic_button/utils/dimensions.dart';
-import 'package:camera/camera.dart';
-import 'package:flutter/foundation.dart';
-import 'package:gallery_saver/gallery_saver.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:flutter/material.dart';
-import 'package:permission_handler/permission_handler.dart';
-import 'package:provider/provider.dart';
-import 'package:uuid/uuid.dart';
-import 'package:video_compress/video_compress.dart';
-import 'package:video_player/video_player.dart';
-
 
 class RecordScreen extends StatefulWidget {
-  final String category;
-  final String content;
   const RecordScreen({
-    this.category = "-",
-    this.content = "-",
     Key? key
   }) : super(key: key);
 
@@ -145,9 +139,9 @@ class _RecordScreenState extends State<RecordScreen> with WidgetsBindingObserver
           String? mediaUrl = await videoProvider.uploadVideo(context, file: info.file!);
           SocketServices.shared.sendMsg(
             id: const Uuid().v4(),
-            content: widget.content,
+            content: "-",
             mediaUrl: mediaUrl!,
-            category: widget.category,
+            category: "-",
             lat: locationProvider.getCurrentLat,
             lng: locationProvider.getCurrentLng,
             address: locationProvider.getCurrentNameAddress,
@@ -158,9 +152,9 @@ class _RecordScreenState extends State<RecordScreen> with WidgetsBindingObserver
           );
           await videoProvider.insertSos(context,
             id: const Uuid().v4(), 
-            content: widget.content,
+            content: "-",
             mediaUrl: mediaUrl, 
-            category: widget.category,
+            category: "-",
             lat: locationProvider.getCurrentLat.toString(),
             lng: locationProvider.getCurrentLng.toString(),
             address: locationProvider.getCurrentNameAddress,

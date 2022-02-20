@@ -144,7 +144,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   Container(
                                     margin: const EdgeInsets.only(left: Dimensions.marginSizeDefault),
                                     alignment: Alignment.centerLeft,
-                                    child: const Text("Hello",
+                                    child: const Text("Halo",
                                       style: TextStyle(
                                         fontWeight: FontWeight.bold,
                                         fontSize: Dimensions.fontSizeLarge

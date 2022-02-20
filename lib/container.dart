@@ -1,4 +1,5 @@
 import 'package:get_it/get_it.dart';
+import 'package:panic_button/services/notification.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:panic_button/data/repository/auth/auth.dart';
@@ -15,8 +16,10 @@ import 'package:panic_button/providers/videos.dart';
 final getIt = GetIt.instance;
 
 Future<void> init() async {
-  getIt.registerLazySingleton(() => AuthRepo(sharedPreferences: getIt()));
   getIt.registerLazySingleton(() => NavigationService());
+  getIt.registerLazySingleton(() => NotificationService());
+
+  getIt.registerLazySingleton(() => AuthRepo(sharedPreferences: getIt()));
   getIt.registerLazySingleton(() => SplashRepo(sharedPreferences: getIt()));
 
   getIt.registerFactory(() => AuthProvider(

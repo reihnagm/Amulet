@@ -2,16 +2,18 @@ import 'dart:io';
 
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:panic_button/data/models/fcm/fcm.dart';
-import 'package:panic_button/providers/auth.dart';
-import 'package:panic_button/providers/location.dart';
+import 'package:panic_button/providers/firebase.dart';
 import 'package:path/path.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:video_player/video_player.dart';
 
+import 'package:panic_button/data/models/fcm/fcm.dart';
+import 'package:panic_button/providers/auth.dart';
+import 'package:panic_button/providers/location.dart';
 import 'package:panic_button/data/models/sos/sos.dart';
 import 'package:panic_button/views/basewidgets/button/custom.dart';
 import 'package:panic_button/utils/color_resources.dart';
@@ -69,9 +71,6 @@ class VideoProvider with ChangeNotifier {
   String _thumbnailUrl = "";
   String get thumbnailUrl => _thumbnailUrl;
 
-  String _fcm = "";
-  String get fcm => _fcm;
-
   void showPreviewThumbnail(BuildContext context, VideoPlayerController videoPlayerController) {
     vid = videoPlayerController;
     showModalBottomSheet(
@@ -84,89 +83,91 @@ class VideoProvider with ChangeNotifier {
           builder: (BuildContext context, Function s) {
             return Container(
               padding: const EdgeInsets.all(Dimensions.paddingSizeSmall),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  InkWell(
-                    onTap: () {
-                      s(() {
-                        vid.pause();
-                        Navigator.of(context).pop();
-                        isPlay = false;
-                      });
-                    },
-                    child: const Padding(
-                      padding: EdgeInsets.all(8.0),
-                      child: Icon(
-                        Icons.close,
-                        color: ColorResources.redPrimary,
-                        size: 30.0,
+              child: SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    InkWell(
+                      onTap: () {
+                        s(() {
+                          vid.pause();
+                          Navigator.of(context).pop();
+                          isPlay = false;
+                        });
+                      },
+                      child: const Padding(
+                        padding: EdgeInsets.all(8.0),
+                        child: Icon(
+                          Icons.close,
+                          color: ColorResources.redPrimary,
+                          size: 30.0,
+                        ),
                       ),
                     ),
-                  ),
-                  const SizedBox(height: 12.0),
-                  vid.value.isInitialized
-                  ? Container(
-                      alignment: Alignment.topCenter, 
-                      child: Stack(
-                        children: [
-                          AspectRatio(
-                            aspectRatio: vid.value.aspectRatio,
-                            child: VideoPlayer(vid),
-                          ),
-                          Positioned.fill(
-                            child: GestureDetector(
-                              behavior: HitTestBehavior.opaque,
-                              onTap: () {
-                                if(vid.value.isPlaying) {
-                                  vid.pause();
-                                  s(() {
-                                    isPlay = false;
-                                  });
-                                } else {
-                                  s(() {
-                                    isPlay = true;
-                                  });
-                                  vid.play();
-                                }
-                              },
-                              child: Stack(
-                                children: [
-                                  isPlay
-                                  ? Container() 
-                                  : Container(
-                                      alignment: Alignment.center,
-                                      child: const Icon(
-                                        Icons.play_arrow,
-                                        color: Colors.white,
-                                        size: 80
+                    const SizedBox(height: 15.0),
+                    vid.value.isInitialized
+                    ? Container(
+                        alignment: Alignment.topCenter, 
+                        child: Stack(
+                          children: [
+                            AspectRatio(
+                              aspectRatio: vid.value.aspectRatio,
+                              child: VideoPlayer(vid),
+                            ),
+                            Positioned.fill(
+                              child: GestureDetector(
+                                behavior: HitTestBehavior.opaque,
+                                onTap: () {
+                                  if(vid.value.isPlaying) {
+                                    vid.pause();
+                                    s(() {
+                                      isPlay = false;
+                                    });
+                                  } else {
+                                    s(() {
+                                      isPlay = true;
+                                    });
+                                    vid.play();
+                                  }
+                                },
+                                child: Stack(
+                                  children: [
+                                    isPlay
+                                    ? Container() 
+                                    : Container(
+                                        alignment: Alignment.center,
+                                        child: const Icon(
+                                          Icons.play_arrow,
+                                          color: Colors.white,
+                                          size: 80
+                                        ),
                                       ),
+                                    Positioned(
+                                      bottom: 0.0,
+                                      left: 0.0,
+                                      right: 0.0,
+                                      child: VideoProgressIndicator(
+                                        vid,
+                                        allowScrubbing: true,
+                                      )
                                     ),
-                                  Positioned(
-                                    bottom: 0.0,
-                                    left: 0.0,
-                                    right: 0.0,
-                                    child: VideoProgressIndicator(
-                                      vid,
-                                      allowScrubbing: true,
-                                    )
-                                  ),
-                                ],
-                              ),
+                                  ],
+                                ),
+                              )
                             )
-                          )
-                        ],
+                          ],
+                        )
                       )
-                    )
-                  : const SizedBox(
-                    height: 200,
-                    child: SpinKitThreeBounce(
-                      size: 20.0,
-                      color: Colors.black87,
+                    : const SizedBox(
+                      height: 200,
+                      child: SpinKitThreeBounce(
+                        size: 20.0,
+                        color: Colors.black87,
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             );
           }, 
@@ -312,7 +313,7 @@ class VideoProvider with ChangeNotifier {
     }
   }
 
-  Future<String?> initFcm(BuildContext context) async {
+  Future<void> initFcm(BuildContext context) async {
     try {
       Dio dio = Dio();
       await dio.post('${AppConstants.baseUrl}/init-fcm',
@@ -343,7 +344,6 @@ class VideoProvider with ChangeNotifier {
     } catch(e) {
       debugPrint(e.toString());
     }
-    return fcm;
   }
 
   Future<String?> uploadVideo(BuildContext context, {required File file}) async {
@@ -451,6 +451,19 @@ class VideoProvider with ChangeNotifier {
           "thumbnail": thumbnail,
           "user_id": userId
         }
+      );
+
+      List<String> tokens = [];
+
+      for (FcmData fcm in fcmData) {
+        tokens.add(fcm.fcmSecret!);
+      }
+
+      await context.read<FirebaseProvider>().sendNotification(
+        context, 
+        title: "Info", 
+        body: "Rekaman berhasil terkirim kepada Public Service dan Emergency Contact", 
+        tokens: tokens
       );
       
       Navigator.of(context).pop();
