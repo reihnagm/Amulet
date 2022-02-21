@@ -43,6 +43,8 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   late VideoProvider videoProvider;
   late NavigationService navigationService;
 
+  late TextEditingController categeoryC;
+
   String selectedTextCat = "";
   int selectedCatIdx = -1;
   int selectedChildCatIdx = -1;
@@ -184,7 +186,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                       style: const TextStyle(
                         fontSize: Dimensions.fontSizeDefault
                       ),
-                      controller: TextEditingController(text: selectedTextCat),
+                      controller: categeoryC,
                       cursorColor: ColorResources.black,
                       onChanged: (val) {
                         s(() {
@@ -284,6 +286,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                                 onTap: () {
                                   s(() {
                                     selectedChildCatIdx = i;
+                                     categeoryC.text = categories[selectedCatIdx]["suggestions"][0]["contents"][i]["name"];
                                     selectedTextCat = categories[selectedCatIdx]["suggestions"][0]["contents"][i]["name"];
                                   });
                                 },
@@ -309,8 +312,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                         onTap: () async {
                           SharedPreferences prefs = await SharedPreferences.getInstance();
                           prefs.setString("selectedTextCat", selectedTextCat);
-                          navigationService.pushNav(
-                            context,
+                          navigationService.pushNav(context,
                             RecordScreen(
                               key: UniqueKey()
                             )
@@ -379,7 +381,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
-
+    categeoryC = TextEditingController(text: selectedTextCat);
     (() async {   
       bool storageIsDenied = await Permission.storage.isDenied;
       bool microphoneIsDenied = await Permission.microphone.isDenied;
@@ -417,6 +419,12 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
         inboxProvider.fetchInbox(context);
       }
     });
+  }
+
+  @override 
+  void dispose() {
+    categeoryC.dispose();
+    super.dispose();
   }
 
   @override
