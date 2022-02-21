@@ -53,7 +53,7 @@ class _PreviewFileScreenState extends State<PreviewFileScreen> with WidgetsBindi
     .network(widget.mediaUrl)
     ..addListener(() { setState(() {}); })
     ..setLooping(false)
-    ..initialize();
+    ..initialize().then((_) => videoPlayerController.pause());;
   }
 
   @override

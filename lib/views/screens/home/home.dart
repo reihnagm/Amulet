@@ -3,17 +3,21 @@ import 'dart:async';
 import 'package:badges/badges.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
+import 'package:panic_button/views/basewidgets/button/custom.dart';
+import 'package:panic_button/views/screens/media/record.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:slide_to_confirm/slide_to_confirm.dart';
+import 'package:flutter_animated_dialog/flutter_animated_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
+import 'package:panic_button/localization/language_constraints.dart';
 import 'package:panic_button/providers/inbox.dart';
 import 'package:panic_button/providers/videos.dart';
 import 'package:panic_button/services/navigation.dart';
 import 'package:panic_button/views/basewidgets/snackbar/snackbar.dart';
-import 'package:panic_button/views/screens/media/record.dart';
 import 'package:panic_button/providers/location.dart';
 import 'package:panic_button/views/basewidgets/drawer/drawer.dart';
 import 'package:panic_button/providers/auth.dart';
@@ -39,8 +43,299 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   late VideoProvider videoProvider;
   late NavigationService navigationService;
 
+  String selectedTextCat = "";
+  int selectedCatIdx = -1;
+  int selectedChildCatIdx = -1;
+
+  bool isRecordPressed = false;
+
+  List categories = [
+    {
+      "id": 1,
+      "name": "Pencurian",
+      "suggestions": [
+        {
+          "cat_id": 1,
+          "contents": [
+            {
+              "id": 1,
+              "name": "Tolong, Barang Saya di jambret !"
+            },
+            {
+              "id": 2,
+              "name": "Terjadi Penjambretan !"
+            }
+          ] 
+        },
+      ]
+    },
+    {
+      "id": 2,
+      "name": "Kebakaran", 
+      "suggestions": [
+        {
+          "cat_id": 2,
+          "contents": [
+            {
+              "id": 1,
+              "name": "Ada Kebakaran !"
+            },
+            {
+              "id": 2,
+              "name": "Telah terjadi Kebakaran !"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "name": "Kecelakaan",
+      "suggestions": [
+        {
+          "cat_id": 3,
+          "contents": [
+            {
+              "id": 1,
+              "name": "Telah terjadi kecelakaan !"
+            },
+            {
+              "id": 2,
+              "name": "Kecelakaan di"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "name": "Bencana Alam",
+      "suggestions": [
+        {
+          "cat_id": 4,
+          "contents": [
+            {
+              "id": 1,
+              "name": "Telah terjadi bencana alam !"
+            },
+            {
+              "id": 2,
+              "name": "Banjir / Gempa / Longsor di"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "name": "Perampokan",
+      "suggestions": [
+        {
+          "cat_id": 5,
+          "contents": [
+            {
+              "id": 1,
+              "name": "Tolong di rampok !"
+            },
+            {
+              "id": 2,
+              "name": "Telah terjadi perampokan di"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 6,
+      "name": "Kerusuhan",
+      "suggestions": [
+        {
+          "cat_id": 6,
+          "contents": [
+            {
+              "id": 1,
+              "name": "Telah terjadi aksi"
+            },
+            {
+              "id": 2,
+              "name": "Ada tawuran di"
+            }
+          ]
+        }
+      ]
+    }
+  ];
+
   void openRecord() {
-    navigationService.pushNav(context,  RecordScreen(key: UniqueKey()));
+    showAnimatedDialog(
+      context: context,
+      barrierDismissible: true,
+      builder: (BuildContext context) {
+        return Dialog(
+          child: StatefulBuilder(
+            builder: (BuildContext context, Function s) {
+              return Container(
+                padding: EdgeInsets.all(20.0),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    TextFormField(
+                      maxLines: 4,
+                      style: const TextStyle(
+                        fontSize: Dimensions.fontSizeDefault
+                      ),
+                      controller: TextEditingController(text: selectedTextCat),
+                      cursorColor: ColorResources.black,
+                      onChanged: (val) {
+                        s(() {
+                          selectedTextCat = val;
+                        });
+                      },
+                      decoration: InputDecoration(
+                        hintText: "",
+                        floatingLabelBehavior: FloatingLabelBehavior.always,
+                        labelText: getTranslated("DESCRIPTION", context), 
+                        labelStyle: const TextStyle(
+                          color: ColorResources.black,
+                          fontSize: Dimensions.fontSizeDefault
+                        ),
+                        border: const OutlineInputBorder(
+                          borderSide: BorderSide(
+                            color: ColorResources.black
+                          )
+                        ),
+                        focusedBorder: const OutlineInputBorder(
+                          borderSide: BorderSide(
+                            color: ColorResources.black
+                          )
+                        )
+                      )
+                    ),
+
+                    Container(
+                      margin: EdgeInsets.only(top: 12.0),
+                      height: 48.0,
+                      child: Padding(
+                        padding: const EdgeInsets.all(5.0),
+                        child: ListView.builder(
+                          itemCount: categories.length,
+                          scrollDirection: Axis.horizontal,
+                          shrinkWrap: true,
+                          itemBuilder: (BuildContext context, int i) {
+                            return Container(
+                              width: 100.0,
+                              alignment: Alignment.center,
+                              padding: EdgeInsets.all(5.0),
+                              margin: EdgeInsets.only(right: 8.0),
+                              decoration: BoxDecoration(
+                                color: selectedCatIdx == i 
+                                ? ColorResources.purpleDark 
+                                : ColorResources.purpleLight,
+                                borderRadius: BorderRadius.circular(30.0)
+                              ),
+                              child: InkWell(
+                                onTap: () {
+                                  s(() {
+                                    selectedCatIdx = i;
+                                  });
+                                },
+                                child: Text(categories[i]["name"],
+                                  style: TextStyle(
+                                    fontSize: Dimensions.fontSizeSmall,
+                                    fontWeight: FontWeight.w500,
+                                    color: ColorResources.white
+                                  ),
+                                ),
+                              )
+                            );
+                          },
+                        ),
+                      ),
+                    ),
+
+                  if(selectedCatIdx != -1)
+                    Container(
+                      margin: EdgeInsets.only(top: 12.0),
+                      height: 48.0,
+                      child: Padding(
+                        padding: const EdgeInsets.all(5.0),
+                        child: ListView.builder(
+                          itemCount: categories[selectedCatIdx]["suggestions"][0]["contents"].length,
+                          scrollDirection: Axis.horizontal,
+                          shrinkWrap: true,
+                          itemBuilder: (BuildContext context, int i) {
+                            return Container(
+                              width: 200.0,
+                              alignment: Alignment.center,
+                              padding: EdgeInsets.all(5.0),
+                              margin: EdgeInsets.only(right: 8.0),
+                              decoration: BoxDecoration(
+                                color: selectedChildCatIdx == i 
+                                ? ColorResources.green 
+                                : ColorResources.white,
+                                border: Border.all(
+                                  color: selectedChildCatIdx == i 
+                                  ? ColorResources.transparent 
+                                  : ColorResources.green
+                                ),
+                                borderRadius: BorderRadius.circular(30.0)
+                              ),
+                              child: InkWell(
+                                onTap: () {
+                                  s(() {
+                                    selectedChildCatIdx = i;
+                                    selectedTextCat = categories[selectedCatIdx]["suggestions"][0]["contents"][i]["name"];
+                                  });
+                                },
+                                child: Text(categories[selectedCatIdx]["suggestions"][0]["contents"][i]["name"],
+                                  style: TextStyle(
+                                    fontSize: Dimensions.fontSizeSmall,
+                                    fontWeight: FontWeight.w500,
+                                    color: selectedChildCatIdx == i 
+                                    ? ColorResources.white
+                                    : ColorResources.green
+                                  ),
+                                ),
+                              )
+                            );
+                          },
+                        ),
+                      ),
+                    ),
+
+                    Container(
+                      margin: EdgeInsets.only(top: 15.0),
+                      child: CustomButton(
+                        onTap: () async {
+                          SharedPreferences prefs = await SharedPreferences.getInstance();
+                          prefs.setString("selectedTextCat", selectedTextCat);
+                          navigationService.pushNav(
+                            context,
+                            RecordScreen(
+                              key: UniqueKey()
+                            )
+                          );
+                        }, 
+                        btnColor: ColorResources.redPrimary,
+                        isBorder: false,
+                        isBoxShadow: false,
+                        height: 40.0,
+                        isBorderRadius: false,
+                        isLoading: isRecordPressed 
+                        ? true 
+                        : false ,
+                        btnTxt: "Record"
+                      ),
+                    )
+
+                  ],
+                ),
+              );
+            },
+          )
+        );
+      }
+    );
   }
 
   @override 
@@ -135,6 +430,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
         authProvider = context.read<AuthProvider>();
         locationProvider = context.read<LocationProvider>();
         videoProvider = context.read<VideoProvider>();
+        inboxProvider = context.read<InboxProvider>();
         navigationService = NavigationService();
         return Scaffold(
           resizeToAvoidBottomInset: false,
@@ -297,38 +593,30 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                         ],
                       ),
                     ),
-
-                    Consumer<VideoProvider>(
-                      builder: (BuildContext context, VideoProvider vp, Widget? child) {
-                        if(vp.fcmStatus == FcmStatus.loading) {
-                          return Container();
-                        }
-                        
-                        return Align(
-                          alignment: Alignment.bottomCenter,
-                          child: Container(
-                            width: double.infinity,
-                            margin: const EdgeInsets.only(top: 160.0),
-                            child: GoogleMap(
-                              mapType: MapType.normal,
-                              gestureRecognizers: {}..add(Factory<EagerGestureRecognizer>(() => EagerGestureRecognizer())),
-                              myLocationEnabled: false,
-                              initialCameraPosition: CameraPosition(
-                                target: LatLng(
-                                  locationProvider.getCurrentLat, 
-                                  locationProvider.getCurrentLng
-                                ),
-                                zoom: 10.0,
-                              ),
-                              markers: Set.from(vp.markers),
-                              onMapCreated: (GoogleMapController controller) {
-                                mapsController.complete(controller);
-                                locationProvider.controller = controller;
-                              },
+                       
+                    Align(
+                      alignment: Alignment.bottomCenter,
+                      child: Container(
+                        width: double.infinity,
+                        margin: const EdgeInsets.only(top: 160.0),
+                        child: GoogleMap(
+                          mapType: MapType.normal,
+                          gestureRecognizers: {}..add(Factory<EagerGestureRecognizer>(() => EagerGestureRecognizer())),
+                          myLocationEnabled: false,
+                          initialCameraPosition: CameraPosition(
+                            target: LatLng(
+                              locationProvider.getCurrentLat, 
+                              locationProvider.getCurrentLng
                             ),
-                          )
-                        );
-                      },
+                            zoom: 15.0,
+                          ),
+                          markers: Set.from(locationProvider.markers),
+                          onMapCreated: (GoogleMapController controller) {
+                            mapsController.complete(controller);
+                            locationProvider.controller = controller;
+                          },
+                        ),
+                      )
                     ),
 
                     Align(

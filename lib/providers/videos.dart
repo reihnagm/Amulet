@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:panic_button/data/models/upload/upload.dart';
 import 'package:panic_button/providers/inbox.dart';
 import 'package:provider/provider.dart';
 import 'package:dio/dio.dart';
@@ -105,7 +106,7 @@ class VideoProvider with ChangeNotifier {
   Future<void> fetchSos(BuildContext context) async {
     try {
       Dio dio = Dio();
-      Response res = await dio.get("${AppConstants.baseUrl}/fetch-sos?page=$page");
+      Response res = await dio.get("${AppConstants.baseUrl}/fetch-sos/${authProvider.getUserId()}?page=$page");
       Map<String, dynamic> resData = res.data;
       SosModel sosModel = SosModel.fromJson(resData);
       _sosData = [];
@@ -249,14 +250,17 @@ class VideoProvider with ChangeNotifier {
     try {
       Dio dio = Dio();
       FormData formData = FormData.fromMap({
-        "video": await MultipartFile.fromFile(
+        "file": await MultipartFile.fromFile(
           file.path, 
           filename: basename(file.path)
         ),
       });
-      Response res = await dio.post("${AppConstants.baseUrl}/upload", data: formData);
+      Response res = await dio.post("${AppConstants.baseUrlAmulet}/api-amulet/v1/media/upload", data: formData);
       Map<String, dynamic> resData = res.data;
-      String url = resData["url"];
+      UploadMediaModel uploadMediaModel = UploadMediaModel.fromJson(resData);
+      UploadMediaData uploadMediaData = uploadMediaModel.data!;
+      // String url = resData["url"];
+      String url = uploadMediaData.path!;
       _videoUrl = url;
       return _videoUrl;
     } on DioError catch(e) {
@@ -352,13 +356,13 @@ class VideoProvider with ChangeNotifier {
         }
       );
 
-      List<String> tokens = [];
+      // List<String> tokens = [];
 
-      for (FcmData fcm in fcmData) {
-        if(authProvider.getUserId() != fcm.uid) {
-          tokens.add(fcm.fcmSecret!);
-        }
-      }
+      // for (FcmData fcm in fcmData) {
+      //   if(authProvider.getUserId() != fcm.uid) {
+      //     tokens.add(fcm.fcmSecret!);
+      //   }
+      // }
 
       NotificationService.showNotification(
         id: Helper.createUniqueId(),
@@ -367,20 +371,21 @@ class VideoProvider with ChangeNotifier {
         payload: {},
       );
 
-      await context.read<FirebaseProvider>().sendNotification(
-        context, 
-        title: "Info", 
-        body:"- Laporan baru telah masuk -",  
-        tokens: tokens
-      );
+      // await context.read<FirebaseProvider>().sendNotification(
+      //   context, 
+      //   title: "Info", 
+      //   body:"- Laporan baru telah masuk -",  
+      //   tokens: tokens
+      // );
 
-      await context.read<InboxProvider>().insertInbox(context, 
-        title: "Info",
-        content: "Rekaman Anda berhasil terkirim kepada Public Service dan Emergency Contact",
-        userId: authProvider.getUserId(),
-      );
+      // await context.read<InboxProvider>().insertInbox(context, 
+      //   title: "Info",
+      //   content: "Rekaman Anda berhasil terkirim kepada Public Service dan Emergency Contact",
+      //   userId: authProvider.getUserId(),
+      // );
       
       Navigator.of(context).pop();
+      Navigator.of(context, rootNavigator: false).pop();
 
       showAnimatedDialog(
         context,

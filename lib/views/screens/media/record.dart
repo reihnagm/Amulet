@@ -9,6 +9,7 @@ import 'package:gallery_saver/gallery_saver.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uuid/uuid.dart';
 import 'package:video_compress/video_compress.dart';
 import 'package:video_player/video_player.dart';
@@ -119,6 +120,7 @@ class _RecordScreenState extends State<RecordScreen> with WidgetsBindingObserver
   }
 
   Future<XFile?> onStopButtonPressed(BuildContext ctx) async {
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     try {
       XFile? xfile = await stopVideoRecording();
       if (xfile != null) {
@@ -129,6 +131,7 @@ class _RecordScreenState extends State<RecordScreen> with WidgetsBindingObserver
             file = File(f.path);
           });
         }
+
         File fileThumbnail = await VideoCompress.getFileThumbnail(f.path); 
         String? thumbnailUploaded = await videoProvider.uploadThumbnail(context, file: fileThumbnail);
         Uint8List thumbnailGenerate = await VideoServices.generateByteThumbnail(file!);
@@ -139,7 +142,7 @@ class _RecordScreenState extends State<RecordScreen> with WidgetsBindingObserver
           String? mediaUrl = await videoProvider.uploadVideo(context, file: info.file!);
           SocketServices.shared.sendMsg(
             id: const Uuid().v4(),
-            content: "-",
+            content: sharedPreferences.getString("selectedTextCat")!,
             mediaUrl: mediaUrl!,
             category: "-",
             lat: locationProvider.getCurrentLat,
@@ -153,7 +156,7 @@ class _RecordScreenState extends State<RecordScreen> with WidgetsBindingObserver
           );
           await videoProvider.insertSos(context,
             id: const Uuid().v4(), 
-            content: "-",
+            content: sharedPreferences.getString("selectedTextCat")!,
             mediaUrl: mediaUrl, 
             category: "-",
             lat: locationProvider.getCurrentLat.toString(),
