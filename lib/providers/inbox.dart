@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'package:panic_button/providers/auth.dart';
-import 'package:panic_button/data/models/inbox/inbox.dart';
-import 'package:panic_button/data/repository/inbox/inbox.dart';
+import 'package:amulet/providers/auth.dart';
+import 'package:amulet/data/models/inbox/inbox.dart';
+import 'package:amulet/data/repository/inbox/inbox.dart';
 
 enum InboxStatus { idle, loading, loaded, empty, error }
 

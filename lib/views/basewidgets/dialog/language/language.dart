@@ -1,12 +1,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:panic_button/localization/language_constraints.dart';
-import 'package:panic_button/utils/constant.dart';
+import 'package:amulet/localization/language_constraints.dart';
+import 'package:amulet/utils/constant.dart';
 import 'package:provider/provider.dart';
 
-import 'package:panic_button/utils/dimensions.dart';
-import 'package:panic_button/utils/color_resources.dart';
-import 'package:panic_button/providers/localization.dart';
+import 'package:amulet/utils/dimensions.dart';
+import 'package:amulet/utils/color_resources.dart';
+import 'package:amulet/providers/localization.dart';
 
 class LanguageDialog extends StatelessWidget {
   const LanguageDialog({Key? key}) : super(key: key);

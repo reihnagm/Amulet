@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 
 import 'package:package_info_plus/package_info_plus.dart';
 
-import 'package:panic_button/localization/language_constraints.dart';
-import 'package:panic_button/services/navigation.dart';
-import 'package:panic_button/utils/color_resources.dart';
-import 'package:panic_button/utils/dimensions.dart';
-import 'package:panic_button/views/basewidgets/button/custom.dart';
-import 'package:panic_button/views/screens/auth/sign_in.dart';
-import 'package:panic_button/views/screens/auth/sign_up.dart';
+import 'package:amulet/localization/language_constraints.dart';
+import 'package:amulet/services/navigation.dart';
+import 'package:amulet/utils/color_resources.dart';
+import 'package:amulet/utils/dimensions.dart';
+import 'package:amulet/views/basewidgets/button/custom.dart';
+import 'package:amulet/views/screens/auth/sign_in.dart';
+import 'package:amulet/views/screens/auth/sign_up.dart';
 
 class WelcomeScreen extends StatefulWidget {
   const WelcomeScreen({ Key? key }) : super(key: key);

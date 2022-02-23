@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import 'package:panic_button/providers/auth.dart';
-import 'package:panic_button/utils/color_resources.dart';
-import 'package:panic_button/utils/dimensions.dart';
-import 'package:panic_button/views/screens/auth/sign_in.dart';
+import 'package:amulet/providers/auth.dart';
+import 'package:amulet/utils/color_resources.dart';
+import 'package:amulet/utils/dimensions.dart';
+import 'package:amulet/views/screens/auth/sign_in.dart';
 
 class SignOutConfirmationDialog extends StatelessWidget {
   const SignOutConfirmationDialog({Key? key}) : super(key: key);

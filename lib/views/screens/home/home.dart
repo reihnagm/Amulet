@@ -3,8 +3,6 @@ import 'dart:async';
 import 'package:badges/badges.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
-import 'package:panic_button/views/basewidgets/button/custom.dart';
-import 'package:panic_button/views/screens/media/record.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -13,18 +11,20 @@ import 'package:flutter_animated_dialog/flutter_animated_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
-import 'package:panic_button/localization/language_constraints.dart';
-import 'package:panic_button/providers/inbox.dart';
-import 'package:panic_button/providers/videos.dart';
-import 'package:panic_button/services/navigation.dart';
-import 'package:panic_button/views/basewidgets/snackbar/snackbar.dart';
-import 'package:panic_button/providers/location.dart';
-import 'package:panic_button/views/basewidgets/drawer/drawer.dart';
-import 'package:panic_button/providers/auth.dart';
-import 'package:panic_button/views/screens/notification/notification.dart';
-import 'package:panic_button/utils/color_resources.dart';
-import 'package:panic_button/utils/dimensions.dart';
-import 'package:panic_button/views/screens/category/category.dart';
+import 'package:amulet/views/basewidgets/button/custom.dart';
+import 'package:amulet/views/screens/media/record.dart';
+import 'package:amulet/localization/language_constraints.dart';
+import 'package:amulet/providers/inbox.dart';
+import 'package:amulet/providers/videos.dart';
+import 'package:amulet/services/navigation.dart';
+import 'package:amulet/views/basewidgets/snackbar/snackbar.dart';
+import 'package:amulet/providers/location.dart';
+import 'package:amulet/views/basewidgets/drawer/drawer.dart';
+import 'package:amulet/providers/auth.dart';
+import 'package:amulet/views/screens/notification/notification.dart';
+import 'package:amulet/utils/color_resources.dart';
+import 'package:amulet/utils/dimensions.dart';
+import 'package:amulet/views/screens/category/category.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({ Key? key }) : super(key: key);
@@ -167,6 +167,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
       ]
     }
   ];
+  
 
   void openRecord() {
     showAnimatedDialog(
@@ -350,6 +351,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     // - Detached (View Destroyed - App Closed)
     if(state == AppLifecycleState.resumed) {
       debugPrint("=== APP RESUME ===");
+      bool contactsIsDenied = await Permission.contacts.isDenied;
       bool storageIsDenied = await Permission.storage.isDenied;
       bool microphoneIsDenied = await Permission.microphone.isDenied;
       bool cameraIsDenied = await Permission.camera.isDenied;
@@ -357,6 +359,9 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
         ShowSnackbar.snackbar(context, "Please granted permission Camera", "", ColorResources.error);
         await openAppSettings();
       } 
+      if(contactsIsDenied) {
+        ShowSnackbar.snackbar(context, "Please granted permission Contacts", "", ColorResources.error);
+      }
       if(microphoneIsDenied) {
         ShowSnackbar.snackbar(context, "Please granted permission Microphone", "", ColorResources.error);
         await openAppSettings();
@@ -383,6 +388,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     WidgetsBinding.instance.addObserver(this);
     categeoryC = TextEditingController(text: selectedTextCat);
     (() async {   
+      bool contactsIsDenied = await Permission.contacts.isDenied;
       bool storageIsDenied = await Permission.storage.isDenied;
       bool microphoneIsDenied = await Permission.microphone.isDenied;
       bool cameraIsDenied = await Permission.camera.isDenied;
@@ -403,6 +409,12 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
         await openAppSettings();
       } else {
         await Permission.storage.request();
+      }
+      if(contactsIsDenied) {
+        ShowSnackbar.snackbar(context, "Please granted permission Contacts", "", ColorResources.error);
+        await openAppSettings();
+      } else {
+        await Permission.contacts.request();
       }
     })();
     Future.delayed((Duration.zero), () {
@@ -569,6 +581,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                             ],
                             bottom: PreferredSize(
                               child:  Column(
+                                mainAxisSize: MainAxisSize.min,
                                 children: [
                                   Container(
                                     margin: const EdgeInsets.only(left: Dimensions.marginSizeDefault),

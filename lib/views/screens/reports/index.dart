@@ -2,16 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:intl/intl.dart';
-import 'package:panic_button/localization/language_constraints.dart';
-import 'package:panic_button/services/navigation.dart';
-import 'package:panic_button/views/screens/media/preview_file.dart';
+import 'package:amulet/localization/language_constraints.dart';
+import 'package:amulet/services/navigation.dart';
+import 'package:amulet/views/screens/media/preview_file.dart';
 import 'package:provider/provider.dart';
 
-import 'package:panic_button/providers/network.dart';
-import 'package:panic_button/providers/videos.dart';
-import 'package:panic_button/utils/color_resources.dart';
-import 'package:panic_button/utils/dimensions.dart';
-import 'package:panic_button/views/basewidgets/drawer/drawer.dart';
+import 'package:amulet/providers/network.dart';
+import 'package:amulet/providers/videos.dart';
+import 'package:amulet/utils/color_resources.dart';
+import 'package:amulet/utils/dimensions.dart';
+import 'package:amulet/views/basewidgets/drawer/drawer.dart';
 
 class ReportsScreen extends StatefulWidget {
   const ReportsScreen({ Key? key }) : super(key: key);

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'package:panic_button/utils/constant.dart';
+import 'package:amulet/utils/constant.dart';
 
 class LocalizationProvider extends ChangeNotifier {
   final SharedPreferences sharedPreferences;

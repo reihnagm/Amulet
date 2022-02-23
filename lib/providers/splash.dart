@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'package:panic_button/data/repository/splash/splash.dart';
+import 'package:amulet/data/repository/splash/splash.dart';
 
 class SplashProvider extends ChangeNotifier {
   final SplashRepo splashRepo;

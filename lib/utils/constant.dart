@@ -1,4 +1,4 @@
-import 'package:panic_button/data/models/language/language.dart';
+import 'package:amulet/data/models/language/language.dart';
 
 class AppConstants { 
   static const String baseUrl = 'http://cxid.xyz:3000';

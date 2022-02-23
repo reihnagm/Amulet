@@ -2,13 +2,13 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import 'package:panic_button/localization/language_constraints.dart';
-import 'package:panic_button/views/basewidgets/button/custom.dart';
-import 'package:panic_button/views/basewidgets/snackbar/snackbar.dart';
-import 'package:panic_button/data/models/user/user.dart';
-import 'package:panic_button/providers/auth.dart';
-import 'package:panic_button/utils/color_resources.dart';
-import 'package:panic_button/utils/dimensions.dart';
+import 'package:amulet/localization/language_constraints.dart';
+import 'package:amulet/views/basewidgets/button/custom.dart';
+import 'package:amulet/views/basewidgets/snackbar/snackbar.dart';
+import 'package:amulet/data/models/user/user.dart';
+import 'package:amulet/providers/auth.dart';
+import 'package:amulet/utils/color_resources.dart';
+import 'package:amulet/utils/dimensions.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({ Key? key }) : super(key: key);

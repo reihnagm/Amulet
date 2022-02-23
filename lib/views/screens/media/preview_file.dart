@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:video_player/video_player.dart';
 
-import 'package:panic_button/utils/color_resources.dart';
+import 'package:amulet/utils/color_resources.dart';
 
 class PreviewFileScreen extends StatefulWidget {
   final String mediaUrl;

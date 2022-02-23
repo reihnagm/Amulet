@@ -1,19 +1,20 @@
+import 'package:amulet/providers/contact.dart';
 import 'package:get_it/get_it.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'package:panic_button/data/repository/inbox/inbox.dart';
-import 'package:panic_button/providers/inbox.dart';
-import 'package:panic_button/services/notification.dart';
-import 'package:panic_button/data/repository/auth/auth.dart';
-import 'package:panic_button/data/repository/splash/splash.dart';
-import 'package:panic_button/providers/auth.dart';
-import 'package:panic_button/providers/localization.dart';
-import 'package:panic_button/providers/splash.dart';
-import 'package:panic_button/services/navigation.dart';
-import 'package:panic_button/providers/firebase.dart';
-import 'package:panic_button/providers/location.dart';
-import 'package:panic_button/providers/network.dart';
-import 'package:panic_button/providers/videos.dart';
+import 'package:amulet/data/repository/inbox/inbox.dart';
+import 'package:amulet/providers/inbox.dart';
+import 'package:amulet/services/notification.dart';
+import 'package:amulet/data/repository/auth/auth.dart';
+import 'package:amulet/data/repository/splash/splash.dart';
+import 'package:amulet/providers/auth.dart';
+import 'package:amulet/providers/localization.dart';
+import 'package:amulet/providers/splash.dart';
+import 'package:amulet/services/navigation.dart';
+import 'package:amulet/providers/firebase.dart';
+import 'package:amulet/providers/location.dart';
+import 'package:amulet/providers/network.dart';
+import 'package:amulet/providers/videos.dart';
 
 final getIt = GetIt.instance;
 
@@ -30,7 +31,9 @@ Future<void> init() async {
     navigationService: getIt(), 
     sharedPreferences: getIt()
   ));
+
   getIt.registerFactory(() => NetworkProvider(sharedPreferences: getIt()));
+
   getIt.registerFactory(() => LocalizationProvider(sharedPreferences: getIt()));
   getIt.registerFactory(() => VideoProvider(
     authProvider: getIt(),
@@ -38,10 +41,14 @@ Future<void> init() async {
     sharedPreferences: getIt(),
     notificationService: getIt()
   ));
+
   getIt.registerFactory(() => SplashProvider(
     sharedPreferences: getIt(), 
     splashRepo: getIt()
   ));
+
+   getIt.registerFactory(() => ContactProvider());
+
   getIt.registerFactory(() => FirebaseProvider(sharedPreferences: getIt()));
   getIt.registerFactory(() => LocationProvider(sharedPreferences: getIt()));
   getIt.registerFactory(() => InboxProvider(

@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:panic_button/localization/language_constraints.dart';
 
-import 'package:panic_button/services/navigation.dart';
-import 'package:panic_button/utils/color_resources.dart';
-import 'package:panic_button/utils/dimensions.dart';
-import 'package:panic_button/views/basewidgets/dialog/animated/animated.dart';
-import 'package:panic_button/views/basewidgets/dialog/logout/logout.dart';
-import 'package:panic_button/views/screens/reports/index.dart';
-import 'package:panic_button/views/screens/home/home.dart';
-import 'package:panic_button/views/screens/settings/settings.dart';
+import 'package:amulet/views/screens/contacts/contacts.dart';
+import 'package:amulet/localization/language_constraints.dart';
+import 'package:amulet/services/navigation.dart';
+import 'package:amulet/utils/color_resources.dart';
+import 'package:amulet/utils/dimensions.dart';
+import 'package:amulet/views/basewidgets/dialog/animated/animated.dart';
+import 'package:amulet/views/basewidgets/dialog/logout/logout.dart';
+import 'package:amulet/views/screens/reports/index.dart';
+import 'package:amulet/views/screens/home/home.dart';
+import 'package:amulet/views/screens/settings/settings.dart';
 
 class DrawerWidget extends StatefulWidget {
   const DrawerWidget({ Key? key }) : super(key: key);
@@ -129,11 +130,18 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                   ),
                   Container(
                     padding: const EdgeInsets.all(Dimensions.paddingSizeSmall),
-                    child: Text(getTranslated("CONTACT_EMERGENCY", context),
-                      style: const TextStyle(
-                        fontWeight: FontWeight.w500,
-                        fontSize: Dimensions.fontSizeDefault,
-                        decoration: TextDecoration.lineThrough
+                    child: InkWell(
+                      onTap: () {
+                       navigationService.pushNav(context, ContactsScreen(key: UniqueKey()));
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(getTranslated("CONTACT_EMERGENCY", context),
+                          style: const TextStyle(
+                            fontWeight: FontWeight.w500,
+                            fontSize: Dimensions.fontSizeDefault,
+                          ),
+                        ),
                       ),
                     ),
                   ),

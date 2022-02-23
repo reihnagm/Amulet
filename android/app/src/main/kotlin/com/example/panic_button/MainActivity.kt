@@ -1,4 +1,4 @@
-package com.inovasi78.panic_button
+package com.inovasi78.amulet
 
 import io.flutter.embedding.android.FlutterActivity
 

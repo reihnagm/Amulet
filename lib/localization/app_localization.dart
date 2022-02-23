@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-import 'package:panic_button/utils/constant.dart';
+import 'package:amulet/utils/constant.dart';
 
 class AppLocalization {
   AppLocalization(this.locale);

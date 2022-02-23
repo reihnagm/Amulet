@@ -13,22 +13,22 @@ import 'package:video_compress/video_compress.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
-import 'package:panic_button/localization/language_constraints.dart';
-import 'package:panic_button/providers/inbox.dart';
-import 'package:panic_button/services/navigation.dart';
-import 'package:panic_button/views/basewidgets/snackbar/snackbar.dart';
-import 'package:panic_button/views/screens/notification/notification.dart';
-import 'package:panic_button/providers/network.dart';
-import 'package:panic_button/providers/auth.dart';
-import 'package:panic_button/services/socket.dart';
-import 'package:panic_button/services/video.dart';
-import 'package:panic_button/providers/location.dart';
-import 'package:panic_button/providers/videos.dart';
-import 'package:panic_button/utils/box_shadow.dart';
-import 'package:panic_button/utils/color_resources.dart';
-import 'package:panic_button/utils/dimensions.dart';
-import 'package:panic_button/views/basewidgets/button/custom.dart';
-import 'package:panic_button/views/basewidgets/drawer/drawer.dart';
+import 'package:amulet/localization/language_constraints.dart';
+import 'package:amulet/providers/inbox.dart';
+import 'package:amulet/services/navigation.dart';
+import 'package:amulet/views/basewidgets/snackbar/snackbar.dart';
+import 'package:amulet/views/screens/notification/notification.dart';
+import 'package:amulet/providers/network.dart';
+import 'package:amulet/providers/auth.dart';
+import 'package:amulet/services/socket.dart';
+import 'package:amulet/services/video.dart';
+import 'package:amulet/providers/location.dart';
+import 'package:amulet/providers/videos.dart';
+import 'package:amulet/utils/box_shadow.dart';
+import 'package:amulet/utils/color_resources.dart';
+import 'package:amulet/utils/dimensions.dart';
+import 'package:amulet/views/basewidgets/button/custom.dart';
+import 'package:amulet/views/basewidgets/drawer/drawer.dart';
 
 class CategoryScreen extends StatefulWidget {
   const CategoryScreen({ Key? key }) : super(key: key);

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 
-import 'package:panic_button/utils/dimensions.dart';
-import 'package:panic_button/views/basewidgets/button/bounce.dart';
+import 'package:amulet/utils/dimensions.dart';
+import 'package:amulet/views/basewidgets/button/bounce.dart';
 
 class CustomButton extends StatelessWidget {
   final Function() onTap;

@@ -3,13 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:provider/provider.dart';
 
-import 'package:panic_button/services/navigation.dart';
-import 'package:panic_button/views/screens/notification/notification_detail.dart';
-import 'package:panic_button/localization/language_constraints.dart';
-import 'package:panic_button/providers/inbox.dart';
-import 'package:panic_button/utils/box_shadow.dart';
-import 'package:panic_button/utils/color_resources.dart';
-import 'package:panic_button/utils/dimensions.dart';
+import 'package:amulet/services/navigation.dart';
+import 'package:amulet/views/screens/notification/notification_detail.dart';
+import 'package:amulet/localization/language_constraints.dart';
+import 'package:amulet/providers/inbox.dart';
+import 'package:amulet/utils/box_shadow.dart';
+import 'package:amulet/utils/color_resources.dart';
+import 'package:amulet/utils/dimensions.dart';
 
 class NotificationScreen extends StatefulWidget {
   const NotificationScreen({ Key? key }) : super(key: key);

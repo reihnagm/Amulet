@@ -2,11 +2,11 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:panic_button/providers/videos.dart';
+import 'package:amulet/providers/videos.dart';
 import 'package:provider/provider.dart';
 import 'package:socket_io_client/socket_io_client.dart' as io;
 
-import 'package:panic_button/providers/network.dart';
+import 'package:amulet/providers/network.dart';
 
 class SocketServices {
   static final shared = SocketServices();

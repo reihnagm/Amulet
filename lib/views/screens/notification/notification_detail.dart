@@ -2,11 +2,11 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import 'package:panic_button/utils/box_shadow.dart';
-import 'package:panic_button/utils/dimensions.dart';
-import 'package:panic_button/localization/language_constraints.dart';
-import 'package:panic_button/providers/inbox.dart';
-import 'package:panic_button/utils/color_resources.dart';
+import 'package:amulet/utils/box_shadow.dart';
+import 'package:amulet/utils/dimensions.dart';
+import 'package:amulet/localization/language_constraints.dart';
+import 'package:amulet/providers/inbox.dart';
+import 'package:amulet/utils/color_resources.dart';
 
 class NotificationDetail extends StatefulWidget {
   final String uid;

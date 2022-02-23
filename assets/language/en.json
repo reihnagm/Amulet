@@ -94,7 +94,7 @@
     "NO_MEMBER_FIELD_MUST_BE_REQUIRED": "No Member is Required",
     "EMAIL_ADDRESS_MUST_BE_REQUIRED": "No Member is Required",
     "PHONE_NUMBER_6_REQUIRED": "Phone Number Minimum 6 Character",
-    "PANIC_BUTTON": "Panic Button",
+    "amulet": "Panic Button",
     "CONNECTION_TIMEOUT": "Connection Timeout, please try again",
     "MY_STORE": "My Store",
     "OPEN_STORE": "Open Store",

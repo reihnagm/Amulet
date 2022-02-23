@@ -6,11 +6,11 @@ import 'package:sqflite/sqlite_api.dart';
 class DBHelper {  
   static Future<Database> database() async {
     final dbPath = await sql.getDatabasesPath();
-    return await sql.openDatabase(path.join(dbPath, 'sos.db'), onCreate: (db, version) => createDb(db), version: 1);
+    return await sql.openDatabase(path.join(dbPath, 'contacts.db'), onCreate: (db, version) => createDb(db), version: 1);
   }
 
   static Future<void> createDb(Database db) async {
-    await db.execute("CREATE TABLE sos (id TEXT PRIMARY KEY, mediaUrl TEXT, msg TEXT, created_at)");
+    await db.execute("CREATE TABLE contacts (id TEXT PRIMARY KEY, identifier TEXT)");
   }
 
   static Future<void> insert(String table, Map<String, Object> data) async {
@@ -33,8 +33,8 @@ class DBHelper {
     await db.delete(table);
   }
   
-  static Future<List<Map<String, dynamic>>> fetchSos(BuildContext context) async {
+  static Future<List<Map<String, dynamic>>> fetchSaveContacts(BuildContext context) async {
     Database db = await DBHelper.database();
-    return db.rawQuery("SELECT * FROM sos ORDER BY id ASC");
+    return db.rawQuery("SELECT * FROM contacts ORDER BY id ASC");
   }
 }

@@ -14,14 +14,14 @@ import 'package:uuid/uuid.dart';
 import 'package:video_compress/video_compress.dart';
 import 'package:video_player/video_player.dart';
 
-import 'package:panic_button/providers/auth.dart';
-import 'package:panic_button/providers/location.dart';
-import 'package:panic_button/providers/network.dart';
-import 'package:panic_button/providers/videos.dart';
-import 'package:panic_button/services/socket.dart';
-import 'package:panic_button/services/video.dart';
-import 'package:panic_button/utils/color_resources.dart';
-import 'package:panic_button/utils/dimensions.dart';
+import 'package:amulet/providers/auth.dart';
+import 'package:amulet/providers/location.dart';
+import 'package:amulet/providers/network.dart';
+import 'package:amulet/providers/videos.dart';
+import 'package:amulet/services/socket.dart';
+import 'package:amulet/services/video.dart';
+import 'package:amulet/utils/color_resources.dart';
+import 'package:amulet/utils/dimensions.dart';
 
 class RecordScreen extends StatefulWidget {
   const RecordScreen({

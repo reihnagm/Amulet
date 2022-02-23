@@ -3,19 +3,18 @@ import 'dart:async';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:panic_button/views/screens/media/record.dart';
-import 'package:panic_button/views/screens/reports/index.dart';
 import 'package:provider/provider.dart';
 
-import 'package:panic_button/utils/constant.dart';
-import 'package:panic_button/localization/app_localization.dart';
-import 'package:panic_button/providers/localization.dart';
-import 'package:panic_button/views/screens/splash/splash.dart';
-import 'package:panic_button/utils/global.dart';
-import 'package:panic_button/providers/firebase.dart';
-import 'package:panic_button/services/notification.dart';
-import 'package:panic_button/providers.dart';
-import 'package:panic_button/container.dart' as core;
+import 'package:amulet/utils/constant.dart';
+import 'package:amulet/views/screens/reports/index.dart';
+import 'package:amulet/localization/app_localization.dart';
+import 'package:amulet/providers/localization.dart';
+import 'package:amulet/views/screens/splash/splash.dart';
+import 'package:amulet/utils/global.dart';
+import 'package:amulet/providers/firebase.dart';
+import 'package:amulet/services/notification.dart';
+import 'package:amulet/providers.dart';
+import 'package:amulet/container.dart' as core;
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();

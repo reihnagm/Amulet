@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:panic_button/utils/color_resources.dart';
-import 'package:panic_button/utils/dimensions.dart';
+import 'package:amulet/utils/color_resources.dart';
+import 'package:amulet/utils/dimensions.dart';
 
 class ShowSnackbar {
   ShowSnackbar._();

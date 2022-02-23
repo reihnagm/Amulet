@@ -1,19 +1,19 @@
-import 'package:panic_button/views/basewidgets/snackbar/snackbar.dart';
+import 'package:amulet/views/basewidgets/snackbar/snackbar.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 
-import 'package:panic_button/localization/language_constraints.dart';
-import 'package:panic_button/providers/localization.dart';
-import 'package:panic_button/utils/constant.dart';
-import 'package:panic_button/views/basewidgets/dialog/animated/animated.dart';
-import 'package:panic_button/views/basewidgets/dialog/language/language.dart';
-import 'package:panic_button/views/basewidgets/button/custom.dart';
-import 'package:panic_button/data/models/user/user.dart';
-import 'package:panic_button/providers/auth.dart';
-import 'package:panic_button/utils/color_resources.dart';
-import 'package:panic_button/utils/dimensions.dart';
-import 'package:panic_button/views/screens/auth/forget_password.dart';
-import 'package:panic_button/views/screens/auth/sign_up.dart';
+import 'package:amulet/localization/language_constraints.dart';
+import 'package:amulet/providers/localization.dart';
+import 'package:amulet/utils/constant.dart';
+import 'package:amulet/views/basewidgets/dialog/animated/animated.dart';
+import 'package:amulet/views/basewidgets/dialog/language/language.dart';
+import 'package:amulet/views/basewidgets/button/custom.dart';
+import 'package:amulet/data/models/user/user.dart';
+import 'package:amulet/providers/auth.dart';
+import 'package:amulet/utils/color_resources.dart';
+import 'package:amulet/utils/dimensions.dart';
+import 'package:amulet/views/screens/auth/forget_password.dart';
+import 'package:amulet/views/screens/auth/sign_up.dart';
 
 class SignInScreen extends StatefulWidget {
   const SignInScreen({ Key? key }) : super(key: key);

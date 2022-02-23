@@ -2,16 +2,16 @@ import 'dart:convert';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:panic_button/data/repository/auth/auth.dart';
-import 'package:panic_button/services/navigation.dart';
-import 'package:panic_button/views/screens/home/home.dart';
+import 'package:amulet/data/repository/auth/auth.dart';
+import 'package:amulet/services/navigation.dart';
+import 'package:amulet/views/screens/home/home.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'package:panic_button/utils/extension.dart';
-import 'package:panic_button/utils/color_resources.dart';
-import 'package:panic_button/views/basewidgets/snackbar/snackbar.dart';
-import 'package:panic_button/data/models/user/user.dart';
-import 'package:panic_button/utils/constant.dart';
+import 'package:amulet/utils/extension.dart';
+import 'package:amulet/utils/color_resources.dart';
+import 'package:amulet/views/basewidgets/snackbar/snackbar.dart';
+import 'package:amulet/data/models/user/user.dart';
+import 'package:amulet/utils/constant.dart';
 
 enum LoginStatus { idle, loading, loaded, empty, error }
 enum RegisterStatus { idle, loading, loaded, empty, error }

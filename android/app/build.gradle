@@ -43,7 +43,7 @@ android {
     }
 
     defaultConfig {
-        applicationId "com.inovasi78.panic_button"
+        applicationId "com.inovasi78.amulet"
         minSdkVersion 21
         targetSdkVersion 31
         versionCode flutterVersionCode.toInteger()

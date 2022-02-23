@@ -1,6 +1,6 @@
 {
-    "name": "panic_button",
-    "short_name": "panic_button",
+    "name": "amulet",
+    "short_name": "amulet",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",

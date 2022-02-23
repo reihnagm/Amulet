@@ -5,14 +5,14 @@ import 'package:package_info_plus/package_info_plus.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 
-import 'package:panic_button/providers/location.dart';
-import 'package:panic_button/providers/splash.dart';
-import 'package:panic_button/providers/videos.dart';
-import 'package:panic_button/utils/dimensions.dart';
-import 'package:panic_button/providers/auth.dart';
-import 'package:panic_button/views/screens/home/home.dart';
-import 'package:panic_button/utils/color_resources.dart';
-import 'package:panic_button/views/screens/welcome/welcome.dart';
+import 'package:amulet/providers/location.dart';
+import 'package:amulet/providers/splash.dart';
+import 'package:amulet/providers/videos.dart';
+import 'package:amulet/utils/dimensions.dart';
+import 'package:amulet/providers/auth.dart';
+import 'package:amulet/views/screens/home/home.dart';
+import 'package:amulet/utils/color_resources.dart';
+import 'package:amulet/views/screens/welcome/welcome.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({Key? key}) : super(key: key);

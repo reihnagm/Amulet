@@ -2,8 +2,8 @@ import 'dart:io';
 
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
-import 'package:panic_button/data/models/upload/upload.dart';
-import 'package:panic_button/providers/inbox.dart';
+import 'package:amulet/data/models/upload/upload.dart';
+import 'package:amulet/providers/inbox.dart';
 import 'package:provider/provider.dart';
 import 'package:dio/dio.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -11,19 +11,19 @@ import 'package:path/path.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:video_player/video_player.dart';
 
-import 'package:panic_button/providers/firebase.dart';
-import 'package:panic_button/services/notification.dart';
-import 'package:panic_button/utils/helper.dart';
-import 'package:panic_button/data/models/fcm/fcm.dart';
-import 'package:panic_button/providers/auth.dart';
-import 'package:panic_button/providers/location.dart';
-import 'package:panic_button/data/models/sos/sos.dart';
-import 'package:panic_button/views/basewidgets/button/custom.dart';
-import 'package:panic_button/utils/color_resources.dart';
-import 'package:panic_button/utils/dimensions.dart';
-import 'package:panic_button/views/basewidgets/dialog/animated/animated.dart';
-import 'package:panic_button/views/basewidgets/snackbar/snackbar.dart';
-import 'package:panic_button/utils/constant.dart';
+import 'package:amulet/providers/firebase.dart';
+import 'package:amulet/services/notification.dart';
+import 'package:amulet/utils/helper.dart';
+import 'package:amulet/data/models/fcm/fcm.dart';
+import 'package:amulet/providers/auth.dart';
+import 'package:amulet/providers/location.dart';
+import 'package:amulet/data/models/sos/sos.dart';
+import 'package:amulet/views/basewidgets/button/custom.dart';
+import 'package:amulet/utils/color_resources.dart';
+import 'package:amulet/utils/dimensions.dart';
+import 'package:amulet/views/basewidgets/dialog/animated/animated.dart';
+import 'package:amulet/views/basewidgets/snackbar/snackbar.dart';
+import 'package:amulet/utils/constant.dart';
 
 enum FcmStatus { idle, loading, loaded, empty, error }
 enum ListenVStatus { idle, loading, loaded, empty, error }

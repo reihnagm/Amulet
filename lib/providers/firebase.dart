@@ -5,13 +5,13 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:rxdart/rxdart.dart';
 
-import 'package:panic_button/utils/color_resources.dart';
-import 'package:panic_button/views/basewidgets/snackbar/snackbar.dart';
-import 'package:panic_button/services/notification.dart';
-import 'package:panic_button/utils/global.dart';
-import 'package:panic_button/utils/helper.dart';
-import 'package:panic_button/views/screens/reports/index.dart';
-import 'package:panic_button/utils/constant.dart';
+import 'package:amulet/utils/color_resources.dart';
+import 'package:amulet/views/basewidgets/snackbar/snackbar.dart';
+import 'package:amulet/services/notification.dart';
+import 'package:amulet/utils/global.dart';
+import 'package:amulet/utils/helper.dart';
+import 'package:amulet/views/screens/reports/index.dart';
+import 'package:amulet/utils/constant.dart';
 
 class FirebaseProvider with ChangeNotifier {
   final SharedPreferences sharedPreferences;
