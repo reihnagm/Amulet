@@ -142,7 +142,7 @@ class _RecordScreenState extends State<RecordScreen> with WidgetsBindingObserver
           String? mediaUrl = await videoProvider.uploadVideo(context, file: info.file!);
           SocketServices.shared.sendMsg(
             id: const Uuid().v4(),
-            content: sharedPreferences.getString("selectedTextCat")!,
+            content: "-" ,
             mediaUrl: mediaUrl!,
             category: "-",
             lat: locationProvider.getCurrentLat,
@@ -156,7 +156,7 @@ class _RecordScreenState extends State<RecordScreen> with WidgetsBindingObserver
           );
           await videoProvider.insertSos(context,
             id: const Uuid().v4(), 
-            content: sharedPreferences.getString("selectedTextCat")!,
+            content: "-",
             mediaUrl: mediaUrl, 
             category: "-",
             lat: locationProvider.getCurrentLat.toString(),

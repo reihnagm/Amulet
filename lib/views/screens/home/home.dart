@@ -534,7 +534,11 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver, Si
                                       margin: const EdgeInsets.only(right: Dimensions.marginSizeDefault),
                                        child: InkWell(
                                         onTap: () {
-                                          navigationService.pushNav(context, NotificationScreen(key: UniqueKey()));
+                                          if(authProvider.isLoggedIn()) {
+                                            navigationService.pushNav(context, NotificationScreen(key: UniqueKey()));
+                                          } else {
+                                            navigationService.pushNav(context, SignInScreen(key: UniqueKey()));
+                                          }
                                         },
                                         child: Padding(
                                           padding: EdgeInsets.all(8.0),
@@ -552,7 +556,11 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver, Si
                                       margin: const EdgeInsets.only(right: Dimensions.marginSizeDefault),
                                        child: InkWell(
                                         onTap: () {
-                                          navigationService.pushNav(context, NotificationScreen(key: UniqueKey()));
+                                          if(authProvider.isLoggedIn()) {
+                                            navigationService.pushNav(context, NotificationScreen(key: UniqueKey()));
+                                          } else {
+                                            navigationService.pushNav(context, SignInScreen(key: UniqueKey()));
+                                          }
                                         },
                                         child: Padding(
                                           padding: EdgeInsets.all(8.0),
@@ -693,9 +701,9 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver, Si
                               navigationService.pushNav(context,  SignInScreen(key: UniqueKey()));
                             }
                           },
-                          child: const Padding(
+                          child: Padding(
                             padding: EdgeInsets.all(8.0),
-                            child: Text("Kategori",
+                            child: Text(getTranslated("CATEGORY", context),
                               style: TextStyle(
                                 fontSize: Dimensions.fontSizeSmall,
                                 color: ColorResources.white

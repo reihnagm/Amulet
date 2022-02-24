@@ -259,7 +259,6 @@ class VideoProvider with ChangeNotifier {
       Map<String, dynamic> resData = res.data;
       UploadMediaModel uploadMediaModel = UploadMediaModel.fromJson(resData);
       UploadMediaData uploadMediaData = uploadMediaModel.data!;
-      // String url = resData["url"];
       String url = uploadMediaData.path!;
       _videoUrl = url;
       return _videoUrl;

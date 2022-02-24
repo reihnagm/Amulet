@@ -61,32 +61,32 @@ class _CategoryScreenState extends State<CategoryScreen> {
   List<Map<String, dynamic>> categories = [
     {
       "id": 1,
-      "name": "Kecelakaan",
+      "name": "ACCIDENT",
       "image": "assets/images/accident.png"
     },
     {
       "id": 2,
-      "name": "Pencurian",
+      "name": "THIEF",
       "image": "assets/images/thief.png"
     },
     {
       "id": 3,
-      "name": "Kebakaran",
+      "name": "FLAME",
       "image": "assets/images/fire.png"
     },
     {
       "id": 4,
-      "name": "Bencana Alam",
+      "name": "DISASTER",
       "image": "assets/images/disaster.png"
     },
     {
       "id": 5,
-      "name": "Perampokan",
+      "name": "THIEF",
       "image": "assets/images/rape.png"
     },
     {
       "id": 6,
-      "name": "Kerusuhan",
+      "name": "UNREST",
       "image": "assets/images/noise.png"
     }
   ];
@@ -403,9 +403,9 @@ class _CategoryScreenState extends State<CategoryScreen> {
                                                                       const SizedBox(height: 10.0),
                                                                       Row(
                                                                         children: [
-                                                                          const Expanded(
+                                                                          Expanded(
                                                                             flex: 20,
-                                                                            child: Text("Tanggal",
+                                                                            child: Text(getTranslated("DATE", context),
                                                                               style: TextStyle(
                                                                                 fontWeight: FontWeight.w500,
                                                                                 fontSize: Dimensions.fontSizeDefault
@@ -435,9 +435,9 @@ class _CategoryScreenState extends State<CategoryScreen> {
                                                                       const SizedBox(height: 10.0),
                                                                       Row(
                                                                         children: [
-                                                                          const Expanded(
+                                                                          Expanded(
                                                                             flex: 20,
-                                                                            child: Text("Lokasi",
+                                                                            child: Text(getTranslated("LOCATION", context),
                                                                               style: TextStyle(
                                                                                 fontWeight: FontWeight.w500,
                                                                                 fontSize: Dimensions.fontSizeDefault
@@ -475,8 +475,8 @@ class _CategoryScreenState extends State<CategoryScreen> {
                                                                       style: const TextStyle(
                                                                         fontSize: Dimensions.fontSizeDefault
                                                                       ),
-                                                                      decoration: const InputDecoration(
-                                                                        labelText: "Pesan",
+                                                                      decoration: InputDecoration(
+                                                                        labelText: getTranslated("MESSAGE", context),
                                                                         labelStyle: TextStyle(
                                                                           fontWeight: FontWeight.w500,
                                                                           color: ColorResources.black,
@@ -514,13 +514,13 @@ class _CategoryScreenState extends State<CategoryScreen> {
                                                                         children: [
                                                                         Image.memory(thumbnail!, height: 100.0),
                                                                         const SizedBox(height: 12.0),
-                                                                        Text("Besar Berkas : ${filesize(videoSize)}",
+                                                                        Text("${getTranslated("FILE", context)} : ${filesize(videoSize)}",
                                                                           style: const TextStyle(
                                                                             fontSize: 16.0
                                                                           ),
                                                                         ),
                                                                         const SizedBox(height: 12.0),
-                                                                        Text("Durasi : ${duration!.inHours}:${duration!.inMinutes.remainder(60)}:${(duration!.inSeconds.remainder(60))}",
+                                                                        Text("${getTranslated("DURATION", context)} : ${duration!.inHours}:${duration!.inMinutes.remainder(60)}:${(duration!.inSeconds.remainder(60))}",
                                                                           style: const TextStyle(
                                                                             fontSize: 16.0
                                                                           ),
@@ -538,7 +538,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
                                                                           isBoxShadow: true,
                                                                           btnColor: ColorResources.redPrimary,
                                                                           btnTextColor: ColorResources.white,
-                                                                          btnTxt: "Batal"
+                                                                          btnTxt: getTranslated("CANCEL", context)
                                                                         )
                                                                       ],
                                                                     ),
@@ -594,7 +594,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
                                                                                 isBoxShadow: true,
                                                                                 btnColor: ColorResources.redPrimary,
                                                                                 btnTextColor: ColorResources.white,
-                                                                                btnTxt: "Batal"
+                                                                                btnTxt: getTranslated("CANCEL", context)
                                                                               )
                                                                             ],
                                                                           ),
@@ -671,7 +671,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
                                                                                 isLoading: loading 
                                                                                 ? true 
                                                                                 : false,
-                                                                                btnTxt: "Kirim"
+                                                                                btnTxt: getTranslated("SEND", context)
                                                                               )
                                                                             ],
                                                                           ),
@@ -709,7 +709,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
                                                   Container(
                                                     margin: const EdgeInsets.only(top: Dimensions.marginSizeDefault),
                                                     alignment: Alignment.center,
-                                                    child: Text(categories[i]["name"].toString(),
+                                                    child: Text(getTranslated(categories[i]["name"].toString(), context),
                                                       style: TextStyle(
                                                         color: selectedIndex == i 
                                                         ? ColorResources.white 
