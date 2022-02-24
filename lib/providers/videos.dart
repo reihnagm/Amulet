@@ -363,19 +363,19 @@ class VideoProvider with ChangeNotifier {
       //   }
       // }
 
-      NotificationService.showNotification(
-        id: Helper.createUniqueId(),
-        title: "Info",
-        body: "Rekaman Anda berhasil terkirim kepada Public Service dan Emergency Contact",
-        payload: {},
-      );
-
       // await context.read<FirebaseProvider>().sendNotification(
       //   context, 
       //   title: "Info", 
       //   body:"- Laporan baru telah masuk -",  
       //   tokens: tokens
       // );
+
+      NotificationService.showNotification(
+        id: Helper.createUniqueId(),
+        title: "Info",
+        body: "Rekaman Anda berhasil terkirim kepada Public Service dan Emergency Contact",
+        payload: {},
+      );
 
       await context.read<InboxProvider>().insertInbox(context, 
         title: "Info",
@@ -384,6 +384,8 @@ class VideoProvider with ChangeNotifier {
       );
       
       Navigator.of(context).pop();
+      
+      /* Using Dialog */
       // Navigator.of(context, rootNavigator: false).pop();
 
       showAnimatedDialog(

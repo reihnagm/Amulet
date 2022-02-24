@@ -1,7 +1,10 @@
 import 'dart:async';
+import 'dart:html';
 
+import 'package:amulet/views/basewidgets/snackbar/snackbar.dart';
 import 'package:flutter/material.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 
 import 'package:amulet/providers/location.dart';
@@ -46,6 +49,39 @@ class _SplashScreenState extends State<SplashScreen> {
       });
     });
     (() async {      
+      bool contactsIsDenied = await Permission.contacts.isDenied;
+      bool storageIsDenied = await Permission.storage.isDenied;
+      bool microphoneIsDenied = await Permission.microphone.isDenied;
+      bool cameraIsDenied = await Permission.camera.isDenied;
+      
+      if(contactsIsDenied) {
+        PermissionStatus permissionStatus = await Permission.contacts.request();
+        if(permissionStatus == PermissionStatus.denied) {
+          ShowSnackbar.snackbar(context, "Please granted permission Contacts", "", ColorResources.error);
+          await openAppSettings();
+        }
+      } 
+      if(microphoneIsDenied) {
+        PermissionStatus permissionStatus = await Permission.microphone.request();
+        if(permissionStatus == PermissionStatus.denied) { 
+          await openAppSettings();
+          ShowSnackbar.snackbar(context, "Please granted permission Microphone", "", ColorResources.error);
+        }
+      } 
+      if(storageIsDenied) {
+        PermissionStatus permissionStatus = await Permission.storage.request();
+        if(permissionStatus == PermissionStatus.denied) {
+          ShowSnackbar.snackbar(context, "Please granted permission Storage", "", ColorResources.error);
+          await openAppSettings();
+        }
+      } 
+      if(cameraIsDenied) {
+        PermissionStatus permissionStatus = await Permission.camera.request();
+        if(permissionStatus == PermissionStatus.denied) {
+          ShowSnackbar.snackbar(context, "Please granted permission Camera", "", ColorResources.error);
+          await openAppSettings();
+        }
+      }
       PackageInfo p = await PackageInfo.fromPlatform();
       setState(() {      
         packageInfo = PackageInfo(
@@ -57,6 +93,7 @@ class _SplashScreenState extends State<SplashScreen> {
       });
     })();
     Future.delayed(Duration.zero, () async {
+      
       if(mounted) {
         await locationProvider.getCurrentPosition(context);
       }

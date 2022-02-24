@@ -25,9 +25,9 @@ class SocketServices {
       debugPrint("=== SOCKET IS CONNECTED ===");
       context.read<NetworkProvider>().turnOnSocket();
        socket.on("message", (data) {
-        final r = data as dynamic;
-        final d = r as Map<String, dynamic>;
-        context.read<VideoProvider>().appendSos(d);
+        // final r = data as dynamic;
+        // final d = r as Map<String, dynamic>;
+        // context.read<VideoProvider>().appendSos(d);
       });
     });
     socket.on("disconnect", (_) {

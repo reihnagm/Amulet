@@ -363,20 +363,34 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver, Si
       bool storageIsDenied = await Permission.storage.isDenied;
       bool microphoneIsDenied = await Permission.microphone.isDenied;
       bool cameraIsDenied = await Permission.camera.isDenied;
-      if(cameraIsDenied) {
-        ShowSnackbar.snackbar(context, "Please granted permission Camera", "", ColorResources.error);
-        await openAppSettings();
-      } 
+      
       if(contactsIsDenied) {
-        ShowSnackbar.snackbar(context, "Please granted permission Contacts", "", ColorResources.error);
-      }
+        PermissionStatus permissionStatus = await Permission.contacts.request();
+        if(permissionStatus == PermissionStatus.denied) {
+          ShowSnackbar.snackbar(context, "Please granted permission Contacts", "", ColorResources.error);
+          await openAppSettings();
+        }
+      } 
       if(microphoneIsDenied) {
-        ShowSnackbar.snackbar(context, "Please granted permission Microphone", "", ColorResources.error);
-        await openAppSettings();
-      }
+        PermissionStatus permissionStatus = await Permission.microphone.request();
+        if(permissionStatus == PermissionStatus.denied) { 
+          await openAppSettings();
+          ShowSnackbar.snackbar(context, "Please granted permission Microphone", "", ColorResources.error);
+        }
+      } 
       if(storageIsDenied) {
-        ShowSnackbar.snackbar(context, "Please granted permission Storage", "", ColorResources.error);
-        await openAppSettings();
+        PermissionStatus permissionStatus = await Permission.storage.request();
+        if(permissionStatus == PermissionStatus.denied) {
+          ShowSnackbar.snackbar(context, "Please granted permission Storage", "", ColorResources.error);
+          await openAppSettings();
+        }
+      } 
+      if(cameraIsDenied) {
+        PermissionStatus permissionStatus = await Permission.camera.request();
+        if(permissionStatus == PermissionStatus.denied) {
+          ShowSnackbar.snackbar(context, "Please granted permission Camera", "", ColorResources.error);
+          await openAppSettings();
+        }
       }
     }
     if(state == AppLifecycleState.inactive) {
@@ -411,40 +425,6 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver, Si
       }
     }); 
     categeoryC = TextEditingController(text: selectedTextCat);
-    (() async {   
-      bool contactsIsDenied = await Permission.contacts.isDenied;
-      bool storageIsDenied = await Permission.storage.isDenied;
-      bool microphoneIsDenied = await Permission.microphone.isDenied;
-      bool cameraIsDenied = await Permission.camera.isDenied;
-      if(cameraIsDenied) {
-        ShowSnackbar.snackbar(context, "Please granted permission Camera", "", ColorResources.error);
-        await Permission.camera.request();
-        await openAppSettings();
-      } else {
-        await Permission.camera.request();
-      }
-      if(microphoneIsDenied) {
-        ShowSnackbar.snackbar(context, "Please granted permission Microphone", "", ColorResources.error);
-        await Permission.microphone.request();
-        await openAppSettings();
-      } else {
-        await Permission.microphone.request();
-      }
-      if(storageIsDenied) {
-        ShowSnackbar.snackbar(context, "Please granted permission Storage", "", ColorResources.error);
-        await Permission.storage.request();
-        await openAppSettings();
-      } else {
-        await Permission.storage.request();
-      }
-      if(contactsIsDenied) {
-        ShowSnackbar.snackbar(context, "Please granted permission Contacts", "", ColorResources.error);
-        await Permission.contacts.request();
-        await openAppSettings();
-      } else {
-        await Permission.contacts.request();
-      }
-    })();
     Future.delayed((Duration.zero), () {
       if(mounted) {
         locationProvider.getCurrentPosition(context);
