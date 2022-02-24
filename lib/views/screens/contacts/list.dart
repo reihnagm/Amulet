@@ -1,9 +1,9 @@
-import 'package:amulet/localization/language_constraints.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:provider/provider.dart';
 
+import 'package:amulet/localization/language_constraints.dart';
 import 'package:amulet/utils/color_resources.dart';
 import 'package:amulet/utils/dimensions.dart';
 import 'package:amulet/providers/contact.dart';
@@ -24,7 +24,9 @@ class _ContactsListScreenState extends State<ContactsListScreen> {
   void initState() {
     super.initState();
     Future.delayed(Duration.zero, () async {
-      await contactProvider.getContacts(context);
+      if(mounted) {
+        await contactProvider.getContacts(context);
+      }
     });
   }
 
@@ -42,9 +44,9 @@ class _ContactsListScreenState extends State<ContactsListScreen> {
           resizeToAvoidBottomInset: false,
           backgroundColor: ColorResources.backgroundColor,
           body: Consumer<ContactProvider>(
-            builder: (BuildContext context, ContactProvider contactProvider, Widget? child) {
+            builder: (BuildContext context, ContactProvider cp, Widget? child) {
 
-              if(contactProvider.contactsStatus == ContactsStatus.loading) {
+              if(cp.contactsStatus == ContactsStatus.loading) {
                 return Center(
                   child: SpinKitThreeBounce(
                     size: 20.0,
@@ -53,7 +55,7 @@ class _ContactsListScreenState extends State<ContactsListScreen> {
                 );
               }
               
-              if(contactProvider.contactsStatus == ContactsStatus.error) {
+              if(cp.contactsStatus == ContactsStatus.error) {
                 return Center(
                   child: SpinKitThreeBounce(
                     size: 20.0,
@@ -71,12 +73,45 @@ class _ContactsListScreenState extends State<ContactsListScreen> {
                     pinned: true,
                     backgroundColor: ColorResources.backgroundColor,
                     elevation: 0.0,
-                    title: Text(getTranslated("CONTACT_EMERGENCY", context),
+                    title:  cp.selectedContacts.isNotEmpty 
+                    ? Text((("${getTranslated("CONTACT_EMERGENCY", context)} (${cp.selectedContacts.length})").toString()),
+                        style: TextStyle(
+                          fontSize: Dimensions.fontSizeDefault,
+                          color: ColorResources.black
+                        )
+                      )
+                    : Text(getTranslated("CONTACT_EMERGENCY", context),
                       style: TextStyle(
                         fontSize: Dimensions.fontSizeDefault,
                         color: ColorResources.black
                       ),
                     ),
+                    actions: [
+                      cp.selectedContacts.isNotEmpty 
+                      ? InkWell(
+                          onTap: () {
+                            cp.addContact(context);
+                          },
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Container(
+                              margin: EdgeInsets.only(
+                                top: Dimensions.marginSizeSmall,
+                                left: Dimensions.marginSizeDefault, 
+                                right: Dimensions.marginSizeDefault,
+                                bottom: Dimensions.marginSizeSmall
+                              ),
+                              child: Text("Submit",
+                              style: TextStyle(
+                                fontSize: Dimensions.fontSizeDefault,
+                                fontWeight: FontWeight.w500,
+                                color: ColorResources.black
+                              ),
+                            ),
+                          ),
+                        ))
+                      : const SizedBox()
+                    ],
                     leading: CupertinoNavigationBarBackButton(
                       color: ColorResources.black,
                       onPressed: () {
@@ -88,35 +123,100 @@ class _ContactsListScreenState extends State<ContactsListScreen> {
                   SliverPadding(
                     padding: EdgeInsets.only(top: 20.0, bottom: 20.0),
                     sliver: SliverList(
-                      delegate: SliverChildBuilderDelegate(
-                        (BuildContext context, int i) {
-                          if(contactProvider.contacts[i].displayName == null) {
-                            return SizedBox();
-                          }
-                          return Container(
-                            margin: EdgeInsets.only(
-                              left: Dimensions.marginSizeDefault,
-                              right: Dimensions.marginSizeDefault
-                            ),
-                            child: ListTile(
-                              dense: true,
-                              title: Text(contactProvider.contacts[i].displayName!,
-                                style: TextStyle(
-                                  fontSize: Dimensions.fontSizeDefault
+                      delegate: SliverChildListDelegate([
+                          ListView.separated(
+                            physics: const NeverScrollableScrollPhysics(),
+                            shrinkWrap: true,
+                            itemCount: cp.contacts.length,
+                            separatorBuilder: (BuildContext context, int i) {
+                              return Divider();
+                            },
+                            itemBuilder: (BuildContext context, int i) {
+                              return Container(
+                                margin: EdgeInsets.only(
+                                  left: Dimensions.marginSizeDefault,
+                                  right: Dimensions.marginSizeDefault
                                 ),
-                              ),
-                              onTap: () async {
-                                await contactProvider.addContact(context, identifier: contactProvider.contacts[i].displayName!);
-                              },
-                              trailing: Icon(
-                                Icons.add,
-                                size: 15.0,
-                                color: ColorResources.black,
-                              ),
-                            ),
-                          );
-                        },
-                        childCount: contactProvider.contacts.length
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  mainAxisSize: MainAxisSize.max,
+                                  children: [ 
+                                    
+                                    Text(cp.contacts[i].displayName!,
+                                      style: TextStyle(
+                                        fontSize: Dimensions.fontSizeDefault
+                                      ),
+                                    ),
+
+                                    Checkbox(
+                                      value: cp.selectedContacts.contains(cp.contacts[i]),
+                                      onChanged: (bool? newValue) {
+                                        cp.toggleContact(contacts: cp.contacts[i]);
+                                      },
+                                    ),
+                                
+                                  ],
+                                )
+                                
+                                // ListTile(
+                                //   dense: true,
+                                //   title: Text(contactProvider.contacts[i].displayName!,
+                                //     style: TextStyle(
+                                //       fontSize: Dimensions.fontSizeDefault
+                                //     ),
+                                //   ),
+                                //   onTap: () async {
+                                //     if(contactProvider.contacts[i].phones!.isNotEmpty) {
+                                //       await contactProvider.addContact(context, 
+                                //         identifier: contactProvider.contacts[i].displayName!,
+                                //         phone: contactProvider.contacts[i].phones![0].value!
+                                //       );
+                                //     }
+                                //   },
+                                //   trailing: Icon(
+                                //     Icons.add,
+                                //     size: 15.0,
+                                //     color: ColorResources.black,
+                                //   ),
+                                // ),
+
+                              );
+                            },
+                          )
+                        ]
+                        // (BuildContext context, int i) {
+                        //   if(contactProvider.contacts[i].displayName == null) {
+                        //     return SizedBox();
+                        //   }
+                        //   return Container(
+                        //     margin: EdgeInsets.only(
+                        //       left: Dimensions.marginSizeDefault,
+                        //       right: Dimensions.marginSizeDefault
+                        //     ),
+                        //     child: ListTile(
+                        //       dense: true,
+                        //       title: Text(contactProvider.contacts[i].displayName!,
+                        //         style: TextStyle(
+                        //           fontSize: Dimensions.fontSizeDefault
+                        //         ),
+                        //       ),
+                        //       onTap: () async {
+                        //         if(contactProvider.contacts[i].phones!.isNotEmpty) {
+                        //           await contactProvider.addContact(context, 
+                        //             identifier: contactProvider.contacts[i].displayName!,
+                        //             phone: contactProvider.contacts[i].phones![0].value!
+                        //           );
+                        //         }
+                        //       },
+                        //       trailing: Icon(
+                        //         Icons.add,
+                        //         size: 15.0,
+                        //         color: ColorResources.black,
+                        //       ),
+                        //     ),
+                        //   );
+                        // },
+                        // childCount: contactProvider.contacts.length
                       )
                     ),
                   )

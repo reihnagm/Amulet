@@ -27,8 +27,9 @@ class _ContactsScreenState extends State<ContactsScreen> {
   void initState() {
     super.initState();
     Future.delayed(Duration.zero, () async {
-      await contactProvider.getContacts(context);
-      await contactProvider.saveContact(context);
+      if(mounted) {
+        await contactProvider.saveContact(context);
+      }
     });
   }
 
@@ -47,89 +48,224 @@ class _ContactsScreenState extends State<ContactsScreen> {
           resizeToAvoidBottomInset: false,
           backgroundColor: ColorResources.backgroundColor,
           body: Consumer<ContactProvider>(
-            builder: (BuildContext context, ContactProvider contactProvider, Widget? child) {
-              return CustomScrollView(
-                physics: BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
-                slivers: [
-
-                  SliverAppBar(
-                    centerTitle: true,
-                    pinned: true,
-                    backgroundColor: ColorResources.backgroundColor,
-                    elevation: 0.0,
-                    title: Text(getTranslated("CONTACT_EMERGENCY", context),
-                      style: TextStyle(
-                        fontSize: Dimensions.fontSizeDefault,
-                        color: ColorResources.black
-                      ),
-                    ),
-                    leading: CupertinoNavigationBarBackButton(
-                      color: ColorResources.black,
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                      },
-                    ),
-                    actions: [
-                      Container(
-                        margin: EdgeInsets.only(right: Dimensions.marginSizeDefault),
-                        child: InkWell(
-                          onTap: () {
-                            navigationService.pushNav(context, ContactsListScreen(key: UniqueKey()));
-                          },
-                          child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Icon(
-                              Icons.person_add,
-                              size: 20.0,
-                              color: ColorResources.black,
-                            ),
-                          ),
-                        ),
-                      )
-                    ],
-                  ),
-
-                  if(contactProvider.saveContacts.isEmpty)
-                    SliverFillRemaining(
-                      child: Center(
-                        child: Text("Belum ada kontak",
+            builder: (BuildContext context, ContactProvider cp, Widget? child) {
+              return RefreshIndicator(
+                backgroundColor: ColorResources.redPrimary,
+                color: ColorResources.white,
+                onRefresh: () {
+                  return Future.sync(() {
+                    contactProvider.saveContact(context);
+                  });
+                },
+                child: CustomScrollView(
+                  physics: BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
+                  slivers: [
+              
+                    SliverAppBar(
+                      centerTitle: true,
+                      pinned: true,
+                      backgroundColor: ColorResources.backgroundColor,
+                      elevation: 0.0,
+                      title: cp.selectedContacsDelete.isNotEmpty 
+                      ? Text((("${getTranslated("CONTACT_EMERGENCY", context)} (${cp.selectedContacsDelete.length})").toString()),
                           style: TextStyle(
-                            fontSize: Dimensions.fontSizeSmall,
+                            fontSize: Dimensions.fontSizeDefault,
                             color: ColorResources.black
+                          )
+                        )
+                      : Text(getTranslated("CONTACT_EMERGENCY", context),
+                        style: TextStyle(
+                          fontSize: Dimensions.fontSizeDefault,
+                          color: ColorResources.black
+                        ),
+                      ),
+                      leading: CupertinoNavigationBarBackButton(
+                        color: ColorResources.black,
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                      ),
+                      actions: [
+                        Container(
+                          margin: EdgeInsets.only(
+                            top: 8.0,
+                            left: Dimensions.marginSizeSmall,
+                            right: Dimensions.marginSizeSmall,
+                          ),
+                          child: InkWell(
+                            onTap: () async {
+                              if(cp.selectedContacsDelete.isNotEmpty) {
+                                await cp.removeContact(context);
+                              } else {
+                                navigationService.pushNav(context, ContactsListScreen(key: UniqueKey()));
+                              }
+                            },
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: cp.selectedContacsDelete.isNotEmpty 
+                              ? Text("Hapus",
+                                  style: TextStyle(
+                                    fontSize: Dimensions.fontSizeDefault,
+                                    color: ColorResources.black
+                                  ),
+                                ) 
+                              : Icon(
+                                  Icons.person_add,
+                                  size: 20.0,
+                                  color: ColorResources.black,
+                                ),
+                            ),
+                          ),
+                        )
+                      ],
+                      bottom: PreferredSize(
+                        child:  Container(
+                          margin: EdgeInsets.only(
+                            top: Dimensions.marginSizeSmall, 
+                            left: Dimensions.marginSizeDefault, 
+                            right: Dimensions.marginSizeDefault
+                          ),
+                          child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            TextField(
+                              onChanged: (val) {
+                                cp.runFilter(enteredKeyword: val);
+                              },
+                              cursorColor: ColorResources.black,
+                              decoration: InputDecoration(
+                                labelText: getTranslated("SEARCH", context),
+                                labelStyle: TextStyle(
+                                  fontSize: Dimensions.fontSizeDefault,
+                                  color: ColorResources.black
+                                ),
+                                floatingLabelBehavior: FloatingLabelBehavior.auto,
+                                border: OutlineInputBorder(),
+                                focusedBorder: OutlineInputBorder(),
+                                errorBorder: OutlineInputBorder(),
+                                enabledBorder: OutlineInputBorder()
+                              ),
+                            )
+                          ],
+                        ),
+                      ),
+                        preferredSize: const Size.fromHeight(60.0) 
+                      ),
+                    ),
+              
+                    if(cp.saveContactsStatus == SaveContactsStatus.loading)
+                      SliverFillRemaining(
+                        child: Center(
+                          child: SpinKitThreeBounce(
+                            size: 20.0,
+                            color: Colors.black87,
+                          )
+                        ),
+                      ),
+              
+                    if(cp.saveContactsStatus == SaveContactsStatus.empty)
+                      SliverFillRemaining(
+                        child: Center(
+                          child: Text(getTranslated("THERE_IS_NO_CONTACTS", context),
+                            style: TextStyle(
+                              fontSize: Dimensions.fontSizeDefault,
+                              color: ColorResources.black
+                            ),
                           ),
                         ),
                       ),
-                    ),
-  
-                  SliverPadding(
-                    padding: EdgeInsets.only(top: 20.0, bottom: 20.0),
-                    sliver: SliverList(
-                      delegate: SliverChildBuilderDelegate(
-                        (BuildContext context, int i) {
-                          return Container(
-                            margin: EdgeInsets.only(
-                              left: Dimensions.marginSizeDefault,
-                              right: Dimensions.marginSizeDefault
-                            ),
-                            child: ListTile(
-                              dense: true,
-                              title: Text(contactProvider.saveContacts[i]["identifier"]!,
-                                style: TextStyle(
-                                  fontSize: Dimensions.fontSizeDefault
+              
+                    SliverPadding(
+                      padding: EdgeInsets.only(top: 20.0, bottom: 20.0),
+                      sliver: SliverList(
+                        delegate: SliverChildListDelegate([
+                          cp.saveContactsResults.isNotEmpty 
+                          ? ListView.builder(
+                              physics: NeverScrollableScrollPhysics(),
+                              shrinkWrap: true,
+                              padding: EdgeInsets.zero,
+                              itemCount: cp.saveContactsResults.length,
+                              itemBuilder: (BuildContext context, int i) {
+                                return Container(
+                                  margin: EdgeInsets.only(
+                                    left: Dimensions.marginSizeDefault,
+                                    right: Dimensions.marginSizeDefault
+                                  ),
+                                  child: ListTile(
+                                    dense: true,
+                                    title: Text(cp.saveContactsResults[i].name!,
+                                      style: TextStyle(
+                                        fontSize: Dimensions.fontSizeDefault
+                                      ),
+                                    ),
+                                    onTap: () { },  
+                                    trailing: Checkbox(
+                                      value: cp.selectedContacsDelete.contains(cp.saveContactsResults[i]),
+                                      onChanged: (bool? n) {
+                                        cp.toggleContactRemove(contacts: cp.saveContactsResults[i]);
+                                      },
+                                    ),
+                                  ),  
+                                );
+                              }
+                            )
+                          : ListView.builder(
+                              physics: NeverScrollableScrollPhysics(),
+                              shrinkWrap: true,
+                              padding: EdgeInsets.zero,
+                              itemCount: cp.saveContacts.length,
+                              itemBuilder: (BuildContext context, int i) {
+                              return Container(
+                                margin: EdgeInsets.only(
+                                  left: Dimensions.marginSizeDefault,
+                                  right: Dimensions.marginSizeDefault
                                 ),
-                              ),
-                              onTap: () {
-                               
-                              },
-                            ),
-                          );
-                        },
-                        childCount: contactProvider.saveContacts.length
-                      )
-                    ),
-                  )
-
-                ],
+                                child: ListTile(
+                                  dense: true,
+                                  title: Text(cp.saveContacts[i].name!,
+                                    style: TextStyle(
+                                      fontSize: Dimensions.fontSizeDefault
+                                    ),
+                                  ),
+                                  onTap: () { },
+                                  trailing: Checkbox(
+                                    value: cp.selectedContacsDelete.contains(cp.saveContacts[i]),
+                                    onChanged: (bool? n) {
+                                      cp.toggleContactRemove(contacts: cp.saveContacts[i]);
+                                    },
+                                  ),
+                                ),
+                              );
+                            }
+                          )
+                        ]),
+                        // delegate: SliverChildBuilderDelegate(
+                        //   (BuildContext context, int i) {
+                        //     return Container(
+                        //       margin: EdgeInsets.only(
+                        //         left: Dimensions.marginSizeDefault,
+                        //         right: Dimensions.marginSizeDefault
+                        //       ),
+                        //       child: ListTile(
+                        //         dense: true,
+                        //         title: Text(contactProvider.saveContacts[i]["identifier"]!,
+                        //           style: TextStyle(
+                        //             fontSize: Dimensions.fontSizeDefault
+                        //           ),
+                        //         ),
+                        //         onTap: () {
+                                 
+                        //         },
+                        //       ),
+                        //     );
+                        //   },
+                        //   childCount: contactProvider.saveContacts.length
+                        // )
+                      ),
+                    )
+              
+                  ],
+                ),
               );
             },
           )

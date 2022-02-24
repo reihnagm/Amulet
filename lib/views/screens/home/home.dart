@@ -33,9 +33,11 @@ class HomeScreen extends StatefulWidget {
   _HomeScreenState createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
+class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver, SingleTickerProviderStateMixin {
   GlobalKey<ScaffoldState> globalKey = GlobalKey<ScaffoldState>();
   Completer<GoogleMapController> mapsController = Completer();
+
+  late AnimationController controller;
 
   late AuthProvider authProvider;
   late LocationProvider locationProvider;
@@ -170,175 +172,180 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   
 
   void openRecord() {
-    showAnimatedDialog(
-      context: context,
-      barrierDismissible: true,
-      builder: (BuildContext context) {
-        return Dialog(
-          child: StatefulBuilder(
-            builder: (BuildContext context, Function s) {
-              return Container(
-                padding: EdgeInsets.all(20.0),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    TextFormField(
-                      maxLines: 4,
-                      style: const TextStyle(
-                        fontSize: Dimensions.fontSizeDefault
-                      ),
-                      controller: categeoryC,
-                      cursorColor: ColorResources.black,
-                      onChanged: (val) {
-                        s(() {
-                          selectedTextCat = val;
-                        });
-                      },
-                      decoration: InputDecoration(
-                        hintText: "",
-                        floatingLabelBehavior: FloatingLabelBehavior.always,
-                        labelText: getTranslated("DESCRIPTION", context), 
-                        labelStyle: const TextStyle(
-                          color: ColorResources.black,
-                          fontSize: Dimensions.fontSizeDefault
-                        ),
-                        border: const OutlineInputBorder(
-                          borderSide: BorderSide(
-                            color: ColorResources.black
-                          )
-                        ),
-                        focusedBorder: const OutlineInputBorder(
-                          borderSide: BorderSide(
-                            color: ColorResources.black
-                          )
-                        )
-                      )
-                    ),
-
-                    Container(
-                      margin: EdgeInsets.only(top: 12.0),
-                      height: 48.0,
-                      child: Padding(
-                        padding: const EdgeInsets.all(5.0),
-                        child: ListView.builder(
-                          itemCount: categories.length,
-                          scrollDirection: Axis.horizontal,
-                          shrinkWrap: true,
-                          itemBuilder: (BuildContext context, int i) {
-                            return Container(
-                              width: 100.0,
-                              alignment: Alignment.center,
-                              padding: EdgeInsets.all(5.0),
-                              margin: EdgeInsets.only(right: 8.0),
-                              decoration: BoxDecoration(
-                                color: selectedCatIdx == i 
-                                ? ColorResources.purpleDark 
-                                : ColorResources.purpleLight,
-                                borderRadius: BorderRadius.circular(30.0)
-                              ),
-                              child: InkWell(
-                                onTap: () {
-                                  s(() {
-                                    selectedCatIdx = i;
-                                  });
-                                },
-                                child: Text(categories[i]["name"],
-                                  style: TextStyle(
-                                    fontSize: Dimensions.fontSizeSmall,
-                                    fontWeight: FontWeight.w500,
-                                    color: ColorResources.white
-                                  ),
-                                ),
-                              )
-                            );
-                          },
-                        ),
-                      ),
-                    ),
-
-                  if(selectedCatIdx != -1)
-                    Container(
-                      margin: EdgeInsets.only(top: 12.0),
-                      height: 48.0,
-                      child: Padding(
-                        padding: const EdgeInsets.all(5.0),
-                        child: ListView.builder(
-                          itemCount: categories[selectedCatIdx]["suggestions"][0]["contents"].length,
-                          scrollDirection: Axis.horizontal,
-                          shrinkWrap: true,
-                          itemBuilder: (BuildContext context, int i) {
-                            return Container(
-                              width: 200.0,
-                              alignment: Alignment.center,
-                              padding: EdgeInsets.all(5.0),
-                              margin: EdgeInsets.only(right: 8.0),
-                              decoration: BoxDecoration(
-                                color: selectedChildCatIdx == i 
-                                ? ColorResources.green 
-                                : ColorResources.white,
-                                border: Border.all(
-                                  color: selectedChildCatIdx == i 
-                                  ? ColorResources.transparent 
-                                  : ColorResources.green
-                                ),
-                                borderRadius: BorderRadius.circular(30.0)
-                              ),
-                              child: InkWell(
-                                onTap: () {
-                                  s(() {
-                                    selectedChildCatIdx = i;
-                                     categeoryC.text = categories[selectedCatIdx]["suggestions"][0]["contents"][i]["name"];
-                                    selectedTextCat = categories[selectedCatIdx]["suggestions"][0]["contents"][i]["name"];
-                                  });
-                                },
-                                child: Text(categories[selectedCatIdx]["suggestions"][0]["contents"][i]["name"],
-                                  style: TextStyle(
-                                    fontSize: Dimensions.fontSizeSmall,
-                                    fontWeight: FontWeight.w500,
-                                    color: selectedChildCatIdx == i 
-                                    ? ColorResources.white
-                                    : ColorResources.green
-                                  ),
-                                ),
-                              )
-                            );
-                          },
-                        ),
-                      ),
-                    ),
-
-                    Container(
-                      margin: EdgeInsets.only(top: 15.0),
-                      child: CustomButton(
-                        onTap: () async {
-                          SharedPreferences prefs = await SharedPreferences.getInstance();
-                          prefs.setString("selectedTextCat", selectedTextCat);
-                          navigationService.pushNav(context,
-                            RecordScreen(
-                              key: UniqueKey()
-                            )
-                          );
-                        }, 
-                        btnColor: ColorResources.redPrimary,
-                        isBorder: false,
-                        isBoxShadow: false,
-                        height: 40.0,
-                        isBorderRadius: false,
-                        isLoading: isRecordPressed 
-                        ? true 
-                        : false ,
-                        btnTxt: "Record"
-                      ),
-                    )
-
-                  ],
-                ),
-              );
-            },
-          )
-        );
-      }
+    navigationService.pushNav(context,
+      RecordScreen(
+        key: UniqueKey()
+      )
     );
+    // showAnimatedDialog(
+    //   context: context,
+    //   barrierDismissible: true,
+    //   builder: (BuildContext context) {
+    //     return Dialog(
+    //       child: StatefulBuilder(
+    //         builder: (BuildContext context, Function s) {
+    //           return Container(
+    //             padding: EdgeInsets.all(20.0),
+    //             child: Column(
+    //               mainAxisSize: MainAxisSize.min,
+    //               children: [
+    //                 TextFormField(
+    //                   maxLines: 4,
+    //                   style: const TextStyle(
+    //                     fontSize: Dimensions.fontSizeDefault
+    //                   ),
+    //                   controller: categeoryC,
+    //                   cursorColor: ColorResources.black,
+    //                   onChanged: (val) {
+    //                     s(() {
+    //                       selectedTextCat = val;
+    //                     });
+    //                   },
+    //                   decoration: InputDecoration(
+    //                     hintText: "",
+    //                     floatingLabelBehavior: FloatingLabelBehavior.always,
+    //                     labelText: getTranslated("DESCRIPTION", context), 
+    //                     labelStyle: const TextStyle(
+    //                       color: ColorResources.black,
+    //                       fontSize: Dimensions.fontSizeDefault
+    //                     ),
+    //                     border: const OutlineInputBorder(
+    //                       borderSide: BorderSide(
+    //                         color: ColorResources.black
+    //                       )
+    //                     ),
+    //                     focusedBorder: const OutlineInputBorder(
+    //                       borderSide: BorderSide(
+    //                         color: ColorResources.black
+    //                       )
+    //                     )
+    //                   )
+    //                 ),
+
+    //                 Container(
+    //                   margin: EdgeInsets.only(top: 12.0),
+    //                   height: 48.0,
+    //                   child: Padding(
+    //                     padding: const EdgeInsets.all(5.0),
+    //                     child: ListView.builder(
+    //                       itemCount: categories.length,
+    //                       scrollDirection: Axis.horizontal,
+    //                       shrinkWrap: true,
+    //                       itemBuilder: (BuildContext context, int i) {
+    //                         return Container(
+    //                           width: 100.0,
+    //                           alignment: Alignment.center,
+    //                           padding: EdgeInsets.all(5.0),
+    //                           margin: EdgeInsets.only(right: 8.0),
+    //                           decoration: BoxDecoration(
+    //                             color: selectedCatIdx == i 
+    //                             ? ColorResources.purpleDark 
+    //                             : ColorResources.purpleLight,
+    //                             borderRadius: BorderRadius.circular(30.0)
+    //                           ),
+    //                           child: InkWell(
+    //                             onTap: () {
+    //                               s(() {
+    //                                 selectedCatIdx = i;
+    //                               });
+    //                             },
+    //                             child: Text(categories[i]["name"],
+    //                               style: TextStyle(
+    //                                 fontSize: Dimensions.fontSizeSmall,
+    //                                 fontWeight: FontWeight.w500,
+    //                                 color: ColorResources.white
+    //                               ),
+    //                             ),
+    //                           )
+    //                         );
+    //                       },
+    //                     ),
+    //                   ),
+    //                 ),
+
+    //               if(selectedCatIdx != -1)
+    //                 Container(
+    //                   margin: EdgeInsets.only(top: 12.0),
+    //                   height: 48.0,
+    //                   child: Padding(
+    //                     padding: const EdgeInsets.all(5.0),
+    //                     child: ListView.builder(
+    //                       itemCount: categories[selectedCatIdx]["suggestions"][0]["contents"].length,
+    //                       scrollDirection: Axis.horizontal,
+    //                       shrinkWrap: true,
+    //                       itemBuilder: (BuildContext context, int i) {
+    //                         return Container(
+    //                           width: 200.0,
+    //                           alignment: Alignment.center,
+    //                           padding: EdgeInsets.all(5.0),
+    //                           margin: EdgeInsets.only(right: 8.0),
+    //                           decoration: BoxDecoration(
+    //                             color: selectedChildCatIdx == i 
+    //                             ? ColorResources.green 
+    //                             : ColorResources.white,
+    //                             border: Border.all(
+    //                               color: selectedChildCatIdx == i 
+    //                               ? ColorResources.transparent 
+    //                               : ColorResources.green
+    //                             ),
+    //                             borderRadius: BorderRadius.circular(30.0)
+    //                           ),
+    //                           child: InkWell(
+    //                             onTap: () {
+    //                               s(() {
+    //                                 selectedChildCatIdx = i;
+    //                                  categeoryC.text = categories[selectedCatIdx]["suggestions"][0]["contents"][i]["name"];
+    //                                 selectedTextCat = categories[selectedCatIdx]["suggestions"][0]["contents"][i]["name"];
+    //                               });
+    //                             },
+    //                             child: Text(categories[selectedCatIdx]["suggestions"][0]["contents"][i]["name"],
+    //                               style: TextStyle(
+    //                                 fontSize: Dimensions.fontSizeSmall,
+    //                                 fontWeight: FontWeight.w500,
+    //                                 color: selectedChildCatIdx == i 
+    //                                 ? ColorResources.white
+    //                                 : ColorResources.green
+    //                               ),
+    //                             ),
+    //                           )
+    //                         );
+    //                       },
+    //                     ),
+    //                   ),
+    //                 ),
+
+    //                 Container(
+    //                   margin: EdgeInsets.only(top: 15.0),
+    //                   child: CustomButton(
+    //                     onTap: () async {
+    //                       SharedPreferences prefs = await SharedPreferences.getInstance();
+    //                       prefs.setString("selectedTextCat", selectedTextCat);
+    //                       navigationService.pushNav(context,
+    //                         RecordScreen(
+    //                           key: UniqueKey()
+    //                         )
+    //                       );
+    //                     }, 
+    //                     btnColor: ColorResources.redPrimary,
+    //                     isBorder: false,
+    //                     isBoxShadow: false,
+    //                     height: 40.0,
+    //                     isBorderRadius: false,
+    //                     isLoading: isRecordPressed 
+    //                     ? true 
+    //                     : false ,
+    //                     btnTxt: "Record"
+    //                   ),
+    //                 )
+
+    //               ],
+    //             ),
+    //           );
+    //         },
+    //       )
+    //     );
+    //   }
+    // );
   }
 
   @override 
@@ -386,6 +393,23 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
+    controller = AnimationController(vsync: this, duration: Duration(seconds: 1));
+    controller.addListener(() {
+      setState(() {});
+    });
+    controller.addStatusListener((status) {
+      if(status == AnimationStatus.completed) {
+        Future.delayed(Duration(seconds: 1), () {
+          navigationService.pushNav(context,
+            RecordScreen(
+              key: UniqueKey()
+            )
+          );
+          controller.reverse();
+          // openRecord();
+        });
+      }
+    }); 
     categeoryC = TextEditingController(text: selectedTextCat);
     (() async {   
       bool contactsIsDenied = await Permission.contacts.isDenied;
@@ -685,18 +709,74 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                                     
                     Align(
                       alignment: Alignment.bottomCenter,
-                      child: Container(
+                      child: 
+                      
+                      Container(
                         margin: const EdgeInsets.only(
                           bottom: 100.0,
                         ),
-                        child: ConfirmationSlider(
-                          foregroundShape: BorderRadius.circular(10.0),
-                          backgroundShape:BorderRadius.circular(10.0) ,
-                          foregroundColor: ColorResources.redPrimary,
-                          text: "Slide to Send Alert",
-                          height: 60.0,
-                          onConfirmation: () => openRecord()
-                        ),
+                        child: GestureDetector(
+                          // onTapDown: (_) {
+                          //   if(controller.status == AnimationStatus.completed) {
+                          //     controller.reverse();
+                          //   } else {
+                          //     controller.forward();
+                          //   }
+                          // },
+                          onLongPress: () {
+                            controller.forward();
+                          },
+                          // onTapUp: (_) {
+                          //   if (controller.status == AnimationStatus.forward) {
+                          //     controller.reverse();
+                          //   }
+                          // },
+                          child: Stack(
+                            clipBehavior: Clip.none,
+                            alignment: Alignment.center,
+                            children: [
+
+                              Positioned(
+                                top: 0.0,
+                                left: 18.0,
+                                right: 18.0,
+                                bottom: 0.0,
+                                child: CircularProgressIndicator(
+                                  value: controller.value,
+                                  valueColor: AlwaysStoppedAnimation<Color>(ColorResources.redPrimary.withOpacity(0.8)),
+                                ),
+                              ),
+                              Container(
+                                margin: EdgeInsets.all(12.0),
+                                child: ElevatedButton(
+                                  onPressed: () {},
+                                  child: Text("Hold to \nsend alert",
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                      fontSize: Dimensions.fontSizeDefault,
+                                      color: ColorResources.white
+                                    ),
+                                  ),
+                                  style: ElevatedButton.styleFrom(
+                                    shape: CircleBorder(),
+                                    padding: EdgeInsets.all(40),
+                                    primary: ColorResources.redPrimary,
+                                  ),
+                                ),
+                              ),
+                           
+                             
+                            ],
+                          ),
+                        )
+                      //   child: ConfirmationSlider(
+                      //     foregroundShape: BorderRadius.circular(10.0),
+                      //     backgroundShape:BorderRadius.circular(10.0) ,
+                      //     foregroundColor: ColorResources.redPrimary,
+                      //     text: "Slide to Send Alert",
+                      //     height: 60.0,
+                      //     onConfirmation: () => openRecord()
+                      //   ),
                       ),
                     ),
 
