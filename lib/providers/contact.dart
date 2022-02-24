@@ -162,6 +162,37 @@ class ContactProvider with ChangeNotifier {
     }
   }
 
+  Future<void> removeContactPerId(BuildContext context, {required String contactId}) async {
+    try {
+      Dio dio = Dio();
+      await dio.delete("${AppConstants.baseUrl}/contacts/${contactId}/delete"); 
+      Future.delayed(Duration.zero, () async {
+        await saveContact(context);
+      });
+      _selectedContactsDelete = [];
+      notifyListeners();
+    } on DioError catch(e) {
+      if(
+        e.response!.statusCode == 400
+        || e.response!.statusCode == 401
+        || e.response!.statusCode == 402 
+        || e.response!.statusCode == 403
+        || e.response!.statusCode == 404 
+        || e.response!.statusCode == 405 
+        || e.response!.statusCode == 500 
+        || e.response!.statusCode == 501
+        || e.response!.statusCode == 502
+        || e.response!.statusCode == 503
+        || e.response!.statusCode == 504
+        || e.response!.statusCode == 505
+      ) {
+        ShowSnackbar.snackbar(context, "(${e.response!.statusCode.toString()}) : Internal Server Error", "", ColorResources.error);
+      }
+    } catch(e) {
+      debugPrint(e.toString());
+    } 
+  }
+
   void runFilter({required String enteredKeyword}) {
     if (enteredKeyword.isEmpty) {
       _results = [];
@@ -187,7 +218,9 @@ class ContactProvider with ChangeNotifier {
     if(_selectedContacts.contains(contacts)) {
       _selectedContacts.remove(contacts);
     } else {
-      _selectedContacts.add(contacts);
+      if(_selectedContacts.length < 5) {
+        _selectedContacts.add(contacts);
+      }
     }
     notifyListeners();
   }

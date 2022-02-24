@@ -224,12 +224,16 @@ class _ContactsScreenState extends State<ContactsScreen> {
                                       ),
                                     ),
                                     onTap: () { },  
-                                    trailing: Checkbox(
-                                      value: cp.selectedContacsDelete.contains(cp.saveContactsResults[i]),
-                                      onChanged: (bool? n) {
-                                        cp.toggleContactRemove(contacts: cp.saveContactsResults[i]);
+                                    trailing: IconButton(
+                                      onPressed: () {
+                                        cp.removeContactPerId(context, contactId: cp.saveContacts[i].uid!);
                                       },
-                                    ),
+                                      icon: Icon(
+                                        Icons.delete,
+                                        size: 20.0,  
+                                      ),
+                                      color: ColorResources.redPrimary,
+                                    )
                                   ),  
                                 );
                               }
@@ -258,12 +262,23 @@ class _ContactsScreenState extends State<ContactsScreen> {
                                     ),
                                   ),
                                   onTap: () { },
-                                  trailing: Checkbox(
-                                    value: cp.selectedContacsDelete.contains(cp.saveContacts[i]),
-                                    onChanged: (bool? n) {
-                                      cp.toggleContactRemove(contacts: cp.saveContacts[i]);
+                                  trailing: IconButton(
+                                    onPressed: () {
+                                      cp.removeContactPerId(context, contactId: cp.saveContacts[i].uid!);
                                     },
-                                  ),
+                                    icon: Icon(
+                                      Icons.delete,
+                                      size: 20.0,  
+                                    ),
+                                    color: ColorResources.redPrimary,
+                                  )
+                                  
+                                  // Checkbox(
+                                  //   value: cp.selectedContacsDelete.contains(cp.saveContacts[i]),
+                                  //   onChanged: (bool? n) {
+                                  //     cp.toggleContactRemove(contacts: cp.saveContacts[i]);
+                                  //   },
+                                  // ),
                                 ),
                               );
                             }

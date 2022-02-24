@@ -1,3 +1,4 @@
+import 'package:amulet/localization/language_constraints.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -18,9 +19,9 @@ class SignOutConfirmationDialog extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min, 
         children: [
-          const Padding(
+          Padding(
             padding: EdgeInsets.symmetric(horizontal: Dimensions.paddingSizeLarge, vertical: 50),
-            child: Text("Apakah kamu yakin ingin keluar ?", 
+            child: Text(getTranslated("ARE_YOU_SURE_LOGOUT", context), 
               style: TextStyle(
                 fontSize: Dimensions.fontSizeDefault,
                 fontWeight: FontWeight.w500
@@ -49,7 +50,7 @@ class SignOutConfirmationDialog extends StatelessWidget {
                     bottomLeft: Radius.circular(10.0)
                   )
                 ),
-                child: const Text("Ya", style: TextStyle(
+                child: const Text("OK", style: TextStyle(
                   color: ColorResources.white,
                   fontSize: Dimensions.fontSizeSmall
                 )),
@@ -68,7 +69,7 @@ class SignOutConfirmationDialog extends StatelessWidget {
                     bottomRight: Radius.circular(10.0)
                   )
                 ),
-                child: const Text("Tidak", style: TextStyle(
+                child: Text(getTranslated("NO", context), style: TextStyle(
                     color: ColorResources.black,
                     fontSize: Dimensions.fontSizeSmall,
                   )

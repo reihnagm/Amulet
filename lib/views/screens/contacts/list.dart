@@ -71,19 +71,19 @@ class _ContactsListScreenState extends State<ContactsListScreen> {
                   SliverAppBar(
                     centerTitle: true,
                     pinned: true,
-                    backgroundColor: ColorResources.backgroundColor,
+                    backgroundColor: ColorResources.redPrimary,
                     elevation: 0.0,
                     title:  cp.selectedContacts.isNotEmpty 
                     ? Text((("${getTranslated("CONTACT_EMERGENCY", context)} (${cp.selectedContacts.length})").toString()),
                         style: TextStyle(
                           fontSize: Dimensions.fontSizeDefault,
-                          color: ColorResources.black
+                          color: ColorResources.white
                         )
                       )
                     : Text(getTranslated("CONTACT_EMERGENCY", context),
                       style: TextStyle(
                         fontSize: Dimensions.fontSizeDefault,
-                        color: ColorResources.black
+                        color: ColorResources.white
                       ),
                     ),
                     actions: [
@@ -101,19 +101,16 @@ class _ContactsListScreenState extends State<ContactsListScreen> {
                                 right: Dimensions.marginSizeDefault,
                                 bottom: Dimensions.marginSizeSmall
                               ),
-                              child: Text("Submit",
-                              style: TextStyle(
-                                fontSize: Dimensions.fontSizeDefault,
-                                fontWeight: FontWeight.w500,
-                                color: ColorResources.black
-                              ),
-                            ),
+                              child: Icon(Icons.save,
+                                color: ColorResources.white,
+                                size: 20.0,
+                              )
                           ),
                         ))
                       : const SizedBox()
                     ],
                     leading: CupertinoNavigationBarBackButton(
-                      color: ColorResources.black,
+                      color: ColorResources.white,
                       onPressed: () {
                         Navigator.of(context).pop();
                       },
@@ -124,6 +121,16 @@ class _ContactsListScreenState extends State<ContactsListScreen> {
                     padding: EdgeInsets.only(top: 20.0, bottom: 20.0),
                     sliver: SliverList(
                       delegate: SliverChildListDelegate([
+                        Container(
+                          margin: const EdgeInsets.only(left: Dimensions.marginSizeDefault),
+                          alignment: Alignment.center,
+                          child: Text(getTranslated("SELECT_UP_TO_FIVE_CONTACTS", context),
+                            style: const TextStyle(
+                              fontWeight: FontWeight.w500,
+                              fontSize: Dimensions.fontSizeDefault
+                            ),
+                          ),
+                        ),
                         ListView.separated(
                           physics: const NeverScrollableScrollPhysics(),
                           shrinkWrap: true,
@@ -142,10 +149,28 @@ class _ContactsListScreenState extends State<ContactsListScreen> {
                                 mainAxisSize: MainAxisSize.max,
                                 children: [ 
                                   
-                                  Text(cp.contacts[i].displayName!,
-                                    style: TextStyle(
-                                      fontSize: Dimensions.fontSizeDefault
-                                    ),
+                                  Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      if((cp.contacts[i].displayName == cp.contacts[i].phones![0].value))
+                                        Container(),
+
+                                      Text(cp.contacts[i].displayName!,
+                                        style: TextStyle(
+                                          fontSize: Dimensions.fontSizeDefault
+                                        ),
+                                      ),
+
+                                      const SizedBox(height: 8.0),
+
+                                      Text(cp.contacts[i].phones![0].value!,
+                                        style: TextStyle(
+                                          color: ColorResources.grey,
+                                          fontSize: Dimensions.fontSizeSmall
+                                        ),
+                                      ),
+                                    ],
                                   ),
 
                                   Checkbox(
