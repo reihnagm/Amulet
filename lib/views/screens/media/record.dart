@@ -120,7 +120,7 @@ class _RecordScreenState extends State<RecordScreen> with WidgetsBindingObserver
   }
 
   Future<XFile?> onStopButtonPressed(BuildContext ctx) async {
-    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    // SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     try {
       XFile? xfile = await stopVideoRecording();
       if (xfile != null) {

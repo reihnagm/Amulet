@@ -377,14 +377,14 @@ class VideoProvider with ChangeNotifier {
       //   tokens: tokens
       // );
 
-      // await context.read<InboxProvider>().insertInbox(context, 
-      //   title: "Info",
-      //   content: "Rekaman Anda berhasil terkirim kepada Public Service dan Emergency Contact",
-      //   userId: authProvider.getUserId(),
-      // );
+      await context.read<InboxProvider>().insertInbox(context, 
+        title: "Info",
+        content: "Rekaman Anda berhasil terkirim kepada Public Service dan Emergency Contact",
+        userId: authProvider.getUserId(),
+      );
       
       Navigator.of(context).pop();
-      Navigator.of(context, rootNavigator: false).pop();
+      // Navigator.of(context, rootNavigator: false).pop();
 
       showAnimatedDialog(
         context,

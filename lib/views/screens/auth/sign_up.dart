@@ -376,8 +376,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                       setState(() => passwordObscure = !passwordObscure);
                                     },
                                     child: passwordObscure 
-                                    ? const Icon(Icons.visibility) 
-                                    : const Icon(Icons.visibility_off),
+                                    ? Icon(Icons.visibility_off) 
+                                    : Icon(Icons.visibility),
                                   ),
                                   hintText: "",
                                   floatingLabelBehavior: FloatingLabelBehavior.always,
@@ -421,8 +421,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                     },
                                     child: Icon(
                                       passwordConfirmObscure 
-                                      ? Icons.visibility 
-                                      : Icons.visibility_off
+                                      ? Icons.visibility_off
+                                      : Icons.visibility 
                                     ),
                                   ),
                                   hintText: "",

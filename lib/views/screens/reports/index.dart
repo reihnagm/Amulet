@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
+
 import 'package:amulet/localization/language_constraints.dart';
 import 'package:amulet/services/navigation.dart';
 import 'package:amulet/views/screens/media/preview_file.dart';
-import 'package:provider/provider.dart';
-
 import 'package:amulet/providers/network.dart';
 import 'package:amulet/providers/videos.dart';
 import 'package:amulet/utils/color_resources.dart';
@@ -115,6 +115,15 @@ class _ReportsScreenState extends State<ReportsScreen> {
                           if(networkProvider.connectionStatus == ConnectionStatus.onInternet)
                             if(videoProvider.listenVStatus == ListenVStatus.loading) 
                               const SliverFillRemaining(
+                                child: Center(
+                                  child: SpinKitThreeBounce(
+                                    size: 20.0,
+                                    color: Colors.black87,
+                                  ),
+                                ),
+                              ),
+                            if(videoProvider.listenVStatus == ListenVStatus.loading) 
+                               const SliverFillRemaining(
                                 child: Center(
                                   child: SpinKitThreeBounce(
                                     size: 20.0,

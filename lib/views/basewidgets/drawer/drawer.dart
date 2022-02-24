@@ -138,7 +138,7 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                     ),
                     Container(
                       padding: const EdgeInsets.all(Dimensions.paddingSizeSmall),
-                      child: const Text("History",
+                      child: Text(getTranslated("HISTORY", context),
                         style: TextStyle(
                           fontWeight: FontWeight.w500,
                           fontSize: Dimensions.fontSizeDefault,

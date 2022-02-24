@@ -418,24 +418,28 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver, Si
       bool cameraIsDenied = await Permission.camera.isDenied;
       if(cameraIsDenied) {
         ShowSnackbar.snackbar(context, "Please granted permission Camera", "", ColorResources.error);
+        await Permission.camera.request();
         await openAppSettings();
       } else {
         await Permission.camera.request();
       }
       if(microphoneIsDenied) {
         ShowSnackbar.snackbar(context, "Please granted permission Microphone", "", ColorResources.error);
+        await Permission.microphone.request();
         await openAppSettings();
       } else {
         await Permission.microphone.request();
       }
       if(storageIsDenied) {
         ShowSnackbar.snackbar(context, "Please granted permission Storage", "", ColorResources.error);
+        await Permission.storage.request();
         await openAppSettings();
       } else {
         await Permission.storage.request();
       }
       if(contactsIsDenied) {
         ShowSnackbar.snackbar(context, "Please granted permission Contacts", "", ColorResources.error);
+        await Permission.contacts.request();
         await openAppSettings();
       } else {
         await Permission.contacts.request();
@@ -748,8 +752,8 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver, Si
                             children: [
                               Positioned(
                                 top: 0.0,
-                                left: 18.0,
-                                right: 18.0,
+                                left: 22.0,
+                                right: 22.0,
                                 bottom: 0.0,
                                 child: CircularProgressIndicator(
                                   value: controller.value,
@@ -760,7 +764,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver, Si
                                 margin: EdgeInsets.all(12.0),
                                 child: ElevatedButton(
                                   onPressed: () {},
-                                  child: Text("Hold to \nsend alert",
+                                  child: Text(getTranslated("HOLD_TO_SEND_ALERT", context),
                                     textAlign: TextAlign.center,
                                     style: TextStyle(
                                       fontSize: Dimensions.fontSizeDefault,
@@ -774,8 +778,6 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver, Si
                                   ),
                                 ),
                               ),
-                           
-                             
                             ],
                           ),
                         )

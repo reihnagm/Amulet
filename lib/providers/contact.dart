@@ -73,7 +73,7 @@ class ContactProvider with ChangeNotifier {
       _saveContacts = [];
       // List sc = await DBHelper.fetchSaveContacts(context);
       Dio dio = Dio ();
-      Response res = await dio.get("${AppConstants.baseUrl}/contacts");
+      Response res = await dio.get("${AppConstants.baseUrl}/contacts/${authRepo.getUserId()}");
       Map<String, dynamic> data = res.data;
       ContactModel cm = ContactModel.fromJson(data);
       List<ContactData> cd = cm.data!;

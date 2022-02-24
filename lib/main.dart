@@ -9,7 +9,7 @@ import 'package:amulet/utils/constant.dart';
 import 'package:amulet/views/screens/reports/index.dart';
 import 'package:amulet/localization/app_localization.dart';
 import 'package:amulet/providers/localization.dart';
-import 'package:amulet/views/screens/splash/splash.dart';
+import 'package:amulet/views/screens/home/home.dart';
 import 'package:amulet/utils/global.dart';
 import 'package:amulet/providers/firebase.dart';
 import 'package:amulet/services/notification.dart';
@@ -90,7 +90,7 @@ class _MyAppState extends State<MyApp> {
       ],
       supportedLocales: locals,
       navigatorKey: GlobalVariable.navState,
-      home: SplashScreen(key: UniqueKey()),
+      home: HomeScreen(key: UniqueKey()),
     );
   }
 }
