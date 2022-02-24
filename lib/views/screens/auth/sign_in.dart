@@ -16,7 +16,11 @@ import 'package:amulet/views/screens/auth/forget_password.dart';
 import 'package:amulet/views/screens/auth/sign_up.dart';
 
 class SignInScreen extends StatefulWidget {
-  const SignInScreen({ Key? key }) : super(key: key);
+  final bool isBack;
+  const SignInScreen({ 
+    this.isBack = false,
+    Key? key 
+  }) : super(key: key);
 
   @override
   _SignInScreenState createState() => _SignInScreenState();

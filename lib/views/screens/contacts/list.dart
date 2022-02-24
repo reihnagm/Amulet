@@ -124,39 +124,39 @@ class _ContactsListScreenState extends State<ContactsListScreen> {
                     padding: EdgeInsets.only(top: 20.0, bottom: 20.0),
                     sliver: SliverList(
                       delegate: SliverChildListDelegate([
-                          ListView.separated(
-                            physics: const NeverScrollableScrollPhysics(),
-                            shrinkWrap: true,
-                            itemCount: cp.contacts.length,
-                            separatorBuilder: (BuildContext context, int i) {
-                              return Divider();
-                            },
-                            itemBuilder: (BuildContext context, int i) {
-                              return Container(
-                                margin: EdgeInsets.only(
-                                  left: Dimensions.marginSizeDefault,
-                                  right: Dimensions.marginSizeDefault
-                                ),
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  mainAxisSize: MainAxisSize.max,
-                                  children: [ 
-                                    
-                                    Text(cp.contacts[i].displayName!,
-                                      style: TextStyle(
-                                        fontSize: Dimensions.fontSizeDefault
-                                      ),
+                        ListView.separated(
+                          physics: const NeverScrollableScrollPhysics(),
+                          shrinkWrap: true,
+                          itemCount: cp.contacts.length,
+                          separatorBuilder: (BuildContext context, int i) {
+                            return Divider();
+                          },
+                          itemBuilder: (BuildContext context, int i) {
+                            return Container(
+                              margin: EdgeInsets.only(
+                                left: Dimensions.marginSizeDefault,
+                                right: Dimensions.marginSizeDefault
+                              ),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                mainAxisSize: MainAxisSize.max,
+                                children: [ 
+                                  
+                                  Text(cp.contacts[i].displayName!,
+                                    style: TextStyle(
+                                      fontSize: Dimensions.fontSizeDefault
                                     ),
+                                  ),
 
-                                    Checkbox(
-                                      value: cp.selectedContacts.contains(cp.contacts[i]),
-                                      onChanged: (bool? newValue) {
-                                        cp.toggleContact(contacts: cp.contacts[i]);
-                                      },
-                                    ),
-                                
-                                  ],
-                                )
+                                  Checkbox(
+                                    value: cp.selectedContacts.contains(cp.contacts[i]),
+                                    onChanged: (bool? newValue) {
+                                      cp.toggleContact(contacts: cp.contacts[i]);
+                                    },
+                                  ),
+                              
+                                ],
+                              )
                                 
                                 // ListTile(
                                 //   dense: true,

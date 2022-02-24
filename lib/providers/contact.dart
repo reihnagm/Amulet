@@ -36,7 +36,7 @@ class ContactProvider with ChangeNotifier {
   List<ContactData> get results => [..._results];
 
   List<Contact> _contacts = [];
-  List<Contact> get contacts => [..._contacts].where((element) => element.displayName != null).toList();
+  List<Contact> get contacts => [..._contacts].where((el) => el.displayName != null && el.phones!.isNotEmpty).toList();
   
   List<ContactData> _saveContacts = [];
   List<ContactData> get saveContacts => [..._saveContacts];
@@ -130,7 +130,6 @@ class ContactProvider with ChangeNotifier {
   }
 
   Future<void> removeContact(BuildContext context) async {
-
     try {
       Dio dio = Dio();
       for (ContactData contacsDelete in selectedContacsDelete) {
@@ -139,6 +138,8 @@ class ContactProvider with ChangeNotifier {
       Future.delayed(Duration.zero, () async {
         await saveContact(context);
       });
+      _selectedContactsDelete = [];
+      notifyListeners();
     } on DioError catch(e) {
       if(
         e.response!.statusCode == 400

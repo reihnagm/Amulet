@@ -47,6 +47,26 @@ class _ContactsScreenState extends State<ContactsScreen> {
           key: globalKey,
           resizeToAvoidBottomInset: false,
           backgroundColor: ColorResources.backgroundColor,
+          floatingActionButton: Consumer<ContactProvider>(
+            builder: (BuildContext context, ContactProvider cp, Widget? child) {
+              return FloatingActionButton(
+                onPressed: () {
+                  if(cp.selectedContacsDelete.isNotEmpty) {
+                    cp.removeContact(context);
+                  } else {
+                    navigationService.pushNav(context, ContactsListScreen(key: UniqueKey()));
+                  }
+                },
+                backgroundColor: ColorResources.redPrimary,
+                child: Icon(
+                  cp.selectedContacsDelete.isNotEmpty  
+                  ? Icons.remove_circle
+                  : Icons.person_add,
+                  size: 20.0,
+                ),
+              );
+            },
+          ),
           body: Consumer<ContactProvider>(
             builder: (BuildContext context, ContactProvider cp, Widget? child) {
               return RefreshIndicator(
@@ -86,37 +106,37 @@ class _ContactsScreenState extends State<ContactsScreen> {
                         },
                       ),
                       actions: [
-                        Container(
-                          margin: EdgeInsets.only(
-                            top: 8.0,
-                            left: Dimensions.marginSizeSmall,
-                            right: Dimensions.marginSizeSmall,
-                          ),
-                          child: InkWell(
-                            onTap: () async {
-                              if(cp.selectedContacsDelete.isNotEmpty) {
-                                await cp.removeContact(context);
-                              } else {
-                                navigationService.pushNav(context, ContactsListScreen(key: UniqueKey()));
-                              }
-                            },
-                            child: Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: cp.selectedContacsDelete.isNotEmpty 
-                              ? Text("Hapus",
-                                  style: TextStyle(
-                                    fontSize: Dimensions.fontSizeDefault,
-                                    color: ColorResources.black
-                                  ),
-                                ) 
-                              : Icon(
-                                  Icons.person_add,
-                                  size: 20.0,
-                                  color: ColorResources.black,
-                                ),
-                            ),
-                          ),
-                        )
+                        // Container(
+                        //   margin: EdgeInsets.only(
+                        //     top: 8.0,
+                        //     left: Dimensions.marginSizeSmall,
+                        //     right: Dimensions.marginSizeSmall,
+                        //   ),
+                        //   child: InkWell(
+                        //     onTap: () async {
+                        //       if(cp.selectedContacsDelete.isNotEmpty) {
+                        //         await cp.removeContact(context);
+                        //       } else {
+                        //         navigationService.pushNav(context, ContactsListScreen(key: UniqueKey()));
+                        //       }
+                        //     },
+                        //     child: Padding(
+                        //       padding: const EdgeInsets.all(8.0),
+                        //       child: cp.selectedContacsDelete.isNotEmpty 
+                        //       ? Text("Hapus",
+                        //           style: TextStyle(
+                        //             fontSize: Dimensions.fontSizeDefault,
+                        //             color: ColorResources.black
+                        //           ),
+                        //         ) 
+                        //       : Icon(
+                        //           Icons.person_add,
+                        //           size: 20.0,
+                        //           color: ColorResources.black,
+                        //         ),
+                        //     ),
+                        //   ),
+                        // )
                       ],
                       bottom: PreferredSize(
                         child:  Container(
@@ -198,6 +218,11 @@ class _ContactsScreenState extends State<ContactsScreen> {
                                         fontSize: Dimensions.fontSizeDefault
                                       ),
                                     ),
+                                    subtitle: Text(cp.saveContactsResults[i].identifier!,
+                                      style: TextStyle(
+                                        fontSize: Dimensions.fontSizeSmall
+                                      ),
+                                    ),
                                     onTap: () { },  
                                     trailing: Checkbox(
                                       value: cp.selectedContacsDelete.contains(cp.saveContactsResults[i]),
@@ -225,6 +250,11 @@ class _ContactsScreenState extends State<ContactsScreen> {
                                   title: Text(cp.saveContacts[i].name!,
                                     style: TextStyle(
                                       fontSize: Dimensions.fontSizeDefault
+                                    ),
+                                  ),
+                                  subtitle: Text(cp.saveContacts[i].identifier!,
+                                    style: TextStyle(
+                                      fontSize: Dimensions.fontSizeSmall
                                     ),
                                   ),
                                   onTap: () { },

@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:package_info_plus/package_info_plus.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 
 import 'package:amulet/providers/location.dart';
@@ -38,12 +37,12 @@ class _SplashScreenState extends State<SplashScreen> {
 
     Timer(const Duration(seconds: 3), () {
       Provider.of<SplashProvider>(context, listen: false).initConfig().then((_) {
-        if (context.read<AuthProvider>().isLoggedIn()) {
-          Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (BuildContext context) => HomeScreen(key: UniqueKey())));
-        } else {
-          Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (BuildContext context) => WelcomeScreen
-          (key: UniqueKey())));
-        }
+        // if (context.read<AuthProvider>().isLoggedIn()) {
+        Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (BuildContext context) => HomeScreen(key: UniqueKey())));
+        // } else {
+        //   Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (BuildContext context) => WelcomeScreen
+        //   (key: UniqueKey())));
+        // }
       });
     });
     (() async {      
@@ -99,7 +98,7 @@ class _SplashScreenState extends State<SplashScreen> {
             child: Container(
               margin: const EdgeInsets.only(bottom: 40.0),
               child: packageInfo == null 
-              ? const Text("") 
+              ? const SizedBox() 
               : Text("Version ${packageInfo?.version} + ${packageInfo?.buildNumber}",
                 style: const TextStyle(
                   fontSize: Dimensions.fontSizeDefault,

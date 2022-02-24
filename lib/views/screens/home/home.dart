@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:amulet/views/screens/auth/sign_in.dart';
 import 'package:badges/badges.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
@@ -406,7 +407,6 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver, Si
             )
           );
           controller.reverse();
-          // openRecord();
         });
       }
     }); 
@@ -506,8 +506,8 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver, Si
                             toolbarHeight: 80.0,
                             backgroundColor: ColorResources.transparent,
                             title: Image.asset('assets/images/logo.png',
-                              width: 70.0,
-                              height: 70.0,
+                              width: 65.0,
+                              height: 65.0,
                               fit: BoxFit.scaleDown,
                             ),
                             centerTitle: true,
@@ -571,7 +571,11 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver, Si
                                       color: ColorResources.transparent,
                                       child: InkWell(
                                         onTap: () {
-                                          navigationService.pushNav(context, NotificationScreen(key: UniqueKey()));
+                                          if(authProvider.isLoggedIn()) {
+                                            navigationService.pushNav(context, NotificationScreen(key: UniqueKey()));
+                                          } else {
+                                            navigationService.pushNav(context, SignInScreen(key: UniqueKey()));
+                                          }
                                         },
                                         child: Padding(
                                           padding: EdgeInsets.all(8.0),
@@ -604,7 +608,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver, Si
                               )
                             ],
                             bottom: PreferredSize(
-                              child:  Column(
+                              child: authProvider.isLoggedIn() ? Column(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
                                   Container(
@@ -629,12 +633,12 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver, Si
                                     ),
                                   )
                                 ],
-                              ),
-                              preferredSize: const Size.fromHeight(60.0) 
+                              ) : SizedBox(),
+                              preferredSize: authProvider.isLoggedIn() 
+                              ? const Size.fromHeight(60.0) 
+                              : const Size.fromHeight(0.0) 
                             ),
                           ),
-                          
-                    
                         ],
                       ),
                     ),
@@ -643,7 +647,10 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver, Si
                       alignment: Alignment.bottomCenter,
                       child: Container(
                         width: double.infinity,
-                        margin: const EdgeInsets.only(top: 160.0),
+                        margin: EdgeInsets.only(
+                          top: authProvider.isLoggedIn() 
+                          ? 160.0 
+                          : 80.0),
                         child: GoogleMap(
                           mapType: MapType.normal,
                           gestureRecognizers: {}..add(Factory<EagerGestureRecognizer>(() => EagerGestureRecognizer())),
@@ -667,8 +674,10 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver, Si
                     Align(
                       alignment: Alignment.topLeft,
                       child: Container(
-                        margin: const EdgeInsets.only(
-                          top: 175.0,
+                        margin: EdgeInsets.only(
+                          top: authProvider.isLoggedIn() 
+                          ? 175.0
+                          : 100.0,
                           left: Dimensions.marginSizeDefault, 
                           right: Dimensions.marginSizeDefault
                         ),
@@ -678,21 +687,11 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver, Si
                         ),
                         child: InkWell(
                           onTap: () { 
-                            Navigator.push(context,
-                              PageRouteBuilder(pageBuilder: (BuildContext context, Animation<double> animation, Animation<double> secondaryAnimation) {
-                                return CategoryScreen(key: UniqueKey());
-                              },
-                              transitionsBuilder: (context, animation, secondaryAnimation, child) {
-                                Offset begin = const Offset(1.0, 0.0);
-                                Offset end = Offset.zero;
-                                Cubic curve = Curves.ease;
-                                Animatable<Offset> tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
-                                return SlideTransition(
-                                  position: animation.drive(tween),
-                                  child: child,
-                                );
-                              })
-                            );
+                            if(authProvider.isLoggedIn()) {
+                              navigationService.pushNav(context,  CategoryScreen(key: UniqueKey()));
+                            } else {
+                              navigationService.pushNav(context,  SignInScreen(key: UniqueKey()));
+                            }
                           },
                           child: const Padding(
                             padding: EdgeInsets.all(8.0),
@@ -723,19 +722,22 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver, Si
                           //     controller.forward();
                           //   }
                           // },
-                          onLongPress: () {
-                            controller.forward();
-                          },
                           // onTapUp: (_) {
                           //   if (controller.status == AnimationStatus.forward) {
                           //     controller.reverse();
                           //   }
                           // },
+                          onLongPress: () {
+                            if(authProvider.isLoggedIn()) {
+                              controller.forward();
+                            } else {
+                              navigationService.pushNav(context, SignInScreen(key: UniqueKey()));
+                            }
+                          },
                           child: Stack(
                             clipBehavior: Clip.none,
                             alignment: Alignment.center,
                             children: [
-
                               Positioned(
                                 top: 0.0,
                                 left: 18.0,
