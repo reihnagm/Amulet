@@ -4,16 +4,27 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 
+enum LocationStatus { idle, loading, loaded, empty, error }
+
 class LocationProvider extends ChangeNotifier {
   final SharedPreferences sharedPreferences;
   LocationProvider({required this.sharedPreferences});  
+
+  LocationStatus _locationStatus = LocationStatus.idle;
+  LocationStatus get locationStatus => _locationStatus;
 
   GoogleMapController? controller;
   
   List<Marker> _markers = [];
   List<Marker> get markers => [..._markers];
 
+  void setStateLocationStatus(LocationStatus locationStatus) {
+    _locationStatus = locationStatus;
+    Future.delayed(Duration.zero, () => notifyListeners());
+  }
+
   Future<void> getCurrentPosition(BuildContext context) async {
+    setStateLocationStatus(LocationStatus.loading);
     _markers = [];
     try {
       Position position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.medium);
@@ -31,7 +42,7 @@ class LocationProvider extends ChangeNotifier {
         )
       );
       sharedPreferences.setString("currentNameAddress", "${place.thoroughfare} ${place.subThoroughfare} \n${place.locality}, ${place.postalCode}");
-      Future.delayed(Duration.zero, () => notifyListeners());
+      setStateLocationStatus(LocationStatus.loaded);
     } catch(e) {
       debugPrint(e.toString());
     } 

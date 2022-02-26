@@ -77,8 +77,8 @@ class InboxProvider with ChangeNotifier {
   Future<void> updateInbox(BuildContext context, {required String uid}) async {
     try {
       await inboxRepo.updateInbox(context, uid: uid);
-      Future.delayed(Duration.zero, () {
-        fetchInbox(context);
+      Future.delayed(Duration.zero, () async {
+        await fetchInbox(context);
       });
     } catch(e) {
       debugPrint(e.toString());

@@ -32,17 +32,23 @@ class ContactProvider with ChangeNotifier {
   List<ContactData> _selectedContactsDelete = [];
   List<ContactData> get selectedContacsDelete => [..._selectedContactsDelete];
   
-  List<ContactData> _results = [];
-  List<ContactData> get results => [..._results];
+  List<Contact> _filterContactsResult = [];
+  List<Contact> get filterContactsResult => [..._filterContactsResult]; 
+
+  List<ContactData> _filterSaveContactsResult = [];
+  List<ContactData> get filterSaveContactsResult => [..._filterSaveContactsResult];
 
   List<Contact> _contacts = [];
   List<Contact> get contacts => [..._contacts].where((el) => el.displayName != null && el.phones!.isNotEmpty).toList();
-  
+
   List<ContactData> _saveContacts = [];
   List<ContactData> get saveContacts => [..._saveContacts];
 
-  List<ContactData> _saveContactsResults = [];
-  List<ContactData> get saveContactsResults => [..._saveContactsResults];
+  List<Contact> _contactsResult = [];
+  List<Contact> get contactsResult => [..._contactsResult];
+
+  List<ContactData> _saveContactsResult = [];
+  List<ContactData> get saveContactsResult => [..._saveContactsResult];
 
   void setStateContactsStatus(ContactsStatus contactsStatus) {
     _contactsStatus = contactsStatus;
@@ -93,7 +99,7 @@ class ContactProvider with ChangeNotifier {
       Dio dio = Dio();
       for (Contact contact in selectedContacts) {
         if(contact.phones!.isNotEmpty) {
-          await dio.post("${AppConstants.baseUrl}/contacts/create", data: {
+          await dio.post("${AppConstants.baseUrl}/contacts/store", data: {
             "uid": contact.phones![0].value!.replaceAll(RegExp(r"[^0-9]"), ""),
             "name": contact.displayName,
             "identifier": contact.phones![0].value!.replaceAll(RegExp(r"[^0-9]"), ""),
@@ -193,15 +199,27 @@ class ContactProvider with ChangeNotifier {
     } 
   }
 
-  void runFilter({required String enteredKeyword}) {
+  void runFilterSaveContact({required String enteredKeyword}) {
     if (enteredKeyword.isEmpty) {
-      _results = [];
+      _filterSaveContactsResult = [];
     } else {
-      _results = _saveContacts
+      _filterSaveContactsResult = _saveContacts
       .where((contact) => contact.name!.toLowerCase().contains(enteredKeyword.toLowerCase()))
       .toList();   
     }
-    _saveContactsResults = results;
+    _saveContactsResult = filterSaveContactsResult;
+    notifyListeners();
+  }
+
+  void runFilterContact({required String enteredKeyword}) {
+    if (enteredKeyword.isEmpty) {
+      _filterContactsResult = [];
+    } else {
+      _filterContactsResult = _contacts
+      .where((contact) => contact.displayName != null && contact.phones!.isNotEmpty && contact.displayName!.toLowerCase().contains(enteredKeyword.toLowerCase()))
+      .toList();   
+    }
+    _contactsResult = filterContactsResult;
     notifyListeners();
   }
 

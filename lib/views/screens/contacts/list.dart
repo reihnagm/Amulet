@@ -122,16 +122,101 @@ class _ContactsListScreenState extends State<ContactsListScreen> {
                     sliver: SliverList(
                       delegate: SliverChildListDelegate([
                         Container(
-                          margin: const EdgeInsets.only(left: Dimensions.marginSizeDefault),
-                          alignment: Alignment.center,
-                          child: Text(getTranslated("SELECT_UP_TO_FIVE_CONTACTS", context),
-                            style: const TextStyle(
-                              fontWeight: FontWeight.w500,
-                              fontSize: Dimensions.fontSizeDefault
-                            ),
+                          margin: EdgeInsets.only(
+                            top: Dimensions.marginSizeSmall, 
+                            left: Dimensions.marginSizeDefault, 
+                            right: Dimensions.marginSizeDefault
+                          ),
+                          child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            TextField(
+                              onChanged: (val) {
+                                cp.runFilterContact(enteredKeyword: val);
+                              },
+                              cursorColor: ColorResources.black,
+                              decoration: InputDecoration(
+                                labelText: getTranslated("SEARCH", context),
+                                labelStyle: TextStyle(
+                                  fontSize: Dimensions.fontSizeDefault,
+                                  color: ColorResources.black
+                                ),
+                                floatingLabelBehavior: FloatingLabelBehavior.auto,
+                                border: OutlineInputBorder(),
+                                focusedBorder: OutlineInputBorder(),
+                                errorBorder: OutlineInputBorder(),
+                                enabledBorder: OutlineInputBorder()
+                              ),
+                            )
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 20.0),
+                      Container(
+                        margin: const EdgeInsets.only(left: Dimensions.marginSizeDefault),
+                        alignment: Alignment.center,
+                        child: Text(getTranslated("SELECT_UP_TO_FIVE_CONTACTS", context),
+                          style: const TextStyle(
+                            fontWeight: FontWeight.w500,
+                            fontSize: Dimensions.fontSizeDefault
                           ),
                         ),
-                        ListView.separated(
+                      ),
+                      const SizedBox(height: 8.0),
+                      cp.contactsResult.isNotEmpty 
+                      ? ListView.builder(
+                          physics: NeverScrollableScrollPhysics(),
+                          shrinkWrap: true,
+                          padding: EdgeInsets.zero,
+                          itemCount: cp.contactsResult.length,
+                          itemBuilder: (BuildContext context, int i) {
+                            return Container(
+                            margin: EdgeInsets.only(
+                              left: Dimensions.marginSizeDefault,
+                              right: Dimensions.marginSizeDefault
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              mainAxisSize: MainAxisSize.max,
+                                children: [ 
+                                  
+                                  Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      if((cp.contactsResult[i].displayName == cp.contactsResult[i].phones![0].value))
+                                        Container(),
+
+                                      Text(cp.contactsResult[i].displayName!,
+                                        style: TextStyle(
+                                          fontSize: Dimensions.fontSizeDefault
+                                        ),
+                                      ),
+
+                                      const SizedBox(height: 8.0),
+
+                                      Text(cp.contactsResult[i].phones![0].value!,
+                                        style: TextStyle(
+                                          color: ColorResources.grey,
+                                          fontSize: Dimensions.fontSizeSmall
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+
+                                  Checkbox(
+                                    value: cp.selectedContacts.contains(cp.contactsResult[i]),
+                                    onChanged: (bool? newValue) {
+                                      cp.toggleContact(contacts: cp.contactsResult[i]);
+                                    },
+                                  ),
+                              
+                                ],
+                              )
+                            );
+                          }
+                        )
+                      : ListView.separated(
                           physics: const NeverScrollableScrollPhysics(),
                           shrinkWrap: true,
                           itemCount: cp.contacts.length,
@@ -147,101 +232,45 @@ class _ContactsListScreenState extends State<ContactsListScreen> {
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 mainAxisSize: MainAxisSize.max,
-                                children: [ 
-                                  
-                                  Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      if((cp.contacts[i].displayName == cp.contacts[i].phones![0].value))
-                                        Container(),
+                                  children: [ 
+                                    
+                                    Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        if((cp.contacts[i].displayName == cp.contacts[i].phones![0].value))
+                                          Container(),
 
-                                      Text(cp.contacts[i].displayName!,
-                                        style: TextStyle(
-                                          fontSize: Dimensions.fontSizeDefault
+                                        Text(cp.contacts[i].displayName!,
+                                          style: TextStyle(
+                                            fontSize: Dimensions.fontSizeDefault
+                                          ),
                                         ),
-                                      ),
 
-                                      const SizedBox(height: 8.0),
+                                        const SizedBox(height: 8.0),
 
-                                      Text(cp.contacts[i].phones![0].value!,
-                                        style: TextStyle(
-                                          color: ColorResources.grey,
-                                          fontSize: Dimensions.fontSizeSmall
+                                        Text(cp.contacts[i].phones![0].value!,
+                                          style: TextStyle(
+                                            color: ColorResources.grey,
+                                            fontSize: Dimensions.fontSizeSmall
+                                          ),
                                         ),
-                                      ),
-                                    ],
-                                  ),
+                                      ],
+                                    ),
 
-                                  Checkbox(
-                                    value: cp.selectedContacts.contains(cp.contacts[i]),
-                                    onChanged: (bool? newValue) {
-                                      cp.toggleContact(contacts: cp.contacts[i]);
-                                    },
-                                  ),
-                              
-                                ],
-                              )
+                                    Checkbox(
+                                      value: cp.selectedContacts.contains(cp.contacts[i]),
+                                      onChanged: (bool? newValue) {
+                                        cp.toggleContact(contacts: cp.contacts[i]);
+                                      },
+                                    ),
                                 
-                                // ListTile(
-                                //   dense: true,
-                                //   title: Text(contactProvider.contacts[i].displayName!,
-                                //     style: TextStyle(
-                                //       fontSize: Dimensions.fontSizeDefault
-                                //     ),
-                                //   ),
-                                //   onTap: () async {
-                                //     if(contactProvider.contacts[i].phones!.isNotEmpty) {
-                                //       await contactProvider.addContact(context, 
-                                //         identifier: contactProvider.contacts[i].displayName!,
-                                //         phone: contactProvider.contacts[i].phones![0].value!
-                                //       );
-                                //     }
-                                //   },
-                                //   trailing: Icon(
-                                //     Icons.add,
-                                //     size: 15.0,
-                                //     color: ColorResources.black,
-                                //   ),
-                                // ),
-
+                                  ],
+                                )
                               );
                             },
                           )
                         ]
-                        // (BuildContext context, int i) {
-                        //   if(contactProvider.contacts[i].displayName == null) {
-                        //     return SizedBox();
-                        //   }
-                        //   return Container(
-                        //     margin: EdgeInsets.only(
-                        //       left: Dimensions.marginSizeDefault,
-                        //       right: Dimensions.marginSizeDefault
-                        //     ),
-                        //     child: ListTile(
-                        //       dense: true,
-                        //       title: Text(contactProvider.contacts[i].displayName!,
-                        //         style: TextStyle(
-                        //           fontSize: Dimensions.fontSizeDefault
-                        //         ),
-                        //       ),
-                        //       onTap: () async {
-                        //         if(contactProvider.contacts[i].phones!.isNotEmpty) {
-                        //           await contactProvider.addContact(context, 
-                        //             identifier: contactProvider.contacts[i].displayName!,
-                        //             phone: contactProvider.contacts[i].phones![0].value!
-                        //           );
-                        //         }
-                        //       },
-                        //       trailing: Icon(
-                        //         Icons.add,
-                        //         size: 15.0,
-                        //         color: ColorResources.black,
-                        //       ),
-                        //     ),
-                        //   );
-                        // },
-                        // childCount: contactProvider.contacts.length
                       )
                     ),
                   )

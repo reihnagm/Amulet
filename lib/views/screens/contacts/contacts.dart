@@ -105,39 +105,6 @@ class _ContactsScreenState extends State<ContactsScreen> {
                           Navigator.of(context).pop();
                         },
                       ),
-                      actions: [
-                        // Container(
-                        //   margin: EdgeInsets.only(
-                        //     top: 8.0,
-                        //     left: Dimensions.marginSizeSmall,
-                        //     right: Dimensions.marginSizeSmall,
-                        //   ),
-                        //   child: InkWell(
-                        //     onTap: () async {
-                        //       if(cp.selectedContacsDelete.isNotEmpty) {
-                        //         await cp.removeContact(context);
-                        //       } else {
-                        //         navigationService.pushNav(context, ContactsListScreen(key: UniqueKey()));
-                        //       }
-                        //     },
-                        //     child: Padding(
-                        //       padding: const EdgeInsets.all(8.0),
-                        //       child: cp.selectedContacsDelete.isNotEmpty 
-                        //       ? Text("Hapus",
-                        //           style: TextStyle(
-                        //             fontSize: Dimensions.fontSizeDefault,
-                        //             color: ColorResources.black
-                        //           ),
-                        //         ) 
-                        //       : Icon(
-                        //           Icons.person_add,
-                        //           size: 20.0,
-                        //           color: ColorResources.black,
-                        //         ),
-                        //     ),
-                        //   ),
-                        // )
-                      ],
                       bottom: PreferredSize(
                         child:  Container(
                           margin: EdgeInsets.only(
@@ -150,7 +117,7 @@ class _ContactsScreenState extends State<ContactsScreen> {
                           children: [
                             TextField(
                               onChanged: (val) {
-                                cp.runFilter(enteredKeyword: val);
+                                cp.runFilterSaveContact(enteredKeyword: val);
                               },
                               cursorColor: ColorResources.black,
                               decoration: InputDecoration(
@@ -199,12 +166,12 @@ class _ContactsScreenState extends State<ContactsScreen> {
                       padding: EdgeInsets.only(top: 20.0, bottom: 20.0),
                       sliver: SliverList(
                         delegate: SliverChildListDelegate([
-                          cp.saveContactsResults.isNotEmpty 
+                          cp.saveContactsResult.isNotEmpty 
                           ? ListView.builder(
                               physics: NeverScrollableScrollPhysics(),
                               shrinkWrap: true,
                               padding: EdgeInsets.zero,
-                              itemCount: cp.saveContactsResults.length,
+                              itemCount: cp.saveContactsResult.length,
                               itemBuilder: (BuildContext context, int i) {
                                 return Container(
                                   margin: EdgeInsets.only(
@@ -213,12 +180,12 @@ class _ContactsScreenState extends State<ContactsScreen> {
                                   ),
                                   child: ListTile(
                                     dense: true,
-                                    title: Text(cp.saveContactsResults[i].name!,
+                                    title: Text(cp.saveContactsResult[i].name!,
                                       style: TextStyle(
                                         fontSize: Dimensions.fontSizeDefault
                                       ),
                                     ),
-                                    subtitle: Text(cp.saveContactsResults[i].identifier!,
+                                    subtitle: Text(cp.saveContactsResult[i].identifier!,
                                       style: TextStyle(
                                         fontSize: Dimensions.fontSizeSmall
                                       ),
@@ -272,40 +239,11 @@ class _ContactsScreenState extends State<ContactsScreen> {
                                     ),
                                     color: ColorResources.redPrimary,
                                   )
-                                  
-                                  // Checkbox(
-                                  //   value: cp.selectedContacsDelete.contains(cp.saveContacts[i]),
-                                  //   onChanged: (bool? n) {
-                                  //     cp.toggleContactRemove(contacts: cp.saveContacts[i]);
-                                  //   },
-                                  // ),
                                 ),
                               );
                             }
                           )
                         ]),
-                        // delegate: SliverChildBuilderDelegate(
-                        //   (BuildContext context, int i) {
-                        //     return Container(
-                        //       margin: EdgeInsets.only(
-                        //         left: Dimensions.marginSizeDefault,
-                        //         right: Dimensions.marginSizeDefault
-                        //       ),
-                        //       child: ListTile(
-                        //         dense: true,
-                        //         title: Text(contactProvider.saveContacts[i]["identifier"]!,
-                        //           style: TextStyle(
-                        //             fontSize: Dimensions.fontSizeDefault
-                        //           ),
-                        //         ),
-                        //         onTap: () {
-                                 
-                        //         },
-                        //       ),
-                        //     );
-                        //   },
-                        //   childCount: contactProvider.saveContacts.length
-                        // )
                       ),
                     )
               

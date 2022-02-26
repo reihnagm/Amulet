@@ -18,7 +18,7 @@ class InboxRepo {
   Future<InboxModel?> fetchInbox(BuildContext context, {required String userId}) async {
     try {
       Dio dio = Dio();
-      Response res = await dio.get("${AppConstants.baseUrl}/inboxes/${userId}");
+      Response res = await dio.get("${AppConstants.baseUrl}/inbox/${userId}");
       Map<String, dynamic> data = res.data;
       return compute(parseInboxes, data);
     } on DioError catch(e) {
@@ -47,7 +47,7 @@ class InboxRepo {
   Future<void> insertInbox(BuildContext context, {required String title, required String content, required String userId}) async {
     try {
       Dio dio = Dio();
-      await dio.post("${AppConstants.baseUrl}/inboxes/create", 
+      await dio.post("${AppConstants.baseUrl}/inbox/create", 
         data: {
           "uid": const Uuid().v4(),
           "title": title,
@@ -80,7 +80,7 @@ class InboxRepo {
   Future<void> updateInbox(BuildContext context, {required String uid}) async {
     try {
       Dio dio = Dio();
-      await dio.put("${AppConstants.baseUrl}/inboxes/update/$uid");
+      await dio.put("${AppConstants.baseUrl}/inbox/$uid/update");
     } on DioError catch(e) {
       if(
         e.response!.statusCode == 400

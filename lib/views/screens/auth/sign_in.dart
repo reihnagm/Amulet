@@ -1,7 +1,7 @@
-import 'package:amulet/views/basewidgets/snackbar/snackbar.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 
+import 'package:amulet/views/basewidgets/snackbar/snackbar.dart';
 import 'package:amulet/localization/language_constraints.dart';
 import 'package:amulet/providers/localization.dart';
 import 'package:amulet/utils/constant.dart';
@@ -31,7 +31,7 @@ class _SignInScreenState extends State<SignInScreen> {
 
   late AuthProvider authProvider;
 
-  late TextEditingController emailC;
+  late TextEditingController phoneC;
   late TextEditingController passwordC;
 
   bool passwordObscure = true;
@@ -39,32 +39,33 @@ class _SignInScreenState extends State<SignInScreen> {
   @override 
   void initState() {
     super.initState();
-    emailC = TextEditingController();
+    phoneC = TextEditingController();
     passwordC = TextEditingController();
   }
 
   @override 
   void dispose() {
-    emailC.dispose();
+    phoneC.dispose();
     passwordC.dispose();
     super.dispose();
   }
 
   Future<void> login() async {
-    String email = emailC.text;
+    String phone = phoneC.text;
     String pass = passwordC.text;
     User user = User();
-    user.emailAddress = email;
+    user.phoneNumber = phone;
     user.password = pass;
-    if(email.trim().isEmpty) {
+    if(phone.trim().isEmpty) {
       ShowSnackbar.snackbar(context, getTranslated("EMAIL_MUST_BE_REQUIRED", context), "", ColorResources.purpleDark);
       return;
     }
-    bool emailValid = RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+").hasMatch(email);
-    if(!emailValid) {
-      ShowSnackbar.snackbar(context,  getTranslated("EMAIL_IS_INVALID", context), "", ColorResources.purpleDark);
+
+    if(phone.trim().length < 6) {
+      ShowSnackbar.snackbar(context, getTranslated("PHONE_NUMBER_6_REQUIRED", context), "", ColorResources.purpleDark);
       return;
-    }   
+    }
+
     if(pass.trim().isEmpty) {
       ShowSnackbar.snackbar(context,  getTranslated("PASSWORD_MUST_BE_REQUIRED", context), "", ColorResources.purpleDark);
       return;
@@ -138,7 +139,7 @@ class _SignInScreenState extends State<SignInScreen> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
-                                    Text(getTranslated("EMAIL", context),
+                                    Text(getTranslated("PHONE_NUMBER", context),
                                       style: const TextStyle(
                                         color: ColorResources.white,
                                         fontSize: Dimensions.fontSizeDefault
@@ -146,12 +147,12 @@ class _SignInScreenState extends State<SignInScreen> {
                                     ),
                                     const SizedBox(height: 12.0),
                                     TextField(
-                                      controller: emailC,
+                                      controller: phoneC,
                                       style: const TextStyle(
                                         fontSize: Dimensions.fontSizeDefault
                                       ),
                                       cursorColor: ColorResources.black,
-                                      // keyboardType: TextInputType.phone,
+                                      keyboardType: TextInputType.phone,
                                       decoration: const InputDecoration(
                                         fillColor: ColorResources.white,
                                         filled: true,

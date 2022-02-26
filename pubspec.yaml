@@ -79,6 +79,8 @@ dependencies:
   expandable: ^5.0.1
   badges: ^2.0.2
   flutter_animated_dialog: ^2.0.1
+  pin_code_fields: ^7.3.0
+  circular_countdown_timer: ^0.2.0
    
 dev_dependencies:
   flutter_test:

@@ -35,7 +35,7 @@ class _ReportsScreenState extends State<ReportsScreen> {
         networkProvider.checkConnection(context);
       }
       if(mounted) {
-        videoProvider.fetchSos(context);
+        videoProvider.getSos(context);
       }
     });
   }
@@ -70,7 +70,7 @@ class _ReportsScreenState extends State<ReportsScreen> {
               color: ColorResources.redPrimary,
               onRefresh: () {
                 return Future.sync(() {
-                  videoProvider.fetchSos(context);
+                  videoProvider.getSos(context);
                 });
               },
               child: Consumer<NetworkProvider>(
@@ -195,499 +195,499 @@ class _ReportsScreenState extends State<ReportsScreen> {
                                   ),
                                 )
                               ),
-                            if(videoProvider.listenVStatus == ListenVStatus.loaded) 
-                              SliverPadding(
-                                padding: const EdgeInsets.only(
-                                  top: 20.0, 
-                                  bottom: 20.0
-                                ),
-                                sliver: SliverList(
-                                  delegate: SliverChildBuilderDelegate(
-                                    (BuildContext context, int i) {
-                                      return Container(
-                                        margin: const EdgeInsets.only(
-                                          left: Dimensions.marginSizeLarge, 
-                                          right: Dimensions.marginSizeLarge
-                                        ),
-                                        padding: const EdgeInsets.all(16.0),
-                                        decoration: BoxDecoration(
-                                          color: i % 2 == 1 
-                                          ? ColorResources.greyTable 
-                                          : ColorResources.white,
-                                        ),
-                                        child: Row(
-                                          mainAxisSize: MainAxisSize.max,
-                                          children: [
-                                            Expanded(
-                                              flex: 6,
-                                              child: Column(
-                                                crossAxisAlignment: CrossAxisAlignment.start,
-                                                mainAxisSize: MainAxisSize.min,
-                                                children: [
-                                                  Stack(
-                                                    clipBehavior: Clip.none,
-                                                    children: [
-                                                      ClipRRect(
-                                                        borderRadius: BorderRadius.circular(10.0),
-                                                        child: CachedNetworkImage(
-                                                          imageUrl: videoProvider.sosData[i].thumbnail.toString(),
-                                                          width: 50.0,
-                                                          height: 50.0,
-                                                          fit: BoxFit.cover,
-                                                        ),
+                          if(videoProvider.listenVStatus == ListenVStatus.loaded) 
+                            SliverPadding(
+                              padding: const EdgeInsets.only(
+                                top: 20.0, 
+                                bottom: 20.0
+                              ),
+                              sliver: SliverList(
+                                delegate: SliverChildBuilderDelegate(
+                                  (BuildContext context, int i) {
+                                    return Container(
+                                      margin: const EdgeInsets.only(
+                                        left: Dimensions.marginSizeLarge, 
+                                        right: Dimensions.marginSizeLarge
+                                      ),
+                                      padding: const EdgeInsets.all(16.0),
+                                      decoration: BoxDecoration(
+                                        color: i % 2 == 1 
+                                        ? ColorResources.greyTable 
+                                        : ColorResources.white,
+                                      ),
+                                      child: Row(
+                                        mainAxisSize: MainAxisSize.max,
+                                        children: [
+                                          Expanded(
+                                            flex: 6,
+                                            child: Column(
+                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              mainAxisSize: MainAxisSize.min,
+                                              children: [
+                                                Stack(
+                                                  clipBehavior: Clip.none,
+                                                  children: [
+                                                    ClipRRect(
+                                                      borderRadius: BorderRadius.circular(10.0),
+                                                      child: CachedNetworkImage(
+                                                        imageUrl: videoProvider.sosData[i].thumbnail.toString(),
+                                                        width: 50.0,
+                                                        height: 50.0,
+                                                        fit: BoxFit.cover,
                                                       ),
-                                                      Positioned.fill(
-                                                        left: 0.0,
-                                                        right: 0.0,
-                                                        child: Align(
-                                                          alignment: Alignment.center,
-                                                          child: InkWell(
-                                                            onTap: () {
-                                                              navigationService.pushNav(context, PreviewFileScreen(
-                                                                mediaUrl: videoProvider.sosData[i].mediaUrl
-                                                              ));
-                                                            },
-                                                            child: const Icon(
-                                                              Icons.arrow_circle_right_outlined,
-                                                              color: ColorResources.white,
-                                                            ),
+                                                    ),
+                                                    Positioned.fill(
+                                                      left: 0.0,
+                                                      right: 0.0,
+                                                      child: Align(
+                                                        alignment: Alignment.center,
+                                                        child: InkWell(
+                                                          onTap: () {
+                                                            navigationService.pushNav(context, PreviewFileScreen(
+                                                              mediaUrl: videoProvider.sosData[i].mediaUrl
+                                                            ));
+                                                          },
+                                                          child: const Icon(
+                                                            Icons.arrow_circle_right_outlined,
+                                                            color: ColorResources.white,
                                                           ),
-                                                        )
-                                                      ),
-                                                    ],
-                                                  )
-                                               
-                                                ],
-                                              ) 
-                                            ),
-                                            Expanded(
-                                              flex: 6,
-                                              child: Column(
-                                                crossAxisAlignment: CrossAxisAlignment.start,
-                                                mainAxisSize: MainAxisSize.min,
-                                                children: [
-                                                  Text(videoProvider.sosData[i].category == null || videoProvider.sosData[i].category == ""
-                                                  ? "-" 
-                                                  : videoProvider.sosData[i].category.toString(),
-                                                    style: const TextStyle(
-                                                      color: ColorResources.black,
-                                                      fontWeight: FontWeight.w500,
-                                                      fontSize: Dimensions.fontSizeDefault
+                                                        ),
+                                                      )
                                                     ),
+                                                  ],
+                                                )
+                                              
+                                              ],
+                                            ) 
+                                          ),
+                                          Expanded(
+                                            flex: 6,
+                                            child: Column(
+                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              mainAxisSize: MainAxisSize.min,
+                                              children: [
+                                                Text(videoProvider.sosData[i].category == null || videoProvider.sosData[i].category == ""
+                                                ? "-" 
+                                                : videoProvider.sosData[i].category.toString(),
+                                                  style: const TextStyle(
+                                                    color: ColorResources.black,
+                                                    fontWeight: FontWeight.w500,
+                                                    fontSize: Dimensions.fontSizeDefault
                                                   ),
-                                                ],
-                                              ),
+                                                ),
+                                              ],
                                             ),
-                                            Expanded(
-                                              flex: 8,
-                                              child: Column(
-                                                crossAxisAlignment: CrossAxisAlignment.start,
-                                                mainAxisSize: MainAxisSize.min,
-                                                children: [
-                                                  Text(videoProvider.sosData[i].fullname.toString(),
-                                                    overflow: TextOverflow.ellipsis,
-                                                    style: const TextStyle(
-                                                      color: ColorResources.black,
-                                                      fontWeight: FontWeight.w500,
-                                                      fontSize: Dimensions.fontSizeDefault
-                                                    ),
+                                          ),
+                                          Expanded(
+                                            flex: 8,
+                                            child: Column(
+                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              mainAxisSize: MainAxisSize.min,
+                                              children: [
+                                                Text(videoProvider.sosData[i].fullname.toString(),
+                                                  overflow: TextOverflow.ellipsis,
+                                                  style: const TextStyle(
+                                                    color: ColorResources.black,
+                                                    fontWeight: FontWeight.w500,
+                                                    fontSize: Dimensions.fontSizeDefault
                                                   ),
-                                                ],
-                                              ),
+                                                ),
+                                              ],
                                             ),
-                                            Expanded(
-                                              flex: 3,
-                                              child: Column(
-                                                crossAxisAlignment: CrossAxisAlignment.start,
-                                                mainAxisSize: MainAxisSize.min,
-                                                children: [
-                                                  Material(
-                                                    color: ColorResources.transparent,
-                                                    child: InkWell(
-                                                      onTap: () {
-                                                        showModalBottomSheet(
-                                                          isDismissible: false,
-                                                          isScrollControlled: true,
-                                                          context: context, 
-                                                          builder: (BuildContext context) {
-                                                            return Container(
-                                                              margin: const EdgeInsets.only(
-                                                                left: Dimensions.marginSizeDefault, 
-                                                                right: Dimensions.marginSizeDefault
-                                                              ),
-                                                              padding: const EdgeInsets.all(Dimensions.paddingSizeDefault),
-                                                              child: SingleChildScrollView(
-                                                                child: Column(
-                                                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                                                  mainAxisSize: MainAxisSize.min,
-                                                                  children: [ 
-                                                                    Row(
-                                                                      mainAxisAlignment: MainAxisAlignment.end,
+                                          ),
+                                          Expanded(
+                                            flex: 3,
+                                            child: Column(
+                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              mainAxisSize: MainAxisSize.min,
+                                              children: [
+                                                Material(
+                                                  color: ColorResources.transparent,
+                                                  child: InkWell(
+                                                    onTap: () {
+                                                      showModalBottomSheet(
+                                                        isDismissible: false,
+                                                        isScrollControlled: true,
+                                                        context: context, 
+                                                        builder: (BuildContext context) {
+                                                          return Container(
+                                                            margin: const EdgeInsets.only(
+                                                              left: Dimensions.marginSizeDefault, 
+                                                              right: Dimensions.marginSizeDefault
+                                                            ),
+                                                            padding: const EdgeInsets.all(Dimensions.paddingSizeDefault),
+                                                            child: SingleChildScrollView(
+                                                              child: Column(
+                                                                crossAxisAlignment: CrossAxisAlignment.start,
+                                                                mainAxisSize: MainAxisSize.min,
+                                                                children: [ 
+                                                                  Row(
+                                                                    mainAxisAlignment: MainAxisAlignment.end,
+                                                                    children: [
+                                                                      InkWell(
+                                                                        onTap: () {
+                                                                          Navigator.of(context).pop();
+                                                                        },
+                                                                        child: const Padding(
+                                                                          padding: EdgeInsets.all(8.0),
+                                                                          child: Icon(
+                                                                            Icons.close,
+                                                                            color: ColorResources.redPrimary,
+                                                                            size: 30.0,
+                                                                          ),
+                                                                        ),
+                                                                      ),
+                                                                    ],
+                                                                  ),
+                                                                  const SizedBox(height: 15.0),
+                                                                  ClipRRect(
+                                                                    borderRadius: BorderRadius.circular(20.0),
+                                                                    child: CachedNetworkImage(
+                                                                      width: double.infinity,
+                                                                      height: 300.0,
+                                                                      fit: BoxFit.fitWidth,
+                                                                      imageUrl: videoProvider.sosData[i].thumbnail!,
+                                                                    ),
+                                                                  ),
+                                                                  const SizedBox(height: 30.0),
+                                                                  Container(
+                                                                    margin: const EdgeInsets.only(
+                                                                      left: Dimensions.marginSizeDefault,
+                                                                      right: Dimensions.marginSizeDefault
+                                                                    ),
+                                                                    child: Row(
+                                                                      mainAxisSize: MainAxisSize.max,
                                                                       children: [
-                                                                        InkWell(
-                                                                          onTap: () {
-                                                                            Navigator.of(context).pop();
-                                                                          },
-                                                                          child: const Padding(
-                                                                            padding: EdgeInsets.all(8.0),
-                                                                            child: Icon(
-                                                                              Icons.close,
-                                                                              color: ColorResources.redPrimary,
-                                                                              size: 30.0,
+                                                                        Expanded(
+                                                                          flex: 4,
+                                                                          child: Text(getTranslated("CASE", context),
+                                                                            style: const TextStyle(
+                                                                              fontWeight: FontWeight.w500,
+                                                                              fontSize: Dimensions.fontSizeDefault
+                                                                            ),
+                                                                          ),
+                                                                        ),
+                                                                        const Expanded(
+                                                                          flex: 1,
+                                                                          child: Text(":",
+                                                                            style: TextStyle(
+                                                                              fontWeight: FontWeight.w500,
+                                                                              fontSize: Dimensions.fontSizeDefault
+                                                                            ),
+                                                                          ),
+                                                                        ),
+                                                                        Expanded(
+                                                                          flex: 11,
+                                                                          child: Text(videoProvider.sosData[i].category.toString().split(".")[0],
+                                                                            style: const TextStyle(
+                                                                              fontWeight: FontWeight.w500,
+                                                                              fontSize: Dimensions.fontSizeDefault
                                                                             ),
                                                                           ),
                                                                         ),
                                                                       ],
                                                                     ),
-                                                                    const SizedBox(height: 15.0),
-                                                                    ClipRRect(
-                                                                      borderRadius: BorderRadius.circular(20.0),
-                                                                      child: CachedNetworkImage(
-                                                                        width: double.infinity,
-                                                                        height: 300.0,
-                                                                        fit: BoxFit.fitWidth,
-                                                                        imageUrl: videoProvider.sosData[i].thumbnail!,
-                                                                      ),
+                                                                  ),
+                                                                  const SizedBox(height: 15.0),
+                                                                  Container(
+                                                                    margin: const EdgeInsets.only(
+                                                                      left: Dimensions.marginSizeDefault,
+                                                                      right: Dimensions.marginSizeDefault
                                                                     ),
-                                                                    const SizedBox(height: 30.0),
-                                                                    Container(
-                                                                      margin: const EdgeInsets.only(
-                                                                        left: Dimensions.marginSizeDefault,
-                                                                        right: Dimensions.marginSizeDefault
-                                                                      ),
-                                                                      child: Row(
-                                                                        mainAxisSize: MainAxisSize.max,
-                                                                        children: [
-                                                                          Expanded(
-                                                                            flex: 4,
-                                                                            child: Text(getTranslated("CASE", context),
-                                                                              style: const TextStyle(
-                                                                                fontWeight: FontWeight.w500,
-                                                                                fontSize: Dimensions.fontSizeDefault
-                                                                              ),
+                                                                    child: Row(
+                                                                      mainAxisSize: MainAxisSize.max,
+                                                                      children: [
+                                                                        Expanded(
+                                                                          flex: 4,
+                                                                          child: Text(getTranslated("MESSAGE", context),
+                                                                            style: const TextStyle(
+                                                                              fontWeight: FontWeight.w500,
+                                                                              fontSize: Dimensions.fontSizeDefault
                                                                             ),
                                                                           ),
-                                                                          const Expanded(
-                                                                            flex: 1,
-                                                                            child: Text(":",
-                                                                              style: TextStyle(
-                                                                                fontWeight: FontWeight.w500,
-                                                                                fontSize: Dimensions.fontSizeDefault
-                                                                              ),
+                                                                        ),
+                                                                        const Expanded(
+                                                                          flex: 1,
+                                                                          child: Text(":",
+                                                                            style: TextStyle(
+                                                                              fontWeight: FontWeight.w500,
+                                                                              fontSize: Dimensions.fontSizeDefault
                                                                             ),
                                                                           ),
-                                                                          Expanded(
-                                                                            flex: 11,
-                                                                            child: Text(videoProvider.sosData[i].category.toString().split(".")[0],
-                                                                              style: const TextStyle(
-                                                                                fontWeight: FontWeight.w500,
-                                                                                fontSize: Dimensions.fontSizeDefault
-                                                                              ),
+                                                                        ),
+                                                                        Expanded(
+                                                                          flex: 11,
+                                                                          child: Text(videoProvider.sosData[i].content.toString().split(".")[0],
+                                                                            style: const TextStyle(
+                                                                              fontWeight: FontWeight.w500,
+                                                                              fontSize: Dimensions.fontSizeDefault
                                                                             ),
                                                                           ),
-                                                                        ],
-                                                                      ),
+                                                                        ),
+                                                                      ],
                                                                     ),
-                                                                    const SizedBox(height: 15.0),
-                                                                    Container(
-                                                                      margin: const EdgeInsets.only(
-                                                                        left: Dimensions.marginSizeDefault,
-                                                                        right: Dimensions.marginSizeDefault
-                                                                      ),
-                                                                      child: Row(
-                                                                        mainAxisSize: MainAxisSize.max,
-                                                                        children: [
-                                                                          Expanded(
-                                                                            flex: 4,
-                                                                            child: Text(getTranslated("MESSAGE", context),
-                                                                              style: const TextStyle(
-                                                                                fontWeight: FontWeight.w500,
-                                                                                fontSize: Dimensions.fontSizeDefault
-                                                                              ),
-                                                                            ),
-                                                                          ),
-                                                                          const Expanded(
-                                                                            flex: 1,
-                                                                            child: Text(":",
-                                                                              style: TextStyle(
-                                                                                fontWeight: FontWeight.w500,
-                                                                                fontSize: Dimensions.fontSizeDefault
-                                                                              ),
-                                                                            ),
-                                                                          ),
-                                                                          Expanded(
-                                                                            flex: 11,
-                                                                            child: Text(videoProvider.sosData[i].content.toString().split(".")[0],
-                                                                              style: const TextStyle(
-                                                                                fontWeight: FontWeight.w500,
-                                                                                fontSize: Dimensions.fontSizeDefault
-                                                                              ),
-                                                                            ),
-                                                                          ),
-                                                                        ],
-                                                                      ),
+                                                                  ),
+                                                                  const SizedBox(height: 15.0),
+                                                                  Container(
+                                                                    margin: const EdgeInsets.only(
+                                                                      left: Dimensions.marginSizeDefault,
+                                                                      right: Dimensions.marginSizeDefault
                                                                     ),
-                                                                    const SizedBox(height: 15.0),
-                                                                    Container(
-                                                                      margin: const EdgeInsets.only(
-                                                                        left: Dimensions.marginSizeDefault,
-                                                                        right: Dimensions.marginSizeDefault
-                                                                      ),
-                                                                      child: Row(
-                                                                        mainAxisSize: MainAxisSize.max,
-                                                                        children: [
-                                                                          Expanded(
-                                                                            flex: 4,
-                                                                            child: Text(getTranslated("DURATION", context),
-                                                                              style: const TextStyle(
-                                                                                fontWeight: FontWeight.w500,
-                                                                                fontSize: Dimensions.fontSizeDefault
-                                                                              ),
+                                                                    child: Row(
+                                                                      mainAxisSize: MainAxisSize.max,
+                                                                      children: [
+                                                                        Expanded(
+                                                                          flex: 4,
+                                                                          child: Text(getTranslated("DURATION", context),
+                                                                            style: const TextStyle(
+                                                                              fontWeight: FontWeight.w500,
+                                                                              fontSize: Dimensions.fontSizeDefault
                                                                             ),
                                                                           ),
-                                                                          const Expanded(
-                                                                            flex: 1,
-                                                                            child: Text(":",
-                                                                              style: TextStyle(
-                                                                                fontWeight: FontWeight.w500,
-                                                                                fontSize: Dimensions.fontSizeDefault
-                                                                              ),
+                                                                        ),
+                                                                        const Expanded(
+                                                                          flex: 1,
+                                                                          child: Text(":",
+                                                                            style: TextStyle(
+                                                                              fontWeight: FontWeight.w500,
+                                                                              fontSize: Dimensions.fontSizeDefault
                                                                             ),
                                                                           ),
-                                                                          Expanded(
-                                                                            flex: 11,
-                                                                            child: Text(videoProvider.sosData[i].duration.toString().split(".")[0],
-                                                                              style: const TextStyle(
-                                                                                fontWeight: FontWeight.w500,
-                                                                                fontSize: Dimensions.fontSizeDefault
-                                                                              ),
+                                                                        ),
+                                                                        Expanded(
+                                                                          flex: 11,
+                                                                          child: Text(videoProvider.sosData[i].duration.toString().split(".")[0],
+                                                                            style: const TextStyle(
+                                                                              fontWeight: FontWeight.w500,
+                                                                              fontSize: Dimensions.fontSizeDefault
                                                                             ),
                                                                           ),
-                                                                        ],
-                                                                      ),
+                                                                        ),
+                                                                      ],
                                                                     ),
-                                                                    const SizedBox(height: 15.0),
-                                                                    Container(
-                                                                      margin: const EdgeInsets.only(
-                                                                        left: Dimensions.marginSizeDefault,
-                                                                        right: Dimensions.marginSizeDefault
-                                                                      ),
-                                                                      child: Row(
-                                                                        mainAxisSize: MainAxisSize.max,
-                                                                        children: [
-                                                                          Expanded(
-                                                                            flex: 4,
-                                                                            child: Text(getTranslated("ADDRESS", context),
-                                                                              style: const TextStyle(
-                                                                                fontWeight: FontWeight.w500,
-                                                                                fontSize: Dimensions.fontSizeDefault
-                                                                              ),
-                                                                            ),
-                                                                          ),
-                                                                          const Expanded(
-                                                                            flex: 1,
-                                                                            child: Text(":",
-                                                                              style: TextStyle(
-                                                                                fontWeight: FontWeight.w500,
-                                                                                fontSize: Dimensions.fontSizeDefault
-                                                                              ),
-                                                                            ),
-                                                                          ),
-                                                                          Expanded(
-                                                                            flex: 11,
-                                                                            child: Text(videoProvider.sosData[i].address.toString(),
-                                                                              style: const TextStyle(
-                                                                                fontWeight: FontWeight.w500,
-                                                                                fontSize: Dimensions.fontSizeDefault
-                                                                              ),
-                                                                            ),
-                                                                          ),
-                                                                        ],
-                                                                      ),
+                                                                  ),
+                                                                  const SizedBox(height: 15.0),
+                                                                  Container(
+                                                                    margin: const EdgeInsets.only(
+                                                                      left: Dimensions.marginSizeDefault,
+                                                                      right: Dimensions.marginSizeDefault
                                                                     ),
-                                                                    const SizedBox(height: 15.0),
-                                                                    Container(
-                                                                      margin: const EdgeInsets.only(
-                                                                        left: Dimensions.marginSizeDefault,
-                                                                        right: Dimensions.marginSizeDefault
-                                                                      ),
-                                                                      child: Row(
-                                                                        mainAxisSize: MainAxisSize.max,
-                                                                        children: [
-                                                                          const Expanded(
-                                                                            flex: 4,
-                                                                            child: Text("Lat",
-                                                                              style: TextStyle(
-                                                                                fontWeight: FontWeight.w500,
-                                                                                fontSize: Dimensions.fontSizeDefault
-                                                                              ),
+                                                                    child: Row(
+                                                                      mainAxisSize: MainAxisSize.max,
+                                                                      children: [
+                                                                        Expanded(
+                                                                          flex: 4,
+                                                                          child: Text(getTranslated("ADDRESS", context),
+                                                                            style: const TextStyle(
+                                                                              fontWeight: FontWeight.w500,
+                                                                              fontSize: Dimensions.fontSizeDefault
                                                                             ),
                                                                           ),
-                                                                          const Expanded(
-                                                                            flex: 1,
-                                                                            child: Text(":",
-                                                                              style: TextStyle(
-                                                                                fontWeight: FontWeight.w500,
-                                                                                fontSize: Dimensions.fontSizeDefault
-                                                                              ),
+                                                                        ),
+                                                                        const Expanded(
+                                                                          flex: 1,
+                                                                          child: Text(":",
+                                                                            style: TextStyle(
+                                                                              fontWeight: FontWeight.w500,
+                                                                              fontSize: Dimensions.fontSizeDefault
                                                                             ),
                                                                           ),
-                                                                          Expanded(
-                                                                            flex: 11,
-                                                                            child: Text(videoProvider.sosData[i].lat.toString(),
-                                                                              style: const TextStyle(
-                                                                                fontWeight: FontWeight.w500,
-                                                                                fontSize: Dimensions.fontSizeDefault
-                                                                              ),
+                                                                        ),
+                                                                        Expanded(
+                                                                          flex: 11,
+                                                                          child: Text(videoProvider.sosData[i].address.toString(),
+                                                                            style: const TextStyle(
+                                                                              fontWeight: FontWeight.w500,
+                                                                              fontSize: Dimensions.fontSizeDefault
                                                                             ),
                                                                           ),
-                                                                        ],
-                                                                      ),
+                                                                        ),
+                                                                      ],
                                                                     ),
-                                                                    const SizedBox(height: 15.0),
-                                                                    Container(
-                                                                      margin: const EdgeInsets.only(
-                                                                        left: Dimensions.marginSizeDefault,
-                                                                        right: Dimensions.marginSizeDefault
-                                                                      ),
-                                                                      child: Row(
-                                                                        mainAxisSize: MainAxisSize.max,
-                                                                        children: [
-                                                                          const Expanded(
-                                                                            flex: 4,
-                                                                            child: Text("Lng",
-                                                                              style: TextStyle(
-                                                                                fontWeight: FontWeight.w500,
-                                                                                fontSize: Dimensions.fontSizeDefault
-                                                                              ),
-                                                                            ),
-                                                                          ),
-                                                                          const Expanded(
-                                                                            flex: 1,
-                                                                            child: Text(":",
-                                                                              style: TextStyle(
-                                                                                fontWeight: FontWeight.w500,
-                                                                                fontSize: Dimensions.fontSizeDefault
-                                                                              ),
-                                                                            ),
-                                                                          ),
-                                                                          Expanded(
-                                                                            flex: 11,
-                                                                            child: Text(videoProvider.sosData[i].lng.toString(),
-                                                                              style: const TextStyle(
-                                                                                fontWeight: FontWeight.w500,
-                                                                                fontSize: Dimensions.fontSizeDefault
-                                                                              ),
-                                                                            ),
-                                                                          ),
-                                                                        ],
-                                                                      ),
+                                                                  ),
+                                                                  const SizedBox(height: 15.0),
+                                                                  Container(
+                                                                    margin: const EdgeInsets.only(
+                                                                      left: Dimensions.marginSizeDefault,
+                                                                      right: Dimensions.marginSizeDefault
                                                                     ),
-                                                                    const SizedBox(height: 15.0),
-                                                                    Container(
-                                                                      margin: const EdgeInsets.only(
-                                                                        left: Dimensions.marginSizeDefault,
-                                                                        right: Dimensions.marginSizeDefault
-                                                                      ),
-                                                                      child: Row(
-                                                                        mainAxisSize: MainAxisSize.max,
-                                                                        children: [
-                                                                          Expanded(
-                                                                            flex: 4,
-                                                                            child: Text(getTranslated("SENDER", context),
-                                                                              style: const TextStyle(
-                                                                                fontWeight: FontWeight.w500,
-                                                                                fontSize: Dimensions.fontSizeDefault
-                                                                              ),
+                                                                    child: Row(
+                                                                      mainAxisSize: MainAxisSize.max,
+                                                                      children: [
+                                                                        const Expanded(
+                                                                          flex: 4,
+                                                                          child: Text("Lat",
+                                                                            style: TextStyle(
+                                                                              fontWeight: FontWeight.w500,
+                                                                              fontSize: Dimensions.fontSizeDefault
                                                                             ),
                                                                           ),
-                                                                          const Expanded(
-                                                                            flex: 1,
-                                                                            child: Text(":",
-                                                                              style: TextStyle(
-                                                                                fontWeight: FontWeight.w500,
-                                                                                fontSize: Dimensions.fontSizeDefault
-                                                                              ),
+                                                                        ),
+                                                                        const Expanded(
+                                                                          flex: 1,
+                                                                          child: Text(":",
+                                                                            style: TextStyle(
+                                                                              fontWeight: FontWeight.w500,
+                                                                              fontSize: Dimensions.fontSizeDefault
                                                                             ),
                                                                           ),
-                                                                          Expanded(
-                                                                            flex: 11,
-                                                                            child: Text(videoProvider.sosData[i].fullname.toString(),
-                                                                              style: const TextStyle(
-                                                                                fontWeight: FontWeight.w500,
-                                                                                fontSize: Dimensions.fontSizeDefault
-                                                                              ),
+                                                                        ),
+                                                                        Expanded(
+                                                                          flex: 11,
+                                                                          child: Text(videoProvider.sosData[i].lat.toString(),
+                                                                            style: const TextStyle(
+                                                                              fontWeight: FontWeight.w500,
+                                                                              fontSize: Dimensions.fontSizeDefault
                                                                             ),
                                                                           ),
-                                                                        ],
-                                                                      ),
+                                                                        ),
+                                                                      ],
                                                                     ),
-                                                                    const SizedBox(height: 15.0),
-                                                                    Container(
-                                                                      margin: const EdgeInsets.only(
-                                                                        left: Dimensions.marginSizeDefault,
-                                                                        right: Dimensions.marginSizeDefault
-                                                                      ),
-                                                                      child: Row(
-                                                                        mainAxisSize: MainAxisSize.max,
-                                                                        children: [
-                                                                          Expanded(
-                                                                            flex: 4,
-                                                                            child: Text(getTranslated("DATE", context),
-                                                                              style: const TextStyle(
-                                                                                fontWeight: FontWeight.w500,
-                                                                                fontSize: Dimensions.fontSizeDefault
-                                                                              ),
-                                                                            ),
-                                                                          ),
-                                                                          const Expanded(
-                                                                            flex: 1,
-                                                                            child: Text(":",
-                                                                              style: TextStyle(
-                                                                                fontWeight: FontWeight.w500,
-                                                                                fontSize: Dimensions.fontSizeDefault
-                                                                              ),
-                                                                            ),
-                                                                          ),
-                                                                          Expanded(
-                                                                            flex: 11,
-                                                                            child: Text(DateFormat.yMMMMEEEEd().add_jms().format(videoProvider.sosData[i].createdAt!.toLocal()),
-                                                                              style: const TextStyle(
-                                                                                fontWeight: FontWeight.w500,
-                                                                                fontSize: Dimensions.fontSizeDefault
-                                                                              ),
-                                                                            ),
-                                                                          ),
-                                                                        ],
-                                                                      ),
+                                                                  ),
+                                                                  const SizedBox(height: 15.0),
+                                                                  Container(
+                                                                    margin: const EdgeInsets.only(
+                                                                      left: Dimensions.marginSizeDefault,
+                                                                      right: Dimensions.marginSizeDefault
                                                                     ),
-                                                                    const SizedBox(height: 30.0),
-                                                                  ],
-                                                                ),
+                                                                    child: Row(
+                                                                      mainAxisSize: MainAxisSize.max,
+                                                                      children: [
+                                                                        const Expanded(
+                                                                          flex: 4,
+                                                                          child: Text("Lng",
+                                                                            style: TextStyle(
+                                                                              fontWeight: FontWeight.w500,
+                                                                              fontSize: Dimensions.fontSizeDefault
+                                                                            ),
+                                                                          ),
+                                                                        ),
+                                                                        const Expanded(
+                                                                          flex: 1,
+                                                                          child: Text(":",
+                                                                            style: TextStyle(
+                                                                              fontWeight: FontWeight.w500,
+                                                                              fontSize: Dimensions.fontSizeDefault
+                                                                            ),
+                                                                          ),
+                                                                        ),
+                                                                        Expanded(
+                                                                          flex: 11,
+                                                                          child: Text(videoProvider.sosData[i].lng.toString(),
+                                                                            style: const TextStyle(
+                                                                              fontWeight: FontWeight.w500,
+                                                                              fontSize: Dimensions.fontSizeDefault
+                                                                            ),
+                                                                          ),
+                                                                        ),
+                                                                      ],
+                                                                    ),
+                                                                  ),
+                                                                  const SizedBox(height: 15.0),
+                                                                  Container(
+                                                                    margin: const EdgeInsets.only(
+                                                                      left: Dimensions.marginSizeDefault,
+                                                                      right: Dimensions.marginSizeDefault
+                                                                    ),
+                                                                    child: Row(
+                                                                      mainAxisSize: MainAxisSize.max,
+                                                                      children: [
+                                                                        Expanded(
+                                                                          flex: 4,
+                                                                          child: Text(getTranslated("SENDER", context),
+                                                                            style: const TextStyle(
+                                                                              fontWeight: FontWeight.w500,
+                                                                              fontSize: Dimensions.fontSizeDefault
+                                                                            ),
+                                                                          ),
+                                                                        ),
+                                                                        const Expanded(
+                                                                          flex: 1,
+                                                                          child: Text(":",
+                                                                            style: TextStyle(
+                                                                              fontWeight: FontWeight.w500,
+                                                                              fontSize: Dimensions.fontSizeDefault
+                                                                            ),
+                                                                          ),
+                                                                        ),
+                                                                        Expanded(
+                                                                          flex: 11,
+                                                                          child: Text(videoProvider.sosData[i].fullname.toString(),
+                                                                            style: const TextStyle(
+                                                                              fontWeight: FontWeight.w500,
+                                                                              fontSize: Dimensions.fontSizeDefault
+                                                                            ),
+                                                                          ),
+                                                                        ),
+                                                                      ],
+                                                                    ),
+                                                                  ),
+                                                                  const SizedBox(height: 15.0),
+                                                                  Container(
+                                                                    margin: const EdgeInsets.only(
+                                                                      left: Dimensions.marginSizeDefault,
+                                                                      right: Dimensions.marginSizeDefault
+                                                                    ),
+                                                                    child: Row(
+                                                                      mainAxisSize: MainAxisSize.max,
+                                                                      children: [
+                                                                        Expanded(
+                                                                          flex: 4,
+                                                                          child: Text(getTranslated("DATE", context),
+                                                                            style: const TextStyle(
+                                                                              fontWeight: FontWeight.w500,
+                                                                              fontSize: Dimensions.fontSizeDefault
+                                                                            ),
+                                                                          ),
+                                                                        ),
+                                                                        const Expanded(
+                                                                          flex: 1,
+                                                                          child: Text(":",
+                                                                            style: TextStyle(
+                                                                              fontWeight: FontWeight.w500,
+                                                                              fontSize: Dimensions.fontSizeDefault
+                                                                            ),
+                                                                          ),
+                                                                        ),
+                                                                        Expanded(
+                                                                          flex: 11,
+                                                                          child: Text(DateFormat.yMMMMEEEEd().add_jms().format(videoProvider.sosData[i].createdAt!.toLocal()),
+                                                                            style: const TextStyle(
+                                                                              fontWeight: FontWeight.w500,
+                                                                              fontSize: Dimensions.fontSizeDefault
+                                                                            ),
+                                                                          ),
+                                                                        ),
+                                                                      ],
+                                                                    ),
+                                                                  ),
+                                                                  const SizedBox(height: 30.0),
+                                                                ],
                                                               ),
-                                                            );
-                                                          }
-                                                        );
-                                                      },
-                                                      child: const Padding(
-                                                        padding: EdgeInsets.all(8.0),
-                                                        child: Icon(Icons.info,
-                                                          color: ColorResources.blue,
-                                                        ),
+                                                            ),
+                                                          );
+                                                        }
+                                                      );
+                                                    },
+                                                    child: const Padding(
+                                                      padding: EdgeInsets.all(8.0),
+                                                      child: Icon(Icons.info,
+                                                        color: ColorResources.blue,
                                                       ),
                                                     ),
-                                                  )
-                                                ],
-                                              ),
-                                            )
-                                          ],
-                                        ),
-                                      );
-                                    },
-                                    childCount: videoProvider.sosData.length          
-                                  )
-                                ),
-                              )
+                                                  ),
+                                                )
+                                              ],
+                                            ),
+                                          )
+                                        ],
+                                      ),
+                                    );
+                                  },
+                                  childCount: videoProvider.sosData.length          
+                                )
+                              ),
+                            )
                         ],
                       ); 
                     },

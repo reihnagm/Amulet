@@ -50,7 +50,7 @@ class User {
   });
 
   int? emailActivated;
-  dynamic emailAddress;
+  String? emailAddress;
   String? address;
   String? fullname;
   String? password;

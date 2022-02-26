@@ -103,10 +103,11 @@ class VideoProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> fetchSos(BuildContext context) async {
+  Future<void> getSos(BuildContext context) async {
+    setStateListenVStatus(ListenVStatus.loading);
     try {
       Dio dio = Dio();
-      Response res = await dio.get("${AppConstants.baseUrl}/fetch-sos/${authProvider.getUserId()}?page=$page");
+      Response res = await dio.get("${AppConstants.baseUrl}/get-sos/${authProvider.getUserId()}?page=$page");
       Map<String, dynamic> resData = res.data;
       SosModel sosModel = SosModel.fromJson(resData);
       _sosData = [];
@@ -159,11 +160,11 @@ class VideoProvider with ChangeNotifier {
     }
   }
 
-  Future<void> fetchFcm(BuildContext context) async {
+  Future<void> getFcm(BuildContext context) async {
     setStateFcmStatus(FcmStatus.loading);
     try {
       Dio dio = Dio();
-      Response res = await dio.get('${AppConstants.baseUrl}/fetch-fcm');
+      Response res = await dio.get('${AppConstants.baseUrl}/get-fcm');
       Map<String, dynamic> data = res.data;
       FcmModel fcmModel = FcmModel.fromJson(data);
       _fcmData = [];

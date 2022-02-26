@@ -1,18 +1,14 @@
 import 'dart:async';
 
-import 'package:amulet/views/screens/auth/sign_in.dart';
 import 'package:badges/badges.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:slide_to_confirm/slide_to_confirm.dart';
-import 'package:flutter_animated_dialog/flutter_animated_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
-import 'package:amulet/views/basewidgets/button/custom.dart';
+import 'package:amulet/views/screens/auth/sign_in.dart';
 import 'package:amulet/views/screens/media/record.dart';
 import 'package:amulet/localization/language_constraints.dart';
 import 'package:amulet/providers/inbox.dart';
@@ -407,7 +403,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver, Si
   @override 
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addObserver(this);
+    WidgetsBinding.instance!.addObserver(this);
     controller = AnimationController(vsync: this, duration: Duration(seconds: 1));
     controller.addListener(() {
       setState(() {});
@@ -433,7 +429,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver, Si
         videoProvider.initFcm(context);
       }
       if(mounted) {
-        videoProvider.fetchFcm(context);
+        videoProvider.getFcm(context);
       }
       if(mounted) {
         inboxProvider.fetchInbox(context);
@@ -479,7 +475,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver, Si
                         return Future.sync(() {
                           locationProvider.getCurrentPosition(context);
                           videoProvider.initFcm(context);
-                          videoProvider.fetchFcm(context);
+                          videoProvider.getFcm(context);
                         });
                       },
                       child: CustomScrollView(
@@ -635,32 +631,66 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver, Si
                       ),
                     ),
                        
-                    Align(
-                      alignment: Alignment.bottomCenter,
-                      child: Container(
-                        width: double.infinity,
-                        margin: EdgeInsets.only(
-                          top: authProvider.isLoggedIn() 
-                          ? 160.0 
-                          : 80.0),
-                        child: GoogleMap(
-                          mapType: MapType.normal,
-                          gestureRecognizers: {}..add(Factory<EagerGestureRecognizer>(() => EagerGestureRecognizer())),
-                          myLocationEnabled: false,
-                          initialCameraPosition: CameraPosition(
-                            target: LatLng(
-                              locationProvider.getCurrentLat, 
-                              locationProvider.getCurrentLng
+                    Consumer<LocationProvider>(
+                      builder: (BuildContext context, LocationProvider lp, Widget? child) {
+                        if(lp.locationStatus == LocationStatus.loading) {
+                          return Align(
+                            alignment: Alignment.bottomCenter,
+                            child: Container(
+                              width: double.infinity,
+                              margin: EdgeInsets.only(
+                                top: authProvider.isLoggedIn() 
+                                ? 160.0 
+                                : 80.0
+                              ),
+                              child: GoogleMap(
+                                mapType: MapType.normal,
+                                gestureRecognizers: {}..add(Factory<EagerGestureRecognizer>(() => EagerGestureRecognizer())),
+                                myLocationEnabled: false,
+                                initialCameraPosition: CameraPosition(
+                                  target: LatLng(
+                                    -6.175392, 
+                                    106.827153
+                                  ),
+                                  zoom: 15.0,
+                                ),
+                                onMapCreated: (GoogleMapController controller) {
+                                  mapsController.complete(controller);
+                                  lp.controller = controller;
+                                },
+                              ),
+                            )
+                          );
+                        }
+                        return Align(
+                          alignment: Alignment.bottomCenter,
+                          child: Container(
+                            width: double.infinity,
+                            margin: EdgeInsets.only(
+                              top: authProvider.isLoggedIn() 
+                              ? 160.0 
+                              : 80.0
                             ),
-                            zoom: 15.0,
-                          ),
-                          markers: Set.from(locationProvider.markers),
-                          onMapCreated: (GoogleMapController controller) {
-                            mapsController.complete(controller);
-                            locationProvider.controller = controller;
-                          },
-                        ),
-                      )
+                            child: GoogleMap(
+                              mapType: MapType.normal,
+                              gestureRecognizers: {}..add(Factory<EagerGestureRecognizer>(() => EagerGestureRecognizer())),
+                              myLocationEnabled: false,
+                              initialCameraPosition: CameraPosition(
+                                target: LatLng(
+                                  lp.getCurrentLat, 
+                                  lp.getCurrentLng
+                                ),
+                                zoom: 15.0,
+                              ),
+                              markers: Set.from(lp.markers),
+                              onMapCreated: (GoogleMapController controller) {
+                                mapsController.complete(controller);
+                                lp.controller = controller;
+                              },
+                            ),
+                          )
+                        );
+                      },
                     ),
 
                     Align(

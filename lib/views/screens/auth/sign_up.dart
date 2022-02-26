@@ -77,7 +77,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
     }
 
     if(phone.trim().length < 6) {
-      ShowSnackbar.snackbar(context, getTranslated("", context), "", ColorResources.purpleDark);
+      ShowSnackbar.snackbar(context, getTranslated("PHONE_NUMBER_6_REQUIRED", context), "", ColorResources.purpleDark);
       return;
     }
 
@@ -141,6 +141,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   CustomScrollView(
                     physics: const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
                     slivers: [
+
                       SliverAppBar(
                         backgroundColor: ColorResources.transparent,
                         leading: CupertinoNavigationBarBackButton(
@@ -150,6 +151,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           },
                         )
                       ),
+
                       SliverPadding(
                         padding: const EdgeInsets.only(top: 20.0, bottom: 80.0),
                         sliver: SliverList(
@@ -160,7 +162,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                 top: Dimensions.marginSizeDefault,
                                 left: Dimensions.marginSizeDefault, 
                                 right: Dimensions.marginSizeDefault,
-                                bottom: Dimensions.marginSizeDefault
+                                bottom: Dimensions.marginSizeLarge
                               ),       
                               child: Column(
                                 mainAxisSize: MainAxisSize.min,
@@ -179,7 +181,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                             
                             Container(
                               margin: const EdgeInsets.only(
-                                top:  Dimensions.marginSizeSmall,
+                                top:  Dimensions.marginSizeExtraSmall,
                                 left: Dimensions.marginSizeDefault, 
                                 right: Dimensions.marginSizeDefault,
                                 bottom: Dimensions.marginSizeDefault
@@ -214,7 +216,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
                             Container(
                               margin: const EdgeInsets.only(
-                                top: Dimensions.marginSizeSmall,
+                                top: Dimensions.marginSizeExtraSmall,
                                 left: Dimensions.marginSizeDefault, 
                                 right: Dimensions.marginSizeDefault,
                                 bottom: Dimensions.marginSizeDefault
@@ -249,7 +251,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
                             Container(
                               margin: const EdgeInsets.only(
-                                top: Dimensions.marginSizeSmall, 
+                                top: Dimensions.marginSizeExtraSmall, 
                                 left: Dimensions.marginSizeDefault, 
                                 right: Dimensions.marginSizeDefault,
                                 bottom: Dimensions.marginSizeDefault
@@ -285,7 +287,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
                             Container(
                               margin: const EdgeInsets.only(
-                                top: Dimensions.marginSizeSmall, 
+                                top: Dimensions.marginSizeExtraSmall, 
                                 left: Dimensions.marginSizeDefault, 
                                 right: Dimensions.marginSizeDefault,
                                 bottom: Dimensions.marginSizeDefault
@@ -321,7 +323,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
                             Container(
                               margin: const EdgeInsets.only(
-                                top: Dimensions.marginSizeSmall,
+                                top: Dimensions.marginSizeExtraSmall,
                                 left: Dimensions.marginSizeDefault,
                                 right: Dimensions.marginSizeDefault,
                                 bottom: Dimensions.marginSizeDefault
@@ -357,7 +359,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
                             Container(
                               margin: const EdgeInsets.only(
-                                top: Dimensions.marginSizeSmall, 
+                                top: Dimensions.marginSizeExtraSmall, 
                                 left: Dimensions.marginSizeDefault, 
                                 right: Dimensions.marginSizeDefault,
                                 bottom: Dimensions.marginSizeDefault
@@ -402,9 +404,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
                             Container(
                               margin: const EdgeInsets.only(
-                                top: Dimensions.marginSizeSmall,
                                 left: Dimensions.marginSizeDefault, 
-                                right: Dimensions.marginSizeDefault
+                                right: Dimensions.marginSizeDefault,
+                                bottom: Dimensions.marginSizeDefault
                               ),
                               child: TextField(
                                 controller: passwordConfirmC,
@@ -449,6 +451,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           ])
                         )
                       )
+
                     ],
                   ),
 

@@ -59,24 +59,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
                   },
                   child: Consumer<InboxProvider>(
                     builder: (BuildContext context, InboxProvider ip, Widget? child) {
-                      if(ip.inboxStatus == InboxStatus.loading) {
-                        return Center(
-                          child: SpinKitThreeBounce(
-                            size: 20.0,
-                            color: Colors.black87,
-                          ),
-                        );
-                      }
-                      if(ip.inboxStatus == InboxStatus.empty) {
-                        return Center(
-                          child: Text(getTranslated("THERE_IS_NO_NOTIFICATION", context),
-                            style: TextStyle(
-                              color: ColorResources.black,
-                              fontSize: Dimensions.fontSizeDefault
-                            ),
-                          )
-                        );
-                      }
+                     
                       return CustomScrollView(
                         physics: const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
                         slivers: [
@@ -97,6 +80,29 @@ class _NotificationScreenState extends State<NotificationScreen> {
                               },
                             )
                           ),
+
+                          if(ip.inboxStatus == InboxStatus.loading) 
+                            SliverFillRemaining(
+                              child: Center(
+                                child: SpinKitThreeBounce(
+                                  size: 20.0,
+                                  color: Colors.black87,
+                                ),
+                              ),
+                            ),
+
+                          if(ip.inboxStatus == InboxStatus.empty) 
+                            SliverFillRemaining(
+                              child: Center(
+                                child: Text(getTranslated("THERE_IS_NO_NOTIFICATION", context),
+                                  style: TextStyle(
+                                    color: ColorResources.black,
+                                    fontSize: Dimensions.fontSizeDefault
+                                  ),
+                                )
+                              ),
+                            ),
+                          
 
                           SliverPadding(
                             padding: const EdgeInsets.only(top: 20.0, bottom: 20.0),
