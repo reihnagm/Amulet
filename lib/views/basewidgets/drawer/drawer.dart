@@ -1,7 +1,8 @@
-import 'package:amulet/views/screens/auth/sign_in.dart';
+import 'package:amulet/views/screens/subscriptions/index.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import 'package:amulet/views/screens/auth/sign_in.dart';
 import 'package:amulet/providers/auth.dart';
 import 'package:amulet/views/screens/contacts/contacts.dart';
 import 'package:amulet/localization/language_constraints.dart';
@@ -212,11 +213,21 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                     ),
                     Container(
                       padding: const EdgeInsets.all(Dimensions.paddingSizeSmall),
-                      child: Text(getTranslated("SUBSCRIPTION", context),
-                        style: const TextStyle(
-                          fontWeight: FontWeight.w500,
-                          fontSize: Dimensions.fontSizeDefault,
-                          decoration: TextDecoration.lineThrough
+                      child: Material(
+                        color: ColorResources.transparent,
+                        child: InkWell(
+                          onTap: () {
+                            navigationService.pushNav(context, SubscriptionsScreen(key: UniqueKey()));
+                          },
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text(getTranslated("SUBSCRIPTION", context),
+                              style: const TextStyle(
+                                fontWeight: FontWeight.w500,
+                                fontSize: Dimensions.fontSizeDefault,
+                              ),
+                            ),
+                          ),
                         ),
                       ),
                     ),

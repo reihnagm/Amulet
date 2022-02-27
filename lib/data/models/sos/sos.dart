@@ -36,6 +36,7 @@ class SosData {
     this.uid,
     this.category,
     this.mediaUrl,
+    this.mediaUrlPhone,
     this.content,
     this.lat,
     this.lng,
@@ -52,6 +53,7 @@ class SosData {
   String? uid;
   String? category;
   dynamic mediaUrl;
+  dynamic mediaUrlPhone;
   String? content;
   String? lat;
   String? lng;
@@ -68,6 +70,7 @@ class SosData {
     uid: json["uid"],
     category: json["category"],
     mediaUrl: json["media_url"],
+    mediaUrlPhone: json["media_url_phone"],
     content: json["content"],
     lat: json["lat"],
     lng: json["lng"],

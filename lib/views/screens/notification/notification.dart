@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -110,7 +111,12 @@ class _NotificationScreenState extends State<NotificationScreen> {
                               delegate: SliverChildBuilderDelegate(
                                 (BuildContext context, int i) {
                                   return Container(
-                                    margin: const EdgeInsets.all(Dimensions.marginSizeDefault),
+                                    margin: const EdgeInsets.only(
+                                      top: Dimensions.marginSizeSmall,
+                                      left: Dimensions.marginSizeDefault,
+                                      right: Dimensions.marginSizeDefault,
+                                      bottom: Dimensions.marginSizeExtraSmall
+                                    ),
                                     decoration: BoxDecoration(
                                       color: ColorResources.white,
                                       borderRadius: BorderRadius.circular(10.0),
@@ -126,6 +132,8 @@ class _NotificationScreenState extends State<NotificationScreen> {
                                             uid: ip.inboxes[i].uid!, 
                                             title: ip.inboxes[i].title!, 
                                             content: ip.inboxes[i].content!, 
+                                            thumbnail: ip.inboxes[i].thumbnail!,
+                                            mediaUrl: ip.inboxes[i].mediaUrl!,
                                             createdAt: ip.inboxes[i].createdAt!
                                           ));
                                         },  
@@ -136,7 +144,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
                                             mainAxisSize: MainAxisSize.max,
                                             children: [
                                               Expanded(
-                                                flex: 2,
+                                                flex: 3,
                                                 child: Image.asset("assets/images/info-sos.png",
                                                   width: 35.0,
                                                   height: 35.0,
@@ -166,7 +174,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
                                                         ),
                                                       ),
                                                     ),
-                                                    const SizedBox(height: 12.0),
+                                                    const SizedBox(height: 8.0),
                                                     Row(
                                                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                       mainAxisSize: MainAxisSize.max,
@@ -189,6 +197,38 @@ class _NotificationScreenState extends State<NotificationScreen> {
                                                     )
                                                   ],
                                                 ),
+                                              ),
+
+                                              Expanded(
+                                                flex: 5,
+                                                child: Column(
+                                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                                  mainAxisSize: MainAxisSize.min,
+                                                  children: [
+                                                    Stack(
+                                                      clipBehavior: Clip.none,
+                                                      children: [
+                                                        ClipRRect(
+                                                          borderRadius: BorderRadius.circular(10.0),
+                                                          child: CachedNetworkImage(
+                                                            imageUrl: ip.inboxes[i].thumbnail.toString(),
+                                                            width: 50.0,
+                                                            height: 50.0,
+                                                            fit: BoxFit.cover,
+                                                            placeholder: (BuildContext context, String url) {
+                                                              return Center(
+                                                                child: SpinKitThreeBounce(
+                                                                  size: 20.0,
+                                                                  color: Colors.black87,
+                                                                ),
+                                                              );              
+                                                            },
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    )
+                                                  ],
+                                                ) 
                                               )
                                                                               
                                             ],

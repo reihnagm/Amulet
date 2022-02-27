@@ -620,15 +620,17 @@ class _CategoryScreenState extends State<CategoryScreen> {
                                                                                   });
                                                                                   try {
                                                                                     String? mediaUrl = await videoProvider.uploadVideo(context, file: videoCompressInfo!.file!);
+                                                                                    String? mediaUrlPhone = await videoProvider.uploadVideoPhone(context, file: videoCompressInfo!.file!);
                                                                                     File fileThumbnail = await VideoCompress.getFileThumbnail(videoCompressInfo!.file!.path); 
                                                                                     String? thumbnailUploaded = await videoProvider.uploadThumbnail(context, file: fileThumbnail); 
                                                                                     SocketServices.shared.sendMsg(
                                                                                       id: const Uuid().v4(),
                                                                                       content: msgC.text,
                                                                                       mediaUrl: mediaUrl!,
+                                                                                      mediaUrlPhone: mediaUrlPhone!,
                                                                                       category: categories[i]["name"],
-                                                                                      lat: locationProvider.getCurrentLat,
-                                                                                      lng: locationProvider.getCurrentLng,
+                                                                                      lat: locationProvider.getCurrentLat.toString(),
+                                                                                      lng: locationProvider.getCurrentLng.toString(),
                                                                                       address: locationProvider.getCurrentNameAddress,
                                                                                       status: "sent",
                                                                                       duration: (Duration(microseconds: (videoCompressInfo!.duration! * 1000).toInt())).toString(),
@@ -636,10 +638,11 @@ class _CategoryScreenState extends State<CategoryScreen> {
                                                                                       fullname: authProvider.getUserFullname(),
                                                                                       userId: authProvider.getUserId()
                                                                                     );
-                                                                                    await videoProvider.insertSos(context,
+                                                                                    await videoProvider.storeSos(context,
                                                                                       id: const Uuid().v4(), 
                                                                                       content: msgC.text,
                                                                                       mediaUrl: mediaUrl, 
+                                                                                      mediaUrlPhone: mediaUrlPhone,
                                                                                       category: categories[i]["name"],
                                                                                       lat: locationProvider.getCurrentLat.toString(),
                                                                                       lng: locationProvider.getCurrentLng.toString(),

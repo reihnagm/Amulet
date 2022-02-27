@@ -244,11 +244,11 @@ class _ReportsScreenState extends State<ReportsScreen> {
                                                         child: InkWell(
                                                           onTap: () {
                                                             navigationService.pushNav(context, PreviewFileScreen(
-                                                              mediaUrl: videoProvider.sosData[i].mediaUrl
+                                                              mediaUrl: videoProvider.sosData[i].mediaUrlPhone
                                                             ));
                                                           },
                                                           child: const Icon(
-                                                            Icons.arrow_circle_right_outlined,
+                                                            Icons.play_arrow,
                                                             color: ColorResources.white,
                                                           ),
                                                         ),

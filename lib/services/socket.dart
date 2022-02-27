@@ -25,9 +25,9 @@ class SocketServices {
       debugPrint("=== SOCKET IS CONNECTED ===");
       context.read<NetworkProvider>().turnOnSocket();
        socket.on("message", (data) {
-        // final r = data as dynamic;
-        // final d = r as Map<String, dynamic>;
-        // context.read<VideoProvider>().appendSos(d);
+        final r = data as dynamic;
+        final d = r as Map<String, dynamic>;
+        context.read<VideoProvider>().appendSos(d);
       });
     });
     socket.on("disconnect", (_) {
@@ -67,9 +67,10 @@ class SocketServices {
     required String id, 
     required String content, 
     required String mediaUrl,
+    required String mediaUrlPhone,
     required String category,
-    required double lat, 
-    required double lng,
+    required String lat, 
+    required String lng,
     required String address,
     required String status,
     required String duration,
@@ -81,6 +82,7 @@ class SocketServices {
       "id": id,
       "content": content,
       "mediaUrl": mediaUrl,
+      "mediaUrlPhone": mediaUrlPhone,
       "category": category,
       "lat": lat,
       "lng": lng,

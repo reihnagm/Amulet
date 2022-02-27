@@ -15,7 +15,7 @@ class InboxRepo {
     required this.sharedPreferences
   });
 
-  Future<InboxModel?> fetchInbox(BuildContext context, {required String userId}) async {
+  Future<InboxModel?> getInbox(BuildContext context, {required String userId}) async {
     try {
       Dio dio = Dio();
       Response res = await dio.get("${AppConstants.baseUrl}/inbox/${userId}");
@@ -44,14 +44,26 @@ class InboxRepo {
     return null;
   }
 
-  Future<void> insertInbox(BuildContext context, {required String title, required String content, required String userId}) async {
+  Future<void> storeInbox(BuildContext context, 
+    {
+      required String title, 
+      required String content, 
+      required String thumbnail,
+      required String mediaUrl,
+      required String type,
+      required String userId
+    }
+  ) async {
     try {
       Dio dio = Dio();
-      await dio.post("${AppConstants.baseUrl}/inbox/create", 
+      await dio.post("${AppConstants.baseUrl}/inbox/store", 
         data: {
           "uid": const Uuid().v4(),
           "title": title,
+          "thumbnail": thumbnail,
+          "media_url": mediaUrl,
           "content": content,
+          "type": type,
           "user_id": userId
         }
       );

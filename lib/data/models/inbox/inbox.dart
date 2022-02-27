@@ -41,6 +41,8 @@ class InboxData {
     this.isRead,
     this.title,
     this.content,
+    this.mediaUrl,
+    this.thumbnail,
     this.userId,
     this.createdAt,
     this.updatedAt,
@@ -50,6 +52,8 @@ class InboxData {
   int? isRead;
   String? title;
   String? content;
+  String? mediaUrl;
+  String? thumbnail;
   String? userId;
   String? createdAt;
   String? updatedAt;
@@ -59,6 +63,8 @@ class InboxData {
     isRead: json["is_read"],
     title: json["title"],
     content: json["content"],
+    mediaUrl: json["media_url"],
+    thumbnail: json["thumbnail"],
     userId: json["user_id"],
     createdAt: json["created_at"],
     updatedAt: json["updated_at"],

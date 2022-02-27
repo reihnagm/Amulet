@@ -33,7 +33,7 @@ class InboxProvider with ChangeNotifier {
 
   Future<void> fetchInbox(BuildContext context) async {
     try {
-      InboxModel? inboxModel = await inboxRepo.fetchInbox(context, userId: authProvider.getUserId());
+      InboxModel? inboxModel = await inboxRepo.getInbox(context, userId: authProvider.getUserId());
       totalUnread = inboxModel!.totalUnread!;
       List<InboxData> inboxData = inboxModel.data!;
       List<InboxData> inboxAssign = [];
@@ -42,6 +42,8 @@ class InboxProvider with ChangeNotifier {
           InboxData(
             uid: inbox.uid,
             isRead: inbox.isRead,
+            mediaUrl: inbox.mediaUrl,
+            thumbnail: inbox.thumbnail,
             title: inbox.title,
             content: inbox.content,
             createdAt: inbox.createdAt,
@@ -59,11 +61,21 @@ class InboxProvider with ChangeNotifier {
     }
   }
 
-  Future<void> insertInbox(BuildContext context, {required String title, required String content, required String userId}) async {
+  Future<void> insertInbox(BuildContext context, {
+    required String title, 
+    required String content, 
+    required String thumbnail,
+    required String mediaUrl,
+    required String type,
+    required String userId
+  }) async {
     try {
-      await inboxRepo.insertInbox(context, 
+      await inboxRepo.storeInbox(context, 
         title: title, 
         content: content,
+        thumbnail: thumbnail,
+        mediaUrl: mediaUrl,
+        type: type,
         userId: userId
       );
       Future.delayed(Duration.zero, () {

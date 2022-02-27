@@ -1,7 +1,12 @@
+
+import 'package:amulet/services/navigation.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:provider/provider.dart';
 
+import 'package:amulet/views/screens/media/preview_file.dart';
 import 'package:amulet/utils/box_shadow.dart';
 import 'package:amulet/utils/dimensions.dart';
 import 'package:amulet/localization/language_constraints.dart';
@@ -12,11 +17,15 @@ class NotificationDetail extends StatefulWidget {
   final String uid;
   final String title;
   final String content;
+  final String thumbnail;
+  final String mediaUrl;
   final String createdAt;
   const NotificationDetail({ 
     required this.uid,
     required this.title,
     required this.content,
+    required this.thumbnail,
+    required this.mediaUrl,
     required this.createdAt,
     Key? key 
   }) : super(key: key);
@@ -27,6 +36,7 @@ class NotificationDetail extends StatefulWidget {
 
 class _NotificationDetailState extends State<NotificationDetail> {
   late InboxProvider inboxProvider;
+  late NavigationService navigationService;
 
   @override 
   void initState() {
@@ -51,6 +61,7 @@ class _NotificationDetailState extends State<NotificationDetail> {
     return Builder(
       builder: (BuildContext context) {
         inboxProvider = context.read<InboxProvider>();
+        navigationService = NavigationService();
         return Scaffold(
           resizeToAvoidBottomInset: false,
           backgroundColor: ColorResources.backgroundColor,
@@ -91,11 +102,7 @@ class _NotificationDetailState extends State<NotificationDetail> {
                         mainAxisSize: MainAxisSize.max,
                         children: [
                           Expanded(
-                            flex: 1,
-                            child: Container()
-                          ),
-                          Expanded(
-                            flex: 16,
+                            flex: 10,
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               mainAxisSize: MainAxisSize.min,
@@ -124,6 +131,59 @@ class _NotificationDetailState extends State<NotificationDetail> {
                                 )
                               ],
                             ),
+                          ),
+                          Expanded(
+                            flex: 1,
+                            child: Container(),
+                          ),
+                          Expanded( 
+                            flex: 3,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Stack(
+                                  clipBehavior: Clip.none,
+                                  children: [
+                                    ClipRRect(
+                                      borderRadius: BorderRadius.circular(10.0),
+                                      child: CachedNetworkImage(
+                                        imageUrl: widget.thumbnail.toString(),
+                                        width: 50.0,
+                                        height: 50.0,
+                                        fit: BoxFit.cover,
+                                        placeholder: (BuildContext context, String url) {
+                                          return Center(
+                                            child: SpinKitThreeBounce(
+                                              size: 20.0,
+                                              color: Colors.black87,
+                                            ),
+                                          );              
+                                        },
+                                      ),
+                                    ),
+                                    Positioned.fill(
+                                      left: 0.0,
+                                      right: 0.0,
+                                      child: Align(
+                                        alignment: Alignment.center,
+                                        child: InkWell(
+                                          onTap: () {
+                                            navigationService.pushNav(context, PreviewFileScreen(
+                                              mediaUrl: widget.mediaUrl
+                                            ));
+                                          },
+                                          child: const Icon(
+                                            Icons.play_arrow,
+                                            color: ColorResources.white,
+                                          ),
+                                        ),
+                                      )
+                                    ),
+                                  ],
+                                )
+                              ],
+                            ) 
                           )
                         ],
                       ),

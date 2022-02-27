@@ -84,6 +84,7 @@ class VideoProvider with ChangeNotifier {
         address: data["address"],
         content: data["content"],
         mediaUrl: data["mediaUrl"],
+        mediaUrlPhone: data["mediaUrlPhone"],
         duration: data["duration"],
         fullname: data["fullname"],
         lat: data["lat"],
@@ -104,7 +105,6 @@ class VideoProvider with ChangeNotifier {
   }
 
   Future<void> getSos(BuildContext context) async {
-    setStateListenVStatus(ListenVStatus.loading);
     try {
       Dio dio = Dio();
       Response res = await dio.get("${AppConstants.baseUrl}/get-sos/${authProvider.getUserId()}?page=$page");
@@ -124,6 +124,7 @@ class VideoProvider with ChangeNotifier {
           lat: sos.lat,
           lng: sos.lng,
           mediaUrl: sos.mediaUrl,
+          mediaUrlPhone: sos.mediaUrlPhone,
           status: sos.status,
           thumbnail: sos.thumbnail,
           uid: sos.uid,
@@ -286,6 +287,41 @@ class VideoProvider with ChangeNotifier {
     return videoUrl;
   }
 
+  Future<String?> uploadVideoPhone(BuildContext context, {required File file}) async {
+    try {
+      Dio dio = Dio();
+      FormData formData = FormData.fromMap({
+        "video": await MultipartFile.fromFile(
+          file.path, 
+          filename: basename(file.path)
+        ),
+      });
+      Response res = await dio.post("${AppConstants.baseUrl}/upload", data: formData);
+      String url = res.data["url"]!;
+      return url;
+    } on DioError catch(e) {
+      if(
+        e.response!.statusCode == 400
+        || e.response!.statusCode == 401
+        || e.response!.statusCode == 402 
+        || e.response!.statusCode == 403
+        || e.response!.statusCode == 404 
+        || e.response!.statusCode == 405 
+        || e.response!.statusCode == 500 
+        || e.response!.statusCode == 501
+        || e.response!.statusCode == 502
+        || e.response!.statusCode == 503
+        || e.response!.statusCode == 504
+        || e.response!.statusCode == 505
+      ) {
+        ShowSnackbar.snackbar(context, "(${e.response!.statusCode.toString()}) : Internal Server Error", "", ColorResources.error);
+      }
+    } catch(e) {
+      debugPrint(e.toString());
+    } 
+    return videoUrl;
+  }
+
   Future<String?> uploadThumbnail(BuildContext context, {required File file}) async {
     try {
       Dio dio = Dio();
@@ -323,11 +359,12 @@ class VideoProvider with ChangeNotifier {
     return thumbnailUrl;
   }
 
-  Future<void> insertSos(BuildContext context, 
+  Future<void> storeSos(BuildContext context, 
     {
       required String id,
       required String category,
       required String mediaUrl, 
+      required String mediaUrlPhone,
       required String content,
       required String lat,
       required String lng,
@@ -340,11 +377,12 @@ class VideoProvider with ChangeNotifier {
   ) async {
     try {
       Dio dio = Dio();
-      await dio.post('${AppConstants.baseUrl}/insert-sos', 
+      await dio.post('${AppConstants.baseUrl}/store-sos', 
         data: {
           "id": id,
           "category": category,
           "media_url": mediaUrl,
+          "media_url_phone": mediaUrlPhone,
           "desc": content,
           "lat": lat,
           "lng": lng,
@@ -352,7 +390,8 @@ class VideoProvider with ChangeNotifier {
           "status": status,
           "duration": duration,
           "thumbnail": thumbnail,
-          "user_id": userId
+          "user_id": userId,
+          "username": authProvider.getUserFullname()
         }
       );
 
@@ -380,7 +419,10 @@ class VideoProvider with ChangeNotifier {
 
       await context.read<InboxProvider>().insertInbox(context, 
         title: "Info",
+        mediaUrl: mediaUrlPhone,
+        thumbnail: thumbnailUrl,
         content: "Rekaman Anda berhasil terkirim kepada Public Service dan Emergency Contact",
+        type: "info",
         userId: authProvider.getUserId(),
       );
       
