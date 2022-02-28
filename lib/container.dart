@@ -47,7 +47,7 @@ Future<void> init() async {
     splashRepo: getIt()
   ));
 
-   getIt.registerFactory(() => ContactProvider(authRepo: getIt()));
+  getIt.registerFactory(() => ContactProvider(authRepo: getIt()));
 
   getIt.registerFactory(() => FirebaseProvider(sharedPreferences: getIt()));
   getIt.registerFactory(() => LocationProvider(sharedPreferences: getIt()));

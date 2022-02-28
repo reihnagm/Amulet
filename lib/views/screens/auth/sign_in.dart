@@ -141,7 +141,7 @@ class _SignInScreenState extends State<SignInScreen> {
                                   children: [
                                     Text(getTranslated("PHONE_NUMBER", context),
                                       style: const TextStyle(
-                                        color: ColorResources.white,
+                                        color: ColorResources.black,
                                         fontSize: Dimensions.fontSizeDefault
                                       ),
                                     ),
@@ -187,7 +187,7 @@ class _SignInScreenState extends State<SignInScreen> {
                                   children: [
                                     Text(getTranslated("PASSWORD", context),
                                       style: const TextStyle(
-                                        color: ColorResources.white,
+                                        color: ColorResources.black,
                                         fontSize: Dimensions.fontSizeDefault
                                       ),
                                     ),

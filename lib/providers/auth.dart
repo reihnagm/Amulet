@@ -1,10 +1,10 @@
 import 'dart:convert';
 
-import 'package:amulet/views/screens/auth/sign_in.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'package:amulet/views/screens/auth/sign_in.dart';
 import 'package:amulet/views/screens/auth/otp.dart';
 import 'package:amulet/localization/language_constraints.dart';
 import 'package:amulet/data/repository/auth/auth.dart';
