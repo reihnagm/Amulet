@@ -2,8 +2,13 @@ import 'dart:convert';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_animated_dialog/flutter_animated_dialog.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'package:amulet/utils/exceptions.dart';
+import 'package:amulet/utils/dimensions.dart';
+import 'package:amulet/views/screens/auth/verify.dart';
+import 'package:amulet/data/models/inquiry/register.dart';
 import 'package:amulet/views/screens/auth/sign_in.dart';
 import 'package:amulet/views/screens/auth/otp.dart';
 import 'package:amulet/localization/language_constraints.dart';
@@ -16,6 +21,7 @@ import 'package:amulet/views/basewidgets/snackbar/snackbar.dart';
 import 'package:amulet/data/models/user/user.dart';
 import 'package:amulet/utils/constant.dart';
 
+enum AuthDisbursementStatus { loading, loaded, error, idle } 
 enum LoginStatus { idle, loading, loaded, empty, error }
 enum RegisterStatus { idle, loading, loaded, empty, error }
 enum ResendOtpStatus { idle, loading, loaded, error, empty } 
@@ -46,10 +52,15 @@ class AuthProvider with ChangeNotifier {
   String changeEmailName = "";
   String emailCustom = "";
 
+  InquiryRegisterModel? inquiryRegisterModel;
+
   TextEditingController otpTextController = TextEditingController();
 
   LoginStatus _loginStatus = LoginStatus.idle;
   LoginStatus get loginStatus => _loginStatus;
+
+  AuthDisbursementStatus _authDisbursementStatus = AuthDisbursementStatus.idle;
+  AuthDisbursementStatus get authDisbursementStatus => _authDisbursementStatus;
 
   RegisterStatus _registerStatus = RegisterStatus.idle;
   RegisterStatus get registerStatus => _registerStatus;
@@ -87,12 +98,22 @@ class AuthProvider with ChangeNotifier {
     _applyChangeEmailOtpStatus = applyChangeEmailOtpStatus;
     Future.delayed(Duration.zero, () => notifyListeners());
   }
+  
+  void setStateAuthDisbursement(AuthDisbursementStatus authDisbursementStatus) {
+    _authDisbursementStatus = authDisbursementStatus;
+    Future.delayed(Duration.zero, () => notifyListeners());
+  }
+
+
+  String getUserPhone() {
+    return authRepo.getUserPhone();
+  }
 
   String getUserFullname() {
     return authRepo.getUserFullName();
   }
 
-  String getUserId() {
+  String? getUserId() {
     return authRepo.getUserId()!;
   }
 
@@ -122,12 +143,117 @@ class AuthProvider with ChangeNotifier {
     sharedPreferences.remove("user");
   }
 
+  Future authDisbursement(BuildContext context, String password) async {
+    setStateAuthDisbursement(AuthDisbursementStatus.loading);
+    try {
+      Response res = await dio.post("${AppConstants.baseUrl}/user-service/authentication-disburse", data: {
+        "password": password
+      }, options: Options(
+        headers: {
+          "Authorization": "Bearer ${sharedPreferences.getString("token")}"
+        }
+      ));
+      setStateAuthDisbursement(AuthDisbursementStatus.loaded);
+      return res.statusCode;
+    } on DioError catch(e) {
+      setStateAuthDisbursement(AuthDisbursementStatus.error);
+      if(e.response?.statusCode == 400) {
+        throw CustomException(json.decode(e.response!.data)["error"]);
+      }
+    } catch(e) {
+      setStateAuthDisbursement(AuthDisbursementStatus.error);
+      debugPrint(e.toString());
+    }
+  }
+
   Future<void> logout(context) async {
     await deleteData();
     return Future.value();
   }
 
-  Future<void> login(BuildContext context, User user) async {
+  Future<InquiryRegisterModel> verify(BuildContext context, GlobalKey<ScaffoldState> globalKey, String token, UserModel user) async {
+    String productId = "";
+    if(user.data!.user!.role! == "1day") {
+      productId = "df78a1a0-9d5b-4a7c-bd48-d4395f207436"; // 30 K
+    } else {
+      productId = "92e1affe-467b-4b2a-a329-019c55fb53a9"; // 300 K
+    }
+    try {
+      Response res = await dio.post("${AppConstants.baseUrlPpob}/registration/inquiry", data: {
+        "productId" : productId
+      }, options: Options(
+        headers: {
+          "Authorization": "Bearer $token",
+          "X-Context-ID": AppConstants.xContextId
+        }
+      ));
+      Map<String, dynamic> resData = res.data;
+      InquiryRegisterModel inquiryRegisterModel = InquiryRegisterModel.fromJson(resData); 
+      return inquiryRegisterModel;  
+    } on DioError catch(e) {
+      if(e.response?.data != null) {
+        if(e.response?.data['code'] == 404 && user.data!.user!.status! == "pending") {
+          showAnimatedDialog(
+            context: context,
+            barrierDismissible: true,
+            builder: (BuildContext context) {
+              return Dialog(
+                child: Container(
+                  alignment: Alignment.center,
+                  height: 60.0,
+                  child: Text(getTranslated("THERE_WAS_PROBLEM", context),
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: Dimensions.fontSizeDefault
+                    )
+                  ),
+                ),
+              );
+            },
+            animationType: DialogTransitionType.scale,
+            curve: Curves.fastOutSlowIn,
+            duration: const Duration(seconds: 2),
+          );
+        }
+        if(e.response?.data['code'] == 404 && user.data!.user!.status == "enabled" && user.data!.user!.emailActivated! == 1) {
+          writeData(user.data!); 
+          Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => HomeScreen(key: UniqueKey())));
+        } else {
+          sharedPreferences.setString("email_otp", user.data!.user!.emailAddress!);
+          Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => OtpScreen(key: UniqueKey())));
+        }
+      } else {
+        if(user.data?.user?.status == "pending") {
+          showAnimatedDialog(
+            context: context,
+            barrierDismissible: true,
+            builder: (BuildContext context) {
+              return Dialog(
+                child: Container(
+                  alignment: Alignment.center,
+                  height: 60.0,
+                  child: Text(getTranslated("THERE_WAS_PROBLEM", context),
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: Dimensions.fontSizeDefault
+                    )
+                  ),
+                ),
+              );
+            },
+            animationType: DialogTransitionType.scale,
+            curve: Curves.fastOutSlowIn,
+            duration: const Duration(seconds: 2),
+          );
+        }
+      }
+    } catch(e) {
+      debugPrint(e.toString());
+    }
+    return inquiryRegisterModel!;
+  }
+
+  Future<void> login(BuildContext context, GlobalKey<ScaffoldState> globalKey, User user) async {
     setStateLoginStatus(LoginStatus.loading);
     try {
       Dio dio = Dio();
@@ -139,7 +265,27 @@ class AuthProvider with ChangeNotifier {
       );
       Map<String, dynamic> resData = res.data;
       UserModel userModel = UserModel.fromJson(resData);
-      UserData userData = userModel.userData!;
+      UserData userData = userModel.data!;
+      // InquiryRegisterModel inquiryRegisterModel = await verify(context, globalKey, userData.accessToken!, userModel);
+      // if(inquiryRegisterModel.code == 0) {
+      //   sharedPreferences.setString("pay_register_token", userData.accessToken!);
+      //   Navigator.of(context).push(MaterialPageRoute(builder: (context) => VerifyScreen(
+      //     accountName: inquiryRegisterModel.body!.data!.accountName!,
+      //     accountNumber: inquiryRegisterModel.body!.accountNumber2!,
+      //     bankFee: inquiryRegisterModel.body!.data!.bankFee!,
+      //     transactionId: inquiryRegisterModel.body!.transactionId!,
+      //     productId: inquiryRegisterModel.body!.productId!,
+      //     productPrice: inquiryRegisterModel.body!.productPrice!,
+      //   )));
+      // } else {
+      //   if(userData.user!.status == "enabled" &&  userModel.data!.user!.emailActivated == 1) {
+      //     writeData(userData);
+      //     Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => HomeScreen(key: UniqueKey())));
+      //   } else {
+      //     sharedPreferences.setString("email_otp", userModel.data!.user!.emailAddress!);
+      //     Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => OtpScreen(key: UniqueKey())));
+      //   }
+      // }
       if(userData.user!.emailActivated != 0) {
         writeData(userData);
         navigationService.pushNavReplacement(
@@ -299,7 +445,7 @@ class AuthProvider with ChangeNotifier {
       ShowSnackbar.snackbar(context, "Akun Alamat E-mail $changeEmailName Anda sudah aktif", "", ColorResources.success);
       Map<String, dynamic> data = res.data;
       UserModel user = UserModel.fromJson(data);
-      writeData(user.userData!);
+      writeData(user.data!);
       Navigator.of(context).pushReplacement(MaterialPageRoute(
         builder: (BuildContext context) => HomeScreen(key: UniqueKey()))
       ); 

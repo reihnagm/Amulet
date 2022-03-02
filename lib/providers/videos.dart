@@ -2,21 +2,21 @@ import 'dart:io';
 
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
-import 'package:amulet/data/models/upload/upload.dart';
-import 'package:amulet/providers/inbox.dart';
 import 'package:provider/provider.dart';
 import 'package:dio/dio.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:path/path.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:video_player/video_player.dart';
 
 import 'package:amulet/providers/firebase.dart';
+import 'package:amulet/providers/auth.dart';
+import 'package:amulet/providers/location.dart';
+import 'package:amulet/data/models/sos/agent.dart';
+import 'package:amulet/data/models/upload/upload.dart';
+import 'package:amulet/providers/inbox.dart';
 import 'package:amulet/services/notification.dart';
 import 'package:amulet/utils/helper.dart';
 import 'package:amulet/data/models/fcm/fcm.dart';
-import 'package:amulet/providers/auth.dart';
-import 'package:amulet/providers/location.dart';
 import 'package:amulet/data/models/sos/sos.dart';
 import 'package:amulet/views/basewidgets/button/custom.dart';
 import 'package:amulet/utils/color_resources.dart';
@@ -27,6 +27,7 @@ import 'package:amulet/utils/constant.dart';
 
 enum FcmStatus { idle, loading, loaded, empty, error }
 enum ListenVStatus { idle, loading, loaded, empty, error }
+enum SosHistoryStatus { idle, loading, loaded, empty, error }
 
 class VideoProvider with ChangeNotifier {
   final AuthProvider authProvider;
@@ -46,8 +47,16 @@ class VideoProvider with ChangeNotifier {
   FcmStatus _fcmStatus = FcmStatus.idle;
   FcmStatus get fcmStatus => _fcmStatus;
 
+  SosHistoryStatus _sosHistoryStatus = SosHistoryStatus.loading;
+  SosHistoryStatus get sosHistoryStatus => _sosHistoryStatus;
+
   void setStateListenVStatus(ListenVStatus listenVStatus) {
     _listenVStatus = listenVStatus;
+    Future.delayed(Duration.zero, () => notifyListeners());
+  }
+
+  void setStateSosHistoryStatus(SosHistoryStatus sosHistoryStatus) {
+    _sosHistoryStatus = sosHistoryStatus;
     Future.delayed(Duration.zero, () => notifyListeners());
   }
 
@@ -55,10 +64,9 @@ class VideoProvider with ChangeNotifier {
     _fcmStatus = fcmStatus;
     Future.delayed(Duration.zero, () => notifyListeners());
   }
-
-  int page = 1;
-
-  late VideoPlayerController vid;
+  
+  int _page = 1;
+  int get page => _page; 
 
   late BitmapDescriptor myCurrentPosition;
 
@@ -69,6 +77,9 @@ class VideoProvider with ChangeNotifier {
 
   List<FcmData> _fcmData = [];
   List<FcmData> get fcmData => [..._fcmData];
+
+  List<SosAgentData> _sosAgentDataHistory = [];
+  List<SosAgentData> get sosAgentDataHistory => [..._sosAgentDataHistory];
 
   String _videoUrl = "";
   String get videoUrl => _videoUrl;
@@ -100,11 +111,12 @@ class VideoProvider with ChangeNotifier {
   }
 
   Future<void> scrollNextPage(int limit) async {
-    page += limit;
+    _page += limit;
     notifyListeners();
   }
 
   Future<void> getSos(BuildContext context) async {
+    setStateListenVStatus(ListenVStatus.loading);
     try {
       Dio dio = Dio();
       Response res = await dio.get("${AppConstants.baseUrl}/get-sos/${authProvider.getUserId()}?page=$page");
@@ -118,7 +130,6 @@ class VideoProvider with ChangeNotifier {
           address: sos.address,
           category: sos.category,
           content: sos.content,
-          createdAt: sos.createdAt,
           duration: sos.duration,
           fullname: sos.fullname,
           lat: sos.lat,
@@ -128,6 +139,7 @@ class VideoProvider with ChangeNotifier {
           status: sos.status,
           thumbnail: sos.thumbnail,
           uid: sos.uid,
+          createdAt: sos.createdAt,
           updatedAt: sos.updatedAt,
           userId: sos.userId
         ));
@@ -161,35 +173,39 @@ class VideoProvider with ChangeNotifier {
     }
   }
 
-  Future<void> getFcm(BuildContext context) async {
-    setStateFcmStatus(FcmStatus.loading);
+  Future<void> getHistorySos(BuildContext context, {required String isConfirm}) async {
     try {
       Dio dio = Dio();
-      Response res = await dio.get('${AppConstants.baseUrl}/get-fcm');
-      Map<String, dynamic> data = res.data;
-      FcmModel fcmModel = FcmModel.fromJson(data);
-      _fcmData = [];
-      markers = [];
-      List<FcmData> fcmData = fcmModel.data!;
-      _fcmData.addAll(fcmData);
-      setStateFcmStatus(FcmStatus.loaded);
-      for (FcmData fcm in fcmData) {
-        markers.add(
-          Marker(
-            markerId: MarkerId(fcm.uid!),
-            position: LatLng(double.parse(fcm.lat!), double.parse(fcm.lng!)),
-            infoWindow: InfoWindow(
-              title: fcm.fullname
-            ),
-            icon: fcm.uid == authProvider.getUserId() 
-            ? BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueOrange) 
-            : BitmapDescriptor.defaultMarker,
-          )
-        );
-      } 
-      if(_fcmData.isEmpty) {
-        markers = [];
-        setStateFcmStatus(FcmStatus.empty);
+      Response res = await dio.get("${AppConstants.baseUrl}/get-history-sos/${isConfirm}/${authProvider.getUserId()}");
+      Map<String, dynamic> resData = res.data;
+      SosAgentModel sosAgentModel = SosAgentModel.fromJson(resData);
+      _sosAgentDataHistory = [];
+      List<SosAgentData> sosAgentData = sosAgentModel.data!;
+      List<SosAgentData> sosAgentDataHistoryAssign = [];
+      for (SosAgentData sosAgent in sosAgentData) {
+        sosAgentDataHistoryAssign.add(SosAgentData(
+          uid: sosAgent.uid,
+          address: sosAgent.address,
+          category: sosAgent.category,
+          asName: sosAgent.asName,
+          signId: sosAgent.signId,
+          content: sosAgent.content,
+          mediaUrlPhone: sosAgent.mediaUrlPhone,
+          thumbnail: sosAgent.thumbnail,
+          createdAt: sosAgent.createdAt,
+          lat: sosAgent.lat,
+          lng: sosAgent.lng,
+          acceptName: sosAgent.acceptName,
+          sender: Sender(
+            name: sosAgent.sender!.name,
+            fcm: sosAgent.sender!.fcm,
+          ),
+        ));
+      }
+      _sosAgentDataHistory = sosAgentDataHistoryAssign;
+      setStateSosHistoryStatus(SosHistoryStatus.loaded);
+      if(_sosAgentDataHistory.isEmpty) {
+        setStateSosHistoryStatus(SosHistoryStatus.empty);
       }
     } on DioError catch(e) {
       if(
@@ -208,43 +224,101 @@ class VideoProvider with ChangeNotifier {
       ) {
         ShowSnackbar.snackbar(context, "(${e.response!.statusCode.toString()}) : Internal Server Error", "", ColorResources.error);
       }
-      setStateFcmStatus(FcmStatus.error);
+      setStateSosHistoryStatus(SosHistoryStatus.error);
     } catch(e) {
       debugPrint(e.toString());
-      setStateFcmStatus(FcmStatus.error);
+      setStateSosHistoryStatus(SosHistoryStatus.error);
+    }
+  }
+
+  Future<void> getFcm(BuildContext context) async {
+    setStateFcmStatus(FcmStatus.loading);
+    if(authProvider.getUserId() != null) {
+      try {
+        Dio dio = Dio();
+        Response res = await dio.get('${AppConstants.baseUrl}/get-fcm');
+        Map<String, dynamic> data = res.data;
+        FcmModel fcmModel = FcmModel.fromJson(data);
+        _fcmData = [];
+        markers = [];
+        List<FcmData> fcmData = fcmModel.data!;
+        _fcmData.addAll(fcmData);
+        setStateFcmStatus(FcmStatus.loaded);
+        if(_fcmData.isEmpty) {
+          markers = [];
+          setStateFcmStatus(FcmStatus.empty);
+        }
+        for (FcmData fcm in fcmData) {
+          markers.add(
+            Marker(
+              markerId: MarkerId(fcm.uid!),
+              position: LatLng(double.parse(fcm.lat!), double.parse(fcm.lng!)),
+              infoWindow: InfoWindow(
+                title: fcm.fullname
+              ),
+              icon: fcm.uid == authProvider.getUserId() 
+              ? BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueOrange) 
+              : BitmapDescriptor.defaultMarker,
+            )
+          );
+        } 
+      } on DioError catch(e) {
+        if(
+          e.response!.statusCode == 400
+          || e.response!.statusCode == 401
+          || e.response!.statusCode == 402 
+          || e.response!.statusCode == 403
+          || e.response!.statusCode == 404 
+          || e.response!.statusCode == 405 
+          || e.response!.statusCode == 500 
+          || e.response!.statusCode == 501
+          || e.response!.statusCode == 502
+          || e.response!.statusCode == 503
+          || e.response!.statusCode == 504
+          || e.response!.statusCode == 505
+        ) {
+          ShowSnackbar.snackbar(context, "(${e.response!.statusCode.toString()}) : Internal Server Error", "", ColorResources.error);
+        }
+        setStateFcmStatus(FcmStatus.error);
+      } catch(e) {
+        debugPrint(e.toString());
+        setStateFcmStatus(FcmStatus.error);
+      }
     }
   }
 
   Future<void> initFcm(BuildContext context) async {
-    try {
-      Dio dio = Dio();
-      await dio.post('${AppConstants.baseUrl}/init-fcm',
-         data: {  
-           "user_id": authProvider.getUserId(),
-           "lat": locationProvider.getCurrentLat,
-           "lng": locationProvider.getCurrentLng,
-           "fcm_secret": await FirebaseMessaging.instance.getToken()
-         }
-      );
-    } on DioError catch(e) {
-      if(
-        e.response!.statusCode == 400
-        || e.response!.statusCode == 401
-        || e.response!.statusCode == 402 
-        || e.response!.statusCode == 403
-        || e.response!.statusCode == 404 
-        || e.response!.statusCode == 405 
-        || e.response!.statusCode == 500 
-        || e.response!.statusCode == 501
-        || e.response!.statusCode == 502
-        || e.response!.statusCode == 503
-        || e.response!.statusCode == 504
-        || e.response!.statusCode == 505
-      ) {
-        ShowSnackbar.snackbar(context, "(${e.response!.statusCode.toString()}) : Internal Server Error", "", ColorResources.error);
+    if(authProvider.getUserId() != null) {
+      try {
+        Dio dio = Dio();
+        await dio.post('${AppConstants.baseUrl}/init-fcm',
+          data: {  
+            "user_id": authProvider.getUserId(),
+            "lat": locationProvider.getCurrentLat,
+            "lng": locationProvider.getCurrentLng,
+            "fcm_secret": await FirebaseMessaging.instance.getToken()
+          }
+        );
+      } on DioError catch(e) {
+        if(
+          e.response?.statusCode == 400
+          || e.response?.statusCode == 401
+          || e.response?.statusCode == 402 
+          || e.response?.statusCode == 403
+          || e.response?.statusCode == 404 
+          || e.response?.statusCode == 405 
+          || e.response?.statusCode == 500 
+          || e.response?.statusCode == 501
+          || e.response?.statusCode == 502
+          || e.response?.statusCode == 503
+          || e.response?.statusCode == 504
+          || e.response?.statusCode == 505
+        ) {
+          ShowSnackbar.snackbar(context, "(${e.response!.statusCode.toString()}) : Internal Server Error", "", ColorResources.error);
+        }
+      } catch(e) {
+        debugPrint(e.toString());
       }
-    } catch(e) {
-      debugPrint(e.toString());
     }
   }
 
@@ -373,9 +447,11 @@ class VideoProvider with ChangeNotifier {
       required String duration,
       required String thumbnail,
       required String userId,
+      required String signId
     }
   ) async {
     try {
+
       Dio dio = Dio();
       await dio.post('${AppConstants.baseUrl}/store-sos', 
         data: {
@@ -386,6 +462,7 @@ class VideoProvider with ChangeNotifier {
           "desc": content,
           "lat": lat,
           "lng": lng,
+          "sign_id": signId,
           "address": address,
           "status": status,
           "duration": duration,
@@ -395,20 +472,20 @@ class VideoProvider with ChangeNotifier {
         }
       );
 
-      // List<String> tokens = [];
+      List<String> tokens = [];
 
-      // for (FcmData fcm in fcmData) {
-      //   if(authProvider.getUserId() != fcm.uid) {
-      //     tokens.add(fcm.fcmSecret!);
-      //   }
-      // }
-
-      // await context.read<FirebaseProvider>().sendNotification(
-      //   context, 
-      //   title: "Info", 
-      //   body:"- Laporan baru telah masuk -",  
-      //   tokens: tokens
-      // );
+      for (FcmData fcm in fcmData) {
+        if(authProvider.getUserId() != fcm.uid) {
+          tokens.add(fcm.fcmSecret!);
+        }
+      }
+      
+      await context.read<FirebaseProvider>().sendNotification(
+        context, 
+        title: "Info", 
+        body:"- Laporan baru telah masuk -",  
+        tokens: tokens
+      );
 
       NotificationService.showNotification(
         id: Helper.createUniqueId(),
@@ -423,7 +500,7 @@ class VideoProvider with ChangeNotifier {
         thumbnail: thumbnailUrl,
         content: "Rekaman Anda berhasil terkirim kepada Public Service dan Emergency Contact",
         type: "info",
-        userId: authProvider.getUserId(),
+        userId: authProvider.getUserId()!,
       );
       
       Navigator.of(context).pop();

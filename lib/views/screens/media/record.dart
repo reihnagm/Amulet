@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:io';
+import 'dart:math';
 import 'dart:typed_data';
 
 import 'package:custom_timer/custom_timer.dart';
@@ -17,14 +18,15 @@ import 'package:amulet/providers/auth.dart';
 import 'package:amulet/providers/location.dart';
 import 'package:amulet/providers/network.dart';
 import 'package:amulet/providers/videos.dart';
-import 'package:amulet/services/socket.dart';
 import 'package:amulet/services/video.dart';
 import 'package:amulet/utils/color_resources.dart';
 import 'package:amulet/utils/dimensions.dart';
 
 class RecordScreen extends StatefulWidget {
+  final String category;
   const RecordScreen({
-    Key? key
+    Key? key,
+    this.category = "-",
   }) : super(key: key);
 
   @override
@@ -136,37 +138,40 @@ class _RecordScreenState extends State<RecordScreen> with WidgetsBindingObserver
         int sizeVideo = await VideoServices.getVideoSize(file!);
         await GallerySaver.saveVideo(file!.path);
         MediaInfo? info = await VideoServices.compressVideo(file!);
+        String signId = Random().nextInt(999999).toString().padLeft(6, '0');
         if(info != null) {
           String? mediaUrl = await videoProvider.uploadVideo(context, file: info.file!);
           String? mediaUrlPhone = await videoProvider.uploadVideoPhone(context, file: info.file!);
-          SocketServices.shared.sendMsg(
-            id: const Uuid().v4(),
-            content: "-" ,
-            mediaUrl: mediaUrl!,
+          // SocketServices.shared.sendMsg(
+          //   id: const Uuid().v4(),
+          //   content: "-" ,
+          //   mediaUrl: mediaUrl!,
+          //   mediaUrlPhone: mediaUrlPhone!,
+          //   category: widget.category,
+          //   lat: locationProvider.getCurrentLat.toString(),
+          //   lng: locationProvider.getCurrentLng.toString(),
+          //   address: locationProvider.getCurrentNameAddress,
+          //   status: "sent",
+          //   duration: (Duration(microseconds: (info.duration! * 1000).toInt())).toString(),
+          //   thumbnail: thumbnailUploaded!,
+          //   fullname: authProvider.getUserFullname(),
+          //   userId: authProvider.getUserId()!,
+          //   signId: signId
+          // );
+          await videoProvider.storeSos(context,
+            id: const Uuid().v4(), 
+            content: "-",
+            mediaUrl: mediaUrl!, 
             mediaUrlPhone: mediaUrlPhone!,
-            category: "-",
+            category: widget.category,
             lat: locationProvider.getCurrentLat.toString(),
             lng: locationProvider.getCurrentLng.toString(),
             address: locationProvider.getCurrentNameAddress,
             status: "sent",
             duration: (Duration(microseconds: (info.duration! * 1000).toInt())).toString(),
             thumbnail: thumbnailUploaded!,
-            fullname: authProvider.getUserFullname(),
-            userId: authProvider.getUserId()
-          );
-          await videoProvider.storeSos(context,
-            id: const Uuid().v4(), 
-            content: "-",
-            mediaUrl: mediaUrl, 
-            mediaUrlPhone: mediaUrlPhone,
-            category: "-",
-            lat: locationProvider.getCurrentLat.toString(),
-            lng: locationProvider.getCurrentLng.toString(),
-            address: locationProvider.getCurrentNameAddress,
-            status: "sent",
-            duration: (Duration(microseconds: (info.duration! * 1000).toInt())).toString(),
-            thumbnail: thumbnailUploaded,
-            userId: authProvider.getUserId(),
+            userId: authProvider.getUserId()!,
+            signId: signId
           );
           if(mounted) {
             setState(() {
@@ -310,9 +315,6 @@ class _RecordScreenState extends State<RecordScreen> with WidgetsBindingObserver
       if(mounted) {
         networkProvider.checkConnection(context);
       }
-      if(mounted) {
-        SocketServices.shared.connect(context);
-      }
     });
   }
 
@@ -320,7 +322,6 @@ class _RecordScreenState extends State<RecordScreen> with WidgetsBindingObserver
   void dispose() {
     controller!.dispose();
     subscription!.unsubscribe();
-    SocketServices.shared.dispose();
     VideoCompress.cancelCompression();
     VideoCompress.dispose();
     super.dispose();

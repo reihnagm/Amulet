@@ -3,11 +3,13 @@ import 'dart:async';
 import 'package:badges/badges.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
+import 'package:amulet/providers/network.dart';
 import 'package:amulet/views/screens/auth/sign_in.dart';
 import 'package:amulet/views/screens/media/record.dart';
 import 'package:amulet/localization/language_constraints.dart';
@@ -38,11 +40,12 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver, Si
 
   late AuthProvider authProvider;
   late LocationProvider locationProvider;
+  late NetworkProvider networkProvider;
   late InboxProvider inboxProvider;
   late VideoProvider videoProvider;
   late NavigationService navigationService;
 
-  late TextEditingController categeoryC;
+  // late TextEditingController categeoryC;
 
   String selectedTextCat = "";
   int selectedCatIdx = -1;
@@ -420,7 +423,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver, Si
         });
       }
     }); 
-    categeoryC = TextEditingController(text: selectedTextCat);
+    // categeoryC = TextEditingController(text: selectedTextCat); 
     Future.delayed((Duration.zero), () {
       if(mounted) {
         locationProvider.getCurrentPosition(context);
@@ -434,12 +437,15 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver, Si
       if(mounted) {
         inboxProvider.fetchInbox(context);
       }
+      if(mounted) {
+        networkProvider.checkConnection(context);
+      }
     });
   }
 
   @override 
   void dispose() {
-    categeoryC.dispose();
+    // categeoryC.dispose();
     super.dispose();
   }
 
@@ -455,12 +461,13 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver, Si
         locationProvider = context.read<LocationProvider>();
         videoProvider = context.read<VideoProvider>();
         inboxProvider = context.read<InboxProvider>();
+        networkProvider = context.read<NetworkProvider>();
         navigationService = NavigationService();
         return Scaffold(
           resizeToAvoidBottomInset: false,
           key: globalKey,
           drawer: DrawerWidget(key: UniqueKey()),
-          backgroundColor: ColorResources.white,
+          backgroundColor: ColorResources.backgroundColor,
           body: SafeArea(
             child: LayoutBuilder(
               builder: (BuildContext context, BoxConstraints constraints) {
@@ -512,7 +519,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver, Si
                                   if(ip.inboxStatus == InboxStatus.loading) {
                                     return Container(
                                       margin: const EdgeInsets.only(right: Dimensions.marginSizeDefault),
-                                       child: InkWell(
+                                      child: InkWell(
                                         onTap: () {
                                           if(authProvider.isLoggedIn()) {
                                             navigationService.pushNav(context, NotificationScreen(key: UniqueKey()));
@@ -534,7 +541,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver, Si
                                   if(ip.inboxStatus == InboxStatus.empty) {
                                     return Container(
                                       margin: const EdgeInsets.only(right: Dimensions.marginSizeDefault),
-                                       child: InkWell(
+                                      child: InkWell(
                                         onTap: () {
                                           if(authProvider.isLoggedIn()) {
                                             navigationService.pushNav(context, NotificationScreen(key: UniqueKey()));
@@ -630,10 +637,55 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver, Si
                         ],
                       ),
                     ),
-                       
+
+                    if(networkProvider.connectionStatus == ConnectionStatus.offInternet) 
+                      Center(
+                        child: SpinKitThreeBounce(
+                          size: 20.0,
+                          color: Colors.black87,
+                        ),
+                      ),
+                        
+                    if(networkProvider.connectionStatus == ConnectionStatus.onInternet)
+                      Center(
+                        child: SpinKitThreeBounce(
+                          size: 20.0,
+                          color: Colors.black87,
+                        ),
+                      ),
+
                     Consumer<LocationProvider>(
                       builder: (BuildContext context, LocationProvider lp, Widget? child) {
                         if(lp.locationStatus == LocationStatus.loading) {
+                          return Align(
+                            alignment: Alignment.bottomCenter,
+                            child: Container(
+                              width: double.infinity,
+                              margin: EdgeInsets.only(
+                                top: authProvider.isLoggedIn() 
+                                ? 160.0 
+                                : 80.0
+                              ),
+                              child: GoogleMap(
+                                mapType: MapType.normal,
+                                gestureRecognizers: {}..add(Factory<EagerGestureRecognizer>(() => EagerGestureRecognizer())),
+                                myLocationEnabled: false,
+                                initialCameraPosition: CameraPosition(
+                                  target: LatLng(
+                                    -6.175392, 
+                                    106.827153
+                                  ),
+                                  zoom: 15.0,
+                                ),
+                                onMapCreated: (GoogleMapController controller) {
+                                  mapsController.complete(controller);
+                                  lp.controller = controller;
+                                },
+                              ),
+                            )
+                          );
+                        }
+                        if(lp.locationStatus == LocationStatus.error) {
                           return Align(
                             alignment: Alignment.bottomCenter,
                             child: Container(
@@ -804,6 +856,11 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver, Si
 
                   ],
                 );
+                
+                
+                
+
+
               },
             ),
           ),

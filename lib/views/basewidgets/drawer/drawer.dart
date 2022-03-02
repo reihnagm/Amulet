@@ -1,7 +1,8 @@
-import 'package:amulet/views/screens/subscriptions/index.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import 'package:amulet/views/screens/history/history.dart';
+import 'package:amulet/views/screens/subscriptions/index.dart';
 import 'package:amulet/views/screens/auth/sign_in.dart';
 import 'package:amulet/providers/auth.dart';
 import 'package:amulet/views/screens/contacts/contacts.dart';
@@ -139,11 +140,18 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                     ),
                     Container(
                       padding: const EdgeInsets.all(Dimensions.paddingSizeSmall),
-                      child: Text(getTranslated("HISTORY", context),
-                        style: TextStyle(
-                          fontWeight: FontWeight.w500,
-                          fontSize: Dimensions.fontSizeDefault,
-                          decoration: TextDecoration.lineThrough
+                      child: InkWell(
+                        onTap: () {
+                          navigationService.pushNav(context, HistoryScreen(key: UniqueKey()));
+                        },
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Text(getTranslated("HISTORY", context),
+                            style: TextStyle(
+                              fontWeight: FontWeight.w500,
+                              fontSize: Dimensions.fontSizeDefault,
+                            ),
+                          ),
                         ),
                       ),
                     ),
@@ -160,7 +168,7 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                       padding: const EdgeInsets.all(Dimensions.paddingSizeSmall),
                       child: InkWell(
                         onTap: () {
-                        navigationService.pushNav(context, ContactsScreen(key: UniqueKey()));
+                          navigationService.pushNav(context, ContactsScreen(key: UniqueKey()));
                         },
                         child: Padding(
                           padding: const EdgeInsets.all(8.0),

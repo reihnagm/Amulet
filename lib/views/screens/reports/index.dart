@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 import 'package:amulet/localization/language_constraints.dart';
@@ -651,7 +650,7 @@ class _ReportsScreenState extends State<ReportsScreen> {
                                                                         ),
                                                                         Expanded(
                                                                           flex: 11,
-                                                                          child: Text(DateFormat.yMMMMEEEEd().add_jms().format(videoProvider.sosData[i].createdAt!.toLocal()),
+                                                                          child: Text(videoProvider.sosData[i].createdAt.toString(),
                                                                             style: const TextStyle(
                                                                               fontWeight: FontWeight.w500,
                                                                               fontSize: Dimensions.fontSizeDefault

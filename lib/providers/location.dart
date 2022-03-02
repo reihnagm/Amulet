@@ -14,6 +14,12 @@ class LocationProvider extends ChangeNotifier {
   LocationStatus get locationStatus => _locationStatus;
 
   GoogleMapController? controller;
+
+  @override
+  void dispose() {
+    controller!.dispose();
+    super.dispose();
+  }
   
   List<Marker> _markers = [];
   List<Marker> get markers => [..._markers];
@@ -31,7 +37,7 @@ class LocationProvider extends ChangeNotifier {
       sharedPreferences.setDouble("lat", position.latitude);
       sharedPreferences.setDouble("long", position.longitude);
       List<Placemark> placemarks = await placemarkFromCoordinates(position.latitude, position.longitude);
-      Placemark place = placemarks[0];
+      Placemark? place = placemarks[0];
       _markers.add(
         Marker(
           markerId: const MarkerId("currentlocation"),
@@ -44,13 +50,14 @@ class LocationProvider extends ChangeNotifier {
       sharedPreferences.setString("currentNameAddress", "${place.thoroughfare} ${place.subThoroughfare} \n${place.locality}, ${place.postalCode}");
       setStateLocationStatus(LocationStatus.loaded);
     } catch(e) {
+      setStateLocationStatus(LocationStatus.error);
       debugPrint(e.toString());
     } 
   }
 
   String get getCurrentNameAddress => sharedPreferences.getString("currentNameAddress") ?? "Location no Selected"; 
 
-  double get getCurrentLat => sharedPreferences.getDouble("lat") ?? 0.0;
+  double get getCurrentLat => sharedPreferences.getDouble("lat") ?? -6.175392;
   
-  double get getCurrentLng => sharedPreferences.getDouble("long") ?? 0.0;
+  double get getCurrentLng => sharedPreferences.getDouble("long") ?? 106.827153;
 }

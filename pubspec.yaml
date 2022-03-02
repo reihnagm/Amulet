@@ -87,6 +87,12 @@ dependencies:
   # U
   uuid: ^3.0.5
   url_launcher: ^6.0.20
+  shimmer: ^2.0.0
+  modal_bottom_sheet: ^2.0.0
+  jwt_decoder: ^2.0.1
+  date_time_picker: ^2.1.0
+  mask_text_input_formatter: ^2.1.0
+  flutter_html: ^2.2.1
 
 dev_dependencies:
   flutter_test:

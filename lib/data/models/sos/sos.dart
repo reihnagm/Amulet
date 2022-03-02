@@ -63,8 +63,8 @@ class SosData {
   String? thumbnail;
   String? fullname;
   String? userId;
-  DateTime? createdAt;
-  DateTime? updatedAt;
+  dynamic createdAt;
+  dynamic updatedAt;
 
   factory SosData.fromJson(Map<String, dynamic> json) => SosData(
     uid: json["uid"],
@@ -80,7 +80,7 @@ class SosData {
     thumbnail: json["thumbnail"],
     fullname: json["fullname"],
     userId: json["user_id"],
-    createdAt: DateTime.parse(json["created_at"]),
-    updatedAt: DateTime.parse(json["updated_at"]),
+    createdAt: json["created_at"],
+    updatedAt: json["updated_at"],
   );
 }

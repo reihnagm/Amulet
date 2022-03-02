@@ -79,7 +79,7 @@ class _MyAppState extends State<MyApp> {
       locals.add(Locale(language.languageCode!, language.countryCode));
     }
     return MaterialApp(
-      title: 'Panic Button',
+      title: 'Amulet',
       debugShowCheckedModeBanner: false,
       locale: Provider.of<LocalizationProvider>(context).locale,
       localizationsDelegates: const [

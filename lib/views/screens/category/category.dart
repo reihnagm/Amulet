@@ -5,29 +5,24 @@ import 'package:badges/badges.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:gallery_saver/gallery_saver.dart';
-import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-import 'package:uuid/uuid.dart';
-import 'package:filesize/filesize.dart';
 import 'package:video_compress/video_compress.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
+import 'package:amulet/views/screens/media/record.dart';
 import 'package:amulet/localization/language_constraints.dart';
 import 'package:amulet/providers/inbox.dart';
 import 'package:amulet/services/navigation.dart';
-import 'package:amulet/views/basewidgets/snackbar/snackbar.dart';
 import 'package:amulet/views/screens/notification/notification.dart';
 import 'package:amulet/providers/network.dart';
 import 'package:amulet/providers/auth.dart';
-import 'package:amulet/services/socket.dart';
 import 'package:amulet/services/video.dart';
 import 'package:amulet/providers/location.dart';
 import 'package:amulet/providers/videos.dart';
 import 'package:amulet/utils/box_shadow.dart';
 import 'package:amulet/utils/color_resources.dart';
 import 'package:amulet/utils/dimensions.dart';
-import 'package:amulet/views/basewidgets/button/custom.dart';
 import 'package:amulet/views/basewidgets/drawer/drawer.dart';
 
 class CategoryScreen extends StatefulWidget {
@@ -61,33 +56,33 @@ class _CategoryScreenState extends State<CategoryScreen> {
   List<Map<String, dynamic>> categories = [
     {
       "id": 1,
-      "name": "ACCIDENT",
-      "image": "assets/images/accident.png"
+      "name": "Kecelakaan",
+      "image": "assets/images/TABRAKAN.png"
     },
     {
       "id": 2,
-      "name": "THIEF",
-      "image": "assets/images/thief.png"
+      "name": "Pencurian",
+      "image": "assets/images/PENCURIAN.png"
     },
     {
       "id": 3,
-      "name": "FLAME",
-      "image": "assets/images/fire.png"
+      "name": "Kebakaran",
+      "image": "assets/images/KEBAKARAN.png"
     },
     {
       "id": 4,
-      "name": "DISASTER",
-      "image": "assets/images/disaster.png"
+      "name": "Banjir",
+      "image": "assets/images/KEBANJIRAN.png"
     },
     {
       "id": 5,
-      "name": "THIEF",
-      "image": "assets/images/rape.png"
+      "name": "Perampokan",
+      "image": "assets/images/PERAMPOKAN.png"
     },
     {
       "id": 6,
-      "name": "UNREST",
-      "image": "assets/images/noise.png"
+      "name": "Kerusuhan",
+      "image": "assets/images/KERUSUHAN.png"
     }
   ];
 
@@ -132,14 +127,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
   @override 
   void initState() {
     super.initState();
-
     msgC = TextEditingController();
-    
-    Future.delayed((Duration.zero), (){
-      if(mounted) {
-        SocketServices.shared.connect(context);
-      }
-    });
   }
 
   @override 
@@ -367,331 +355,340 @@ class _CategoryScreenState extends State<CategoryScreen> {
                                             borderRadius: BorderRadius.circular(20.0),
                                             onTap: () {
                                               setState(() => selectedIndex = i);
-                                              showModalBottomSheet(
-                                                isScrollControlled: true,
-                                                isDismissible: false,
-                                                context: context, 
-                                                shape: const RoundedRectangleBorder(
-                                                  borderRadius: BorderRadius.only(
-                                                    topLeft: Radius.circular(20.0),
-                                                    topRight: Radius.circular(20.0)
-                                                  )
-                                                ),
-                                                builder: (BuildContext context) {
-                                                  return StatefulBuilder(
-                                                    builder: (BuildContext context, Function s) {
-                                                      return  LayoutBuilder(
-                                                        builder: (BuildContext context, BoxConstraints constraints) {
-                                                          return Padding(
-                                                            padding: MediaQuery.of(context).viewInsets,
-                                                            child: Padding(
-                                                              padding: const EdgeInsets.all(16.0),
-                                                              child: Column(
-                                                                crossAxisAlignment: CrossAxisAlignment.start,
-                                                                mainAxisSize: MainAxisSize.min,
-                                                                children: [
-                                                                  Column(
-                                                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                                                    mainAxisSize: MainAxisSize.min,
-                                                                    children: [
-                                                                      Text(categories[i]["name"],
-                                                                        style: const TextStyle(
-                                                                          fontWeight: FontWeight.w500,
-                                                                          fontSize: Dimensions.fontSizeLarge
-                                                                        ),
-                                                                      ),
-                                                                      const SizedBox(height: 10.0),
-                                                                      Row(
-                                                                        children: [
-                                                                          Expanded(
-                                                                            flex: 20,
-                                                                            child: Text(getTranslated("DATE", context),
-                                                                              style: TextStyle(
-                                                                                fontWeight: FontWeight.w500,
-                                                                                fontSize: Dimensions.fontSizeDefault
-                                                                              ),
-                                                                            ),
-                                                                          ),
-                                                                          const Expanded(
-                                                                            flex: 6,
-                                                                            child: Text(":",
-                                                                              style: TextStyle(
-                                                                                fontWeight: FontWeight.w500,
-                                                                                fontSize: Dimensions.fontSizeDefault
-                                                                              ),
-                                                                            )
-                                                                          ),
-                                                                          Expanded(
-                                                                            flex: 100,
-                                                                            child: Text(DateFormat('M/d/y').format(DateTime.now()),
-                                                                              style: const TextStyle(
-                                                                                fontWeight: FontWeight.w500,
-                                                                                fontSize: Dimensions.fontSizeDefault
-                                                                              ),
-                                                                            ),
-                                                                          ),
-                                                                        ],
-                                                                      ),
-                                                                      const SizedBox(height: 10.0),
-                                                                      Row(
-                                                                        children: [
-                                                                          Expanded(
-                                                                            flex: 20,
-                                                                            child: Text(getTranslated("LOCATION", context),
-                                                                              style: TextStyle(
-                                                                                fontWeight: FontWeight.w500,
-                                                                                fontSize: Dimensions.fontSizeDefault
-                                                                              ),
-                                                                            ),
-                                                                          ),
-                                                                          const Expanded(
-                                                                            flex: 6,
-                                                                            child: Text(":",
-                                                                              style: TextStyle(
-                                                                                fontWeight: FontWeight.w500,
-                                                                                fontSize: Dimensions.fontSizeDefault
-                                                                              ),
-                                                                            )
-                                                                          ),
-                                                                          Expanded(
-                                                                            flex: 100,
-                                                                            child: Text(locationProvider.getCurrentNameAddress,
-                                                                              style: const TextStyle(
-                                                                                fontWeight: FontWeight.w500,
-                                                                                fontSize: Dimensions.fontSizeDefault
-                                                                              ),
-                                                                            ),
-                                                                          ),
-                                                                        ],
-                                                                      )
-                                                                    ],
-                                                                  ),
+
+                                              navigationService.pushNav(context, RecordScreen(
+                                                category: categories[i]["name"],
+                                              ));
+
+                                              setState(() => selectedIndex = -1);
+
+                                              // showModalBottomSheet(
+                                              //   isScrollControlled: true,
+                                              //   isDismissible: false,
+                                              //   context: context, 
+                                              //   shape: const RoundedRectangleBorder(
+                                              //     borderRadius: BorderRadius.only(
+                                              //       topLeft: Radius.circular(20.0),
+                                              //       topRight: Radius.circular(20.0)
+                                              //     )
+                                              //   ),
+                                              //   builder: (BuildContext context) {
+                                              //     return StatefulBuilder(
+                                              //       builder: (BuildContext context, Function s) {
+                                              //         return  LayoutBuilder(
+                                              //           builder: (BuildContext context, BoxConstraints constraints) {
+                                              //             return Padding(
+                                              //               padding: MediaQuery.of(context).viewInsets,
+                                              //               child: Padding(
+                                              //                 padding: const EdgeInsets.all(16.0),
+                                              //                 child: Column(
+                                              //                   crossAxisAlignment: CrossAxisAlignment.start,
+                                              //                   mainAxisSize: MainAxisSize.min,
+                                              //                   children: [
+                                              //                     Column(
+                                              //                       crossAxisAlignment: CrossAxisAlignment.start,
+                                              //                       mainAxisSize: MainAxisSize.min,
+                                              //                       children: [
+                                              //                         Text(categories[i]["name"],
+                                              //                           style: const TextStyle(
+                                              //                             fontWeight: FontWeight.w500,
+                                              //                             fontSize: Dimensions.fontSizeLarge
+                                              //                           ),
+                                              //                         ),
+                                              //                         const SizedBox(height: 10.0),
+                                              //                         Row(
+                                              //                           children: [
+                                              //                             Expanded(
+                                              //                               flex: 20,
+                                              //                               child: Text(getTranslated("DATE", context),
+                                              //                                 style: TextStyle(
+                                              //                                   fontWeight: FontWeight.w500,
+                                              //                                   fontSize: Dimensions.fontSizeDefault
+                                              //                                 ),
+                                              //                               ),
+                                              //                             ),
+                                              //                             const Expanded(
+                                              //                               flex: 6,
+                                              //                               child: Text(":",
+                                              //                                 style: TextStyle(
+                                              //                                   fontWeight: FontWeight.w500,
+                                              //                                   fontSize: Dimensions.fontSizeDefault
+                                              //                                 ),
+                                              //                               )
+                                              //                             ),
+                                              //                             Expanded(
+                                              //                               flex: 100,
+                                              //                               child: Text(DateFormat('M/d/y').format(DateTime.now()),
+                                              //                                 style: const TextStyle(
+                                              //                                   fontWeight: FontWeight.w500,
+                                              //                                   fontSize: Dimensions.fontSizeDefault
+                                              //                                 ),
+                                              //                               ),
+                                              //                             ),
+                                              //                           ],
+                                              //                         ),
+                                              //                         const SizedBox(height: 10.0),
+                                              //                         Row(
+                                              //                           children: [
+                                              //                             Expanded(
+                                              //                               flex: 20,
+                                              //                               child: Text(getTranslated("LOCATION", context),
+                                              //                                 style: TextStyle(
+                                              //                                   fontWeight: FontWeight.w500,
+                                              //                                   fontSize: Dimensions.fontSizeDefault
+                                              //                                 ),
+                                              //                               ),
+                                              //                             ),
+                                              //                             const Expanded(
+                                              //                               flex: 6,
+                                              //                               child: Text(":",
+                                              //                                 style: TextStyle(
+                                              //                                   fontWeight: FontWeight.w500,
+                                              //                                   fontSize: Dimensions.fontSizeDefault
+                                              //                                 ),
+                                              //                               )
+                                              //                             ),
+                                              //                             Expanded(
+                                              //                               flex: 100,
+                                              //                               child: Text(locationProvider.getCurrentNameAddress,
+                                              //                                 style: const TextStyle(
+                                              //                                   fontWeight: FontWeight.w500,
+                                              //                                   fontSize: Dimensions.fontSizeDefault
+                                              //                                 ),
+                                              //                               ),
+                                              //                             ),
+                                              //                           ],
+                                              //                         )
+                                              //                       ],
+                                              //                     ),
                                                               
-                                                                  Container(
-                                                                    margin: const EdgeInsets.only(top: Dimensions.marginSizeLarge),
-                                                                    child: TextField(
-                                                                      controller: msgC,
-                                                                      cursorColor: ColorResources.black,
-                                                                      style: const TextStyle(
-                                                                        fontSize: Dimensions.fontSizeDefault
-                                                                      ),
-                                                                      decoration: InputDecoration(
-                                                                        labelText: getTranslated("MESSAGE", context),
-                                                                        labelStyle: TextStyle(
-                                                                          fontWeight: FontWeight.w500,
-                                                                          color: ColorResources.black,
-                                                                          fontSize: Dimensions.fontSizeLarge
-                                                                        ),
-                                                                        floatingLabelBehavior: FloatingLabelBehavior.always,
-                                                                        border: OutlineInputBorder(),
-                                                                        focusedBorder: OutlineInputBorder(),
-                                                                        errorBorder: OutlineInputBorder(),
-                                                                        enabledBorder: OutlineInputBorder(),
-                                                                        disabledBorder: OutlineInputBorder(),
-                                                                        focusedErrorBorder: OutlineInputBorder()
-                                                                      ),
-                                                                      maxLines: 4,
-                                                                    ),
-                                                                  ),
+                                              //                     Container(
+                                              //                       margin: const EdgeInsets.only(top: Dimensions.marginSizeLarge),
+                                              //                       child: TextField(
+                                              //                         controller: msgC,
+                                              //                         cursorColor: ColorResources.black,
+                                              //                         style: const TextStyle(
+                                              //                           fontSize: Dimensions.fontSizeDefault
+                                              //                         ),
+                                              //                         decoration: InputDecoration(
+                                              //                           labelText: getTranslated("MESSAGE", context),
+                                              //                           labelStyle: TextStyle(
+                                              //                             fontWeight: FontWeight.w500,
+                                              //                             color: ColorResources.black,
+                                              //                             fontSize: Dimensions.fontSizeLarge
+                                              //                           ),
+                                              //                           floatingLabelBehavior: FloatingLabelBehavior.always,
+                                              //                           border: OutlineInputBorder(),
+                                              //                           focusedBorder: OutlineInputBorder(),
+                                              //                           errorBorder: OutlineInputBorder(),
+                                              //                           enabledBorder: OutlineInputBorder(),
+                                              //                           disabledBorder: OutlineInputBorder(),
+                                              //                           focusedErrorBorder: OutlineInputBorder()
+                                              //                         ),
+                                              //                         maxLines: 4,
+                                              //                       ),
+                                              //                     ),
 
-                                                                  isCompressed 
-                                                                  ? Container(
-                                                                      margin: const EdgeInsets.all(Dimensions.marginSizeDefault),
-                                                                      child: const Center(
-                                                                        child: SpinKitThreeBounce(
-                                                                          size: 20.0,
-                                                                          color: Colors.black87,
-                                                                        ),
-                                                                      ),
-                                                                    ) 
-                                                                  : videoCompressInfo == null 
-                                                                  ? Container()
-                                                                  : Container(
-                                                                      margin: const EdgeInsets.all(Dimensions.marginSizeDefault),
-                                                                      child: Column(
-                                                                        crossAxisAlignment: CrossAxisAlignment.center,
-                                                                        mainAxisSize: MainAxisSize.min,
-                                                                        children: [
-                                                                        Image.memory(thumbnail!, height: 100.0),
-                                                                        const SizedBox(height: 12.0),
-                                                                        Text("${getTranslated("FILE", context)} : ${filesize(videoSize)}",
-                                                                          style: const TextStyle(
-                                                                            fontSize: 16.0
-                                                                          ),
-                                                                        ),
-                                                                        const SizedBox(height: 12.0),
-                                                                        Text("${getTranslated("DURATION", context)} : ${duration!.inHours}:${duration!.inMinutes.remainder(60)}:${(duration!.inSeconds.remainder(60))}",
-                                                                          style: const TextStyle(
-                                                                            fontSize: 16.0
-                                                                          ),
-                                                                        ),
-                                                                        const  SizedBox(height: 12.0),
-                                                                        CustomButton(
-                                                                          onTap: () {
-                                                                            s(() {
-                                                                              videoCompressInfo = null;
-                                                                            });
-                                                                          }, 
-                                                                          height: 30.0,
-                                                                          isBorder: false,
-                                                                          isBorderRadius: false,
-                                                                          isBoxShadow: true,
-                                                                          btnColor: ColorResources.redPrimary,
-                                                                          btnTextColor: ColorResources.white,
-                                                                          btnTxt: getTranslated("CANCEL", context)
-                                                                        )
-                                                                      ],
-                                                                    ),
-                                                                  ),
+                                              //                     isCompressed 
+                                              //                     ? Container(
+                                              //                         margin: const EdgeInsets.all(Dimensions.marginSizeDefault),
+                                              //                         child: const Center(
+                                              //                           child: SpinKitThreeBounce(
+                                              //                             size: 20.0,
+                                              //                             color: Colors.black87,
+                                              //                           ),
+                                              //                         ),
+                                              //                       ) 
+                                              //                     : videoCompressInfo == null 
+                                              //                     ? Container()
+                                              //                     : Container(
+                                              //                         margin: const EdgeInsets.all(Dimensions.marginSizeDefault),
+                                              //                         child: Column(
+                                              //                           crossAxisAlignment: CrossAxisAlignment.center,
+                                              //                           mainAxisSize: MainAxisSize.min,
+                                              //                           children: [
+                                              //                           Image.memory(thumbnail!, height: 100.0),
+                                              //                           const SizedBox(height: 12.0),
+                                              //                           Text("${getTranslated("FILE", context)} : ${filesize(videoSize)}",
+                                              //                             style: const TextStyle(
+                                              //                               fontSize: 16.0
+                                              //                             ),
+                                              //                           ),
+                                              //                           const SizedBox(height: 12.0),
+                                              //                           Text("${getTranslated("DURATION", context)} : ${duration!.inHours}:${duration!.inMinutes.remainder(60)}:${(duration!.inSeconds.remainder(60))}",
+                                              //                             style: const TextStyle(
+                                              //                               fontSize: 16.0
+                                              //                             ),
+                                              //                           ),
+                                              //                           const  SizedBox(height: 12.0),
+                                              //                           CustomButton(
+                                              //                             onTap: () {
+                                              //                               s(() {
+                                              //                                 videoCompressInfo = null;
+                                              //                               });
+                                              //                             }, 
+                                              //                             height: 30.0,
+                                              //                             isBorder: false,
+                                              //                             isBorderRadius: false,
+                                              //                             isBoxShadow: true,
+                                              //                             btnColor: ColorResources.redPrimary,
+                                              //                             btnTextColor: ColorResources.white,
+                                              //                             btnTxt: getTranslated("CANCEL", context)
+                                              //                           )
+                                              //                         ],
+                                              //                       ),
+                                              //                     ),
 
-                                                                  Container(
-                                                                    margin: const EdgeInsets.only(top: Dimensions.marginSizeLarge),
-                                                                    child: Row(
-                                                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                                      mainAxisSize: MainAxisSize.max,
-                                                                      children: [
-                                                                        Expanded(
-                                                                          flex: 6,
-                                                                          child: Row(
-                                                                            children: [
-                                                                              Image.asset("assets/images/sound-record.png",
-                                                                                width: 30.0,
-                                                                                height: 30.0,
-                                                                                color: ColorResources.grey,
-                                                                              ),
-                                                                              const SizedBox(width: 14.0),
-                                                                              Image.asset("assets/images/camera.png",
-                                                                                width: 30.0,
-                                                                                height: 30.0,
-                                                                                color: ColorResources.grey,
-                                                                              ),
-                                                                              const SizedBox(width: 14.0),
-                                                                              InkWell(
-                                                                                onTap: () => uploadVid(s),
-                                                                                child: Image.asset("assets/images/video-record.png",
-                                                                                  width: 30.0,
-                                                                                  height: 30.0,
-                                                                                ),
-                                                                              ),
-                                                                            ],
-                                                                          ),
-                                                                        ),
-                                                                        Expanded(
-                                                                          flex: 3,
-                                                                          child: Column(
-                                                                            mainAxisSize: MainAxisSize.min,
-                                                                            children: [
-                                                                              CustomButton(
-                                                                                onTap: () {
-                                                                                  setState(() {
-                                                                                    selectedIndex = -1;
-                                                                                  });
-                                                                                  Navigator.of(context).pop();
-                                                                                }, 
-                                                                                height: 30.0,
-                                                                                isBorder: false,
-                                                                                isBorderRadius: false,
-                                                                                isBoxShadow: true,
-                                                                                btnColor: ColorResources.redPrimary,
-                                                                                btnTextColor: ColorResources.white,
-                                                                                btnTxt: getTranslated("CANCEL", context)
-                                                                              )
-                                                                            ],
-                                                                          ),
-                                                                        ),
-                                                                        const SizedBox(width: 15.0),
-                                                                        Expanded(
-                                                                          flex: 3,
-                                                                          child: Column(
-                                                                            mainAxisSize: MainAxisSize.min,
-                                                                            children: [
-                                                                              CustomButton(
-                                                                                onTap: () async {
-                                                                                  if(videoCompressInfo == null) {
-                                                                                    ShowSnackbar.snackbar(context, getTranslated("FILE_IS_REQUIRED", context), "", ColorResources.purpleDark);
-                                                                                    Navigator.of(context).pop();
-                                                                                    setState(() {
-                                                                                      selectedIndex = -1;
-                                                                                    });
-                                                                                    return;
-                                                                                  }
-                                                                                  s(() {
-                                                                                    loading = true;
-                                                                                  });
-                                                                                  try {
-                                                                                    String? mediaUrl = await videoProvider.uploadVideo(context, file: videoCompressInfo!.file!);
-                                                                                    String? mediaUrlPhone = await videoProvider.uploadVideoPhone(context, file: videoCompressInfo!.file!);
-                                                                                    File fileThumbnail = await VideoCompress.getFileThumbnail(videoCompressInfo!.file!.path); 
-                                                                                    String? thumbnailUploaded = await videoProvider.uploadThumbnail(context, file: fileThumbnail); 
-                                                                                    SocketServices.shared.sendMsg(
-                                                                                      id: const Uuid().v4(),
-                                                                                      content: msgC.text,
-                                                                                      mediaUrl: mediaUrl!,
-                                                                                      mediaUrlPhone: mediaUrlPhone!,
-                                                                                      category: categories[i]["name"],
-                                                                                      lat: locationProvider.getCurrentLat.toString(),
-                                                                                      lng: locationProvider.getCurrentLng.toString(),
-                                                                                      address: locationProvider.getCurrentNameAddress,
-                                                                                      status: "sent",
-                                                                                      duration: (Duration(microseconds: (videoCompressInfo!.duration! * 1000).toInt())).toString(),
-                                                                                      thumbnail: thumbnailUploaded!,
-                                                                                      fullname: authProvider.getUserFullname(),
-                                                                                      userId: authProvider.getUserId()
-                                                                                    );
-                                                                                    await videoProvider.storeSos(context,
-                                                                                      id: const Uuid().v4(), 
-                                                                                      content: msgC.text,
-                                                                                      mediaUrl: mediaUrl, 
-                                                                                      mediaUrlPhone: mediaUrlPhone,
-                                                                                      category: categories[i]["name"],
-                                                                                      lat: locationProvider.getCurrentLat.toString(),
-                                                                                      lng: locationProvider.getCurrentLng.toString(),
-                                                                                      address: locationProvider.getCurrentNameAddress,
-                                                                                      status: "sent",
-                                                                                      duration: (Duration(microseconds: (videoCompressInfo!.duration! * 1000).toInt())).toString(),
-                                                                                      thumbnail: thumbnailUploaded,
-                                                                                      userId: authProvider.getUserId(),
-                                                                                    );
-                                                                                    s(() {
-                                                                                      loading = false;
-                                                                                      videoCompressInfo = null;
-                                                                                    });
-                                                                                    setState(() {
-                                                                                      selectedIndex = -1;
-                                                                                    });
-                                                                                  } catch(e) {
-                                                                                    debugPrint(e.toString());
-                                                                                    Navigator.of(context).pop();
-                                                                                  }
-                                                                                }, 
-                                                                                height: 30.0,
-                                                                                isBorder: false,
-                                                                                isBorderRadius: false,
-                                                                                isBoxShadow: true,
-                                                                                btnColor: ColorResources.blue,
-                                                                                btnTextColor: ColorResources.white,
-                                                                                loadingColor: ColorResources.redPrimary,
-                                                                                isLoading: loading 
-                                                                                ? true 
-                                                                                : false,
-                                                                                btnTxt: getTranslated("SEND", context)
-                                                                              )
-                                                                            ],
-                                                                          ),
-                                                                        )
-                                                                      ],
-                                                                    )
-                                                                  )
-                                                                ],
-                                                              ),
-                                                            ),
-                                                          );
-                                                        },
-                                                      );     
-                                                    },
-                                                  );
-                                                } 
-                                              );
+                                              //                     Container(
+                                              //                       margin: const EdgeInsets.only(top: Dimensions.marginSizeLarge),
+                                              //                       child: Row(
+                                              //                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                              //                         mainAxisSize: MainAxisSize.max,
+                                              //                         children: [
+                                              //                           Expanded(
+                                              //                             flex: 6,
+                                              //                             child: Row(
+                                              //                               children: [
+                                              //                                 Image.asset("assets/images/sound-record.png",
+                                              //                                   width: 30.0,
+                                              //                                   height: 30.0,
+                                              //                                   color: ColorResources.grey,
+                                              //                                 ),
+                                              //                                 const SizedBox(width: 14.0),
+                                              //                                 Image.asset("assets/images/camera.png",
+                                              //                                   width: 30.0,
+                                              //                                   height: 30.0,
+                                              //                                   color: ColorResources.grey,
+                                              //                                 ),
+                                              //                                 const SizedBox(width: 14.0),
+                                              //                                 InkWell(
+                                              //                                   onTap: () => uploadVid(s),
+                                              //                                   child: Image.asset("assets/images/video-record.png",
+                                              //                                     width: 30.0,
+                                              //                                     height: 30.0,
+                                              //                                   ),
+                                              //                                 ),
+                                              //                               ],
+                                              //                             ),
+                                              //                           ),
+                                              //                           Expanded(
+                                              //                             flex: 3,
+                                              //                             child: Column(
+                                              //                               mainAxisSize: MainAxisSize.min,
+                                              //                               children: [
+                                              //                                 CustomButton(
+                                              //                                   onTap: () {
+                                              //                                     setState(() {
+                                              //                                       selectedIndex = -1;
+                                              //                                     });
+                                              //                                     Navigator.of(context).pop();
+                                              //                                   }, 
+                                              //                                   height: 30.0,
+                                              //                                   isBorder: false,
+                                              //                                   isBorderRadius: false,
+                                              //                                   isBoxShadow: true,
+                                              //                                   btnColor: ColorResources.redPrimary,
+                                              //                                   btnTextColor: ColorResources.white,
+                                              //                                   btnTxt: getTranslated("CANCEL", context)
+                                              //                                 )
+                                              //                               ],
+                                              //                             ),
+                                              //                           ),
+                                              //                           const SizedBox(width: 15.0),
+                                              //                           Expanded(
+                                              //                             flex: 3,
+                                              //                             child: Column(
+                                              //                               mainAxisSize: MainAxisSize.min,
+                                              //                               children: [
+                                              //                                 CustomButton(
+                                              //                                   onTap: () async {
+                                              //                                     if(videoCompressInfo == null) {
+                                              //                                       ShowSnackbar.snackbar(context, getTranslated("FILE_IS_REQUIRED", context), "", ColorResources.purpleDark);
+                                              //                                       Navigator.of(context).pop();
+                                              //                                       setState(() {
+                                              //                                         selectedIndex = -1;
+                                              //                                       });
+                                              //                                       return;
+                                              //                                     }
+                                              //                                     s(() {
+                                              //                                       loading = true;
+                                              //                                     });
+                                              //                                     try {
+                                              //                                       String? mediaUrl = await videoProvider.uploadVideo(context, file: videoCompressInfo!.file!);
+                                              //                                       String? mediaUrlPhone = await videoProvider.uploadVideoPhone(context, file: videoCompressInfo!.file!);
+                                              //                                       File fileThumbnail = await VideoCompress.getFileThumbnail(videoCompressInfo!.file!.path); 
+                                              //                                       String? thumbnailUploaded = await videoProvider.uploadThumbnail(context, file: fileThumbnail); 
+                                              //                                       SocketServices.shared.sendMsg(
+                                              //                                         id: const Uuid().v4(),
+                                              //                                         content: msgC.text,
+                                              //                                         mediaUrl: mediaUrl!,
+                                              //                                         mediaUrlPhone: mediaUrlPhone!,
+                                              //                                         category: categories[i]["name"],
+                                              //                                         lat: locationProvider.getCurrentLat.toString(),
+                                              //                                         lng: locationProvider.getCurrentLng.toString(),
+                                              //                                         address: locationProvider.getCurrentNameAddress,
+                                              //                                         status: "sent",
+                                              //                                         duration: (Duration(microseconds: (videoCompressInfo!.duration! * 1000).toInt())).toString(),
+                                              //                                         thumbnail: thumbnailUploaded!,
+                                              //                                         fullname: authProvider.getUserFullname(),
+                                              //                                         userId: authProvider.getUserId()!
+                                              //                                       );
+                                              //                                       await videoProvider.storeSos(context,
+                                              //                                         id: const Uuid().v4(), 
+                                              //                                         content: msgC.text,
+                                              //                                         mediaUrl: mediaUrl, 
+                                              //                                         mediaUrlPhone: mediaUrlPhone,
+                                              //                                         category: categories[i]["name"],
+                                              //                                         lat: locationProvider.getCurrentLat.toString(),
+                                              //                                         lng: locationProvider.getCurrentLng.toString(),
+                                              //                                         address: locationProvider.getCurrentNameAddress,
+                                              //                                         status: "sent",
+                                              //                                         duration: (Duration(microseconds: (videoCompressInfo!.duration! * 1000).toInt())).toString(),
+                                              //                                         thumbnail: thumbnailUploaded,
+                                              //                                         userId: authProvider.getUserId()!,
+                                              //                                       );
+                                              //                                       s(() {
+                                              //                                         loading = false;
+                                              //                                         videoCompressInfo = null;
+                                              //                                       });
+                                              //                                       setState(() {
+                                              //                                         selectedIndex = -1;
+                                              //                                       });
+                                              //                                     } catch(e) {
+                                              //                                       debugPrint(e.toString());
+                                              //                                       Navigator.of(context).pop();
+                                              //                                     }
+                                              //                                   }, 
+                                              //                                   height: 30.0,
+                                              //                                   isBorder: false,
+                                              //                                   isBorderRadius: false,
+                                              //                                   isBoxShadow: true,
+                                              //                                   btnColor: ColorResources.blue,
+                                              //                                   btnTextColor: ColorResources.white,
+                                              //                                   loadingColor: ColorResources.redPrimary,
+                                              //                                   isLoading: loading 
+                                              //                                   ? true 
+                                              //                                   : false,
+                                              //                                   btnTxt: getTranslated("SEND", context)
+                                              //                                 )
+                                              //                               ],
+                                              //                             ),
+                                              //                           )
+                                              //                         ],
+                                              //                       )
+                                              //                     )
+                                              //                   ],
+                                              //                 ),
+                                              //               ),
+                                              //             );
+                                              //           },
+                                              //         );     
+                                              //       },
+                                              //     );
+                                              //   } 
+                                              // );
+
+
                                             },
                                             child: Padding(
                                               padding: const EdgeInsets.all(8.0),

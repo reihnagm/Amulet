@@ -1,4 +1,5 @@
 import 'package:amulet/localization/language_constraints.dart';
+import 'package:amulet/providers/auth.dart';
 import 'package:amulet/utils/box_shadow.dart';
 import 'package:amulet/utils/color_resources.dart';
 import 'package:amulet/utils/dimensions.dart';
@@ -15,8 +16,22 @@ class SubscriptionsScreen extends StatefulWidget {
 class _SubscriptionsScreenState extends State<SubscriptionsScreen> {
   GlobalKey<ScaffoldState> globalKey = GlobalKey<ScaffoldState>();
 
+  late AuthProvider authProvider;
+
+  Future<void> buyNow() async {
+    try {
+      
+    } catch(e) {
+      debugPrint(e.toString());
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    return buildUI();
+  }
+
+  Widget buildUI() {
     return Scaffold(
       key: globalKey,
       resizeToAvoidBottomInset: false,
@@ -130,12 +145,13 @@ class _SubscriptionsScreenState extends State<SubscriptionsScreen> {
                             child: Container(
                               alignment: Alignment.center,
                               child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
                                    
-                                  Text("Lorem ipsum dolor sit amet",
+                                  Text(getTranslated("SOS_EMERGENCY", context),
                                     style: TextStyle(
-                                      fontSize: Dimensions.fontSizeSmall,
+                                      fontSize: Dimensions.fontSizeDefault,
                                       fontWeight: FontWeight.w400,
                                       color: ColorResources.redPrimary
                                     ),
@@ -143,34 +159,17 @@ class _SubscriptionsScreenState extends State<SubscriptionsScreen> {
 
                                   const SizedBox(height: 12.0),
 
-                                  Text("Lorem ipsum dolor sit amet",
-                                    style: TextStyle(
-                                      fontSize: Dimensions.fontSizeSmall,
-                                      fontWeight: FontWeight.w400,
-                                      color: ColorResources.redPrimary
+                                  Container(
+                                    width: 180.0,
+                                    child: Text(getTranslated("SHARE_TO_EMERGENCY_CONTACT", context),
+                                      style: TextStyle(
+                                        height: 1.5,
+                                        fontSize: Dimensions.fontSizeDefault,
+                                        fontWeight: FontWeight.w400,
+                                        color: ColorResources.redPrimary
+                                      ),
                                     ),
                                   ),
-
-                                  const SizedBox(height: 12.0),
-
-                                  Text("Lorem ipsum dolor sit amet",
-                                    style: TextStyle(
-                                      fontSize: Dimensions.fontSizeSmall,
-                                      fontWeight: FontWeight.w400,
-                                      color: ColorResources.redPrimary
-                                    ),
-                                  ),
-
-                                  const SizedBox(height: 12.0),
-
-                                  Text("Lorem ipsum dolor sit amet",
-                                    style: TextStyle(
-                                      fontSize: Dimensions.fontSizeSmall,
-                                      fontWeight: FontWeight.w400,
-                                      color: ColorResources.redPrimary
-                                    ),
-                                  ),
-
 
                                 ],
                               )
@@ -184,9 +183,7 @@ class _SubscriptionsScreenState extends State<SubscriptionsScreen> {
                             child: Material(
                               color: ColorResources.transparent,
                               child: InkWell(
-                                onTap: () {
-                                  
-                                },
+                                onTap: () => buyNow(),
                                 child: Padding(
                                   padding: const EdgeInsets.all(8.0),
                                   child: Text(getTranslated("BUY_NOW", context),
@@ -215,8 +212,8 @@ class _SubscriptionsScreenState extends State<SubscriptionsScreen> {
                             height: 320.0,
                             margin: EdgeInsets.only(
                               top: Dimensions.marginSizeDefault,
-                              left: 90, 
-                              right: 90
+                              left: 90.0, 
+                              right: 90.0
                             ),
                             padding: EdgeInsets.all(Dimensions.paddingSizeDefault),
                             decoration: BoxDecoration(
@@ -280,12 +277,13 @@ class _SubscriptionsScreenState extends State<SubscriptionsScreen> {
                             child: Container(
                               alignment: Alignment.center,
                               child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
                                    
-                                  Text("Lorem ipsum dolor sit amet",
+                                  Text(getTranslated("SOS_EMERGENCY", context),
                                     style: TextStyle(
-                                      fontSize: Dimensions.fontSizeSmall,
+                                      fontSize: Dimensions.fontSizeDefault,
                                       fontWeight: FontWeight.w400,
                                       color: ColorResources.redPrimary
                                     ),
@@ -293,34 +291,17 @@ class _SubscriptionsScreenState extends State<SubscriptionsScreen> {
 
                                   const SizedBox(height: 12.0),
 
-                                  Text("Lorem ipsum dolor sit amet",
-                                    style: TextStyle(
-                                      fontSize: Dimensions.fontSizeSmall,
-                                      fontWeight: FontWeight.w400,
-                                      color: ColorResources.redPrimary
+                                  Container(
+                                    width: 180.0,
+                                    child: Text(getTranslated("SHARE_TO_EMERGENCY_CONTACT", context),
+                                      style: TextStyle(
+                                        height: 1.5,
+                                        fontSize: Dimensions.fontSizeDefault,
+                                        fontWeight: FontWeight.w400,
+                                        color: ColorResources.redPrimary
+                                      ),
                                     ),
                                   ),
-
-                                  const SizedBox(height: 12.0),
-
-                                  Text("Lorem ipsum dolor sit amet",
-                                    style: TextStyle(
-                                      fontSize: Dimensions.fontSizeSmall,
-                                      fontWeight: FontWeight.w400,
-                                      color: ColorResources.redPrimary
-                                    ),
-                                  ),
-
-                                  const SizedBox(height: 12.0),
-
-                                  Text("Lorem ipsum dolor sit amet",
-                                    style: TextStyle(
-                                      fontSize: Dimensions.fontSizeSmall,
-                                      fontWeight: FontWeight.w400,
-                                      color: ColorResources.redPrimary
-                                    ),
-                                  ),
-
 
                                 ],
                               )
@@ -334,9 +315,7 @@ class _SubscriptionsScreenState extends State<SubscriptionsScreen> {
                             child: Material(
                               color: ColorResources.transparent,
                               child: InkWell(
-                                onTap: () {
-                                  
-                                },
+                                onTap: () => buyNow(),
                                 child: Padding(
                                   padding: const EdgeInsets.all(8.0),
                                   child: Text(getTranslated("BUY_NOW", context),

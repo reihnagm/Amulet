@@ -38,7 +38,7 @@ class SignOutConfirmationDialog extends StatelessWidget {
             Expanded(
               child: InkWell(
               onTap: () {
-                Provider.of<AuthProvider>(context, listen: false).logout(context);
+                context.read<AuthProvider>().logout(context);
                 Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) => const SignInScreen()), (route) => false);
               },
               child: Container(

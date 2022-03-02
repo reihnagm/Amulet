@@ -1,8 +1,8 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
-import 'package:amulet/providers/videos.dart';
 import 'package:provider/provider.dart';
 import 'package:socket_io_client/socket_io_client.dart' as io;
 
@@ -24,11 +24,11 @@ class SocketServices {
     socket.on("connect", (_) {
       debugPrint("=== SOCKET IS CONNECTED ===");
       context.read<NetworkProvider>().turnOnSocket();
-       socket.on("message", (data) {
-        final r = data as dynamic;
-        final d = r as Map<String, dynamic>;
-        context.read<VideoProvider>().appendSos(d);
-      });
+      // socket.on("message", (data) {
+        // final r = data as dynamic;
+        // final d = r as Map<String, dynamic>;
+        // context.read<VideoProvider>().appendSos(d);
+      // });
     });
     socket.on("disconnect", (_) {
       debugPrint("=== SOCKET IS DISCONNECTED  ===");
@@ -63,37 +63,51 @@ class SocketServices {
     });
   }
   
-  void sendMsg({
-    required String id, 
-    required String content, 
-    required String mediaUrl,
-    required String mediaUrlPhone,
-    required String category,
-    required String lat, 
-    required String lng,
-    required String address,
-    required String status,
-    required String duration,
-    required String fullname,
-    required String thumbnail,
-    required String userId,
-  }) {
-    socket.emit("message", jsonEncode({
-      "id": id,
-      "content": content,
-      "mediaUrl": mediaUrl,
-      "mediaUrlPhone": mediaUrlPhone,
-      "category": category,
-      "lat": lat,
-      "lng": lng,
-      "address": address,
-      "status": status,
-      "duration": duration,
-      "fullname": fullname,
-      "thumbnail": thumbnail,
-      "user_id": userId
-    }));
-  }
+  // Future<void> sendMsg({
+  //   required String id, 
+  //   required String content, 
+  //   required String mediaUrl,
+  //   required String mediaUrlPhone,
+  //   required String category,
+  //   required String lat, 
+  //   required String lng,
+  //   required String address,
+  //   required String status,
+  //   required String duration,
+  //   required String fullname,
+  //   required String thumbnail,
+  //   required String userId,
+  //   required String signId
+  // }) async {
+  //   socket.emit("message", jsonEncode({
+  //     "id": id,
+  //     "content": content,
+  //     "mediaUrl": mediaUrl,
+  //     "mediaUrlPhone": mediaUrlPhone,
+  //     "category": category,
+  //     "lat": lat,
+  //     "lng": lng,
+  //     "address": address,
+  //     "status": status,
+  //     "duration": duration,
+  //     "fullname": fullname,
+  //     "thumbnail": thumbnail,
+  //     "user_id": userId
+  //   }));
+  //   socket.emit("broadcast", jsonEncode({
+  //     "uid": id,
+  //     "address": address,
+  //     "category": category,
+  //     "content": content,
+  //     "sign_id": signId,
+  //     "media_url_phone": mediaUrlPhone, 
+  //     "thumbnail": thumbnail,
+  //     "sender_name": fullname,
+  //     "sender_fcm": await FirebaseMessaging.instance.getToken(), 
+  //     "lat": lat,
+  //     "lng": lng
+  //   }));
+  // }
 
   void dispose() {
     socket.clearListeners();

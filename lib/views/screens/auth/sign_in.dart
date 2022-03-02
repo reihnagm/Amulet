@@ -71,7 +71,7 @@ class _SignInScreenState extends State<SignInScreen> {
       return;
     }   
     try {
-      await authProvider.login(context, user);
+      await authProvider.login(context, globalKey, user);
     } catch(e) {
       debugPrint(e.toString());
     }
@@ -207,11 +207,11 @@ class _SignInScreenState extends State<SignInScreen> {
                                           },
                                           child: passwordObscure 
                                           ? const Icon(
-                                            Icons.visibility,
+                                            Icons.visibility_off,
                                             color: ColorResources.black,
                                           )
                                           : const Icon(
-                                            Icons.visibility_off,
+                                            Icons.visibility,
                                             color: ColorResources.black,
                                           ),
                                         ),

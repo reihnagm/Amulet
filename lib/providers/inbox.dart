@@ -32,32 +32,34 @@ class InboxProvider with ChangeNotifier {
   }
 
   Future<void> fetchInbox(BuildContext context) async {
-    try {
-      InboxModel? inboxModel = await inboxRepo.getInbox(context, userId: authProvider.getUserId());
-      totalUnread = inboxModel!.totalUnread!;
-      List<InboxData> inboxData = inboxModel.data!;
-      List<InboxData> inboxAssign = [];
-      for (InboxData inbox in inboxData) {
-        inboxAssign.add(
-          InboxData(
-            uid: inbox.uid,
-            isRead: inbox.isRead,
-            mediaUrl: inbox.mediaUrl,
-            thumbnail: inbox.thumbnail,
-            title: inbox.title,
-            content: inbox.content,
-            createdAt: inbox.createdAt,
-            updatedAt: inbox.updatedAt
-          )
-        );
+    if(authProvider.getUserId() != null) {
+      try {
+        InboxModel? inboxModel = await inboxRepo.getInbox(context, userId: authProvider.getUserId()!);
+        totalUnread = inboxModel!.totalUnread!;
+        List<InboxData> inboxData = inboxModel.data!;
+        List<InboxData> inboxAssign = [];
+        for (InboxData inbox in inboxData) {
+          inboxAssign.add(
+            InboxData(
+              uid: inbox.uid,
+              isRead: inbox.isRead,
+              mediaUrl: inbox.mediaUrl,
+              thumbnail: inbox.thumbnail,
+              title: inbox.title,
+              content: inbox.content,
+              createdAt: inbox.createdAt,
+              updatedAt: inbox.updatedAt
+            )
+          );
+        }
+        _inboxes = inboxAssign;
+        setStateInboxStatus(InboxStatus.loaded);
+        if(inboxes.isEmpty) {
+          setStateInboxStatus(InboxStatus.empty);
+        }
+      } catch(e) {
+        debugPrint(e.toString());
       }
-      _inboxes = inboxAssign;
-      setStateInboxStatus(InboxStatus.loaded);
-      if(inboxes.isEmpty) {
-        setStateInboxStatus(InboxStatus.empty);
-      }
-    } catch(e) {
-      debugPrint(e.toString());
     }
   }
 

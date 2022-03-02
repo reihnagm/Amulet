@@ -1,16 +1,16 @@
 class UserModel {
   UserModel({
-    this.userData,
+    this.data,
     this.code,
     this.message,
   });
 
-  UserData? userData;
+  UserData? data;
   int? code;
   String? message;
 
   factory UserModel.fromJson(Map<String, dynamic> json) => UserModel(
-    userData: UserData.fromJson(json["body"]),
+    data: UserData.fromJson(json["body"]),
     code: json["code"],
     message: json["message"],
   );

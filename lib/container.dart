@@ -1,4 +1,5 @@
 import 'package:amulet/providers/contact.dart';
+import 'package:amulet/services/video.dart';
 import 'package:get_it/get_it.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -21,6 +22,7 @@ final getIt = GetIt.instance;
 Future<void> init() async {
   getIt.registerLazySingleton(() => NavigationService());
   getIt.registerLazySingleton(() => NotificationService());
+  getIt.registerLazySingleton(() => VideoServices());
 
   getIt.registerLazySingleton(() => AuthRepo(sharedPreferences: getIt()));
   getIt.registerLazySingleton(() => SplashRepo(sharedPreferences: getIt()));
