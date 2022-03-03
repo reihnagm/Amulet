@@ -1,3 +1,4 @@
+import 'package:amulet/views/screens/history/history.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
@@ -26,21 +27,41 @@ class FirebaseProvider with ChangeNotifier {
   Future<void> setupInteractedMessage(BuildContext context) async {
     await FirebaseMessaging.instance.getInitialMessage();
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
-      GlobalVariable.navState.currentState!.pushAndRemoveUntil(
-        PageRouteBuilder(pageBuilder: (BuildContext context, Animation<double> animation, Animation<double> secondaryAnimation) {
-          return ReportsScreen(key: UniqueKey());
-        },
-        transitionsBuilder: (context, animation, secondaryAnimation, child) {
-          const begin = Offset(1.0, 0.0);
-          const end = Offset.zero;
-          const curve = Curves.ease;
-          var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
-          return SlideTransition(
-            position: animation.drive(tween),
-            child: child,
-          );
-        }), (Route<dynamic> route) => route.isFirst
-      );  
+      // RemoteNotification notification = message.notification!;
+      Map<String, dynamic> data = message.data;
+      if(data["redirect"] == "history") {
+        GlobalVariable.navState.currentState!.pushAndRemoveUntil(
+          PageRouteBuilder(pageBuilder: (BuildContext context, Animation<double> animation, Animation<double> secondaryAnimation) {
+            return HistoryScreen(key: UniqueKey());
+          },
+          transitionsBuilder: (context, animation, secondaryAnimation, child) {
+            const begin = Offset(1.0, 0.0);
+            const end = Offset.zero;
+            const curve = Curves.ease;
+            var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+            return SlideTransition(
+              position: animation.drive(tween),
+              child: child,
+            );
+          }), (Route<dynamic> route) => route.isFirst
+        );  
+      } else {
+        GlobalVariable.navState.currentState!.pushAndRemoveUntil(
+          PageRouteBuilder(pageBuilder: (BuildContext context, Animation<double> animation, Animation<double> secondaryAnimation) {
+            return ReportsScreen(key: UniqueKey());
+          },
+          transitionsBuilder: (context, animation, secondaryAnimation, child) {
+            const begin = Offset(1.0, 0.0);
+            const end = Offset.zero;
+            const curve = Curves.ease;
+            var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+            return SlideTransition(
+              position: animation.drive(tween),
+              child: child,
+            );
+          }), (Route<dynamic> route) => route.isFirst
+        );  
+      }
     });
   }
 
@@ -68,12 +89,12 @@ class FirebaseProvider with ChangeNotifier {
   void listenNotification(BuildContext context) {
     FirebaseMessaging.onMessage.listen((RemoteMessage message) async {
       RemoteNotification notification = message.notification!;
-      // Map<String, dynamic> data = message.data;
+      Map<String, dynamic> data = message.data;
       NotificationService.showNotification(
         id: Helper.createUniqueId(),
         title: notification.title,
         body: notification.body,
-        payload: {},
+        payload: data,
       );
     });
   }

@@ -74,7 +74,7 @@ class NotificationService {
       title, 
       body, 
       await notificationDetails(payload: payload!),
-      payload: ""
+      payload: payload["redirect"]
     );
   }
 

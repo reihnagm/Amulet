@@ -15,6 +15,7 @@ class SosAgentData {
     this.uid,
     this.sender,
     this.acceptName,
+    this.isConfirm,
     this.asName,
     this.signId,
     this.category,
@@ -30,6 +31,7 @@ class SosAgentData {
   String? uid;
   Sender? sender;
   String? acceptName;
+  int? isConfirm;
   String? asName;
   String? signId;
   String? category;
@@ -45,6 +47,7 @@ class SosAgentData {
     uid: json["uid"],
     sender: Sender.fromJson(json["sender"]),
     acceptName: json["accept_name"],
+    isConfirm: json["is_confirm"],
     asName: json["as_name"],
     category: json["category"],
     signId: json["sign_id"],
@@ -60,14 +63,17 @@ class SosAgentData {
 
 class Sender {
   Sender({
+    this.id,
     this.name,
     this.fcm,
   });
 
+  String? id;
   String? name;
   String? fcm;
 
   factory Sender.fromJson(Map<String, dynamic> json) => Sender(
+    id: json["id"],
     name: json["name"],
     fcm: json["fcm"],
   );

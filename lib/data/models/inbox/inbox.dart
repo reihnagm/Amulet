@@ -40,6 +40,7 @@ class InboxData {
     this.uid,
     this.isRead,
     this.title,
+    this.type,
     this.content,
     this.mediaUrl,
     this.thumbnail,
@@ -51,6 +52,7 @@ class InboxData {
   String? uid;
   int? isRead;
   String? title;
+  String? type;
   String? content;
   String? mediaUrl;
   String? thumbnail;
@@ -62,6 +64,7 @@ class InboxData {
     uid: json["uid"],
     isRead: json["is_read"],
     title: json["title"],
+    type: json["type"],
     content: json["content"],
     mediaUrl: json["media_url"],
     thumbnail: json["thumbnail"],

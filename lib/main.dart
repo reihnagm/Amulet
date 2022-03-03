@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:amulet/views/screens/history/history.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -53,24 +54,43 @@ class _MyAppState extends State<MyApp> {
 
   void listenOnClickNotifications() => NotificationService.onNotifications.stream.listen(onClickedNotification);
   
-  void onClickedNotification(String? payload) async {
-    GlobalVariable.navState.currentState!.pushAndRemoveUntil(
-      PageRouteBuilder(pageBuilder: (BuildContext context, Animation<double> animation, Animation<double> secondaryAnimation) {
-        return ReportsScreen(key: UniqueKey());
-      },
-      transitionsBuilder: (context, animation, secondaryAnimation, child) {
-        const begin = Offset(1.0, 0.0);
-        const end = Offset.zero;
-        const curve = Curves.ease;
-        var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
-        return SlideTransition(
-          position: animation.drive(tween),
-          child: child,
-        );
-      }),
-      (Route<dynamic> route) => route.isFirst
-    );
-  }
+  void onClickedNotification(String? payload) {
+    if(payload == "history") {
+      GlobalVariable.navState.currentState!.pushAndRemoveUntil(
+        PageRouteBuilder(pageBuilder: (BuildContext context, Animation<double> animation, Animation<double> secondaryAnimation) {
+          return HistoryScreen(key: UniqueKey());
+        },
+        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+          const begin = Offset(1.0, 0.0);
+          const end = Offset.zero;
+          const curve = Curves.ease;
+          var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+          return SlideTransition(
+            position: animation.drive(tween),
+            child: child,
+          );
+        }),
+        (Route<dynamic> route) => route.isFirst
+      );
+    } else {
+      GlobalVariable.navState.currentState!.pushAndRemoveUntil(
+        PageRouteBuilder(pageBuilder: (BuildContext context, Animation<double> animation, Animation<double> secondaryAnimation) {
+          return ReportsScreen(key: UniqueKey());
+        },
+        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+          const begin = Offset(1.0, 0.0);
+          const end = Offset.zero;
+          const curve = Curves.ease;
+          var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+          return SlideTransition(
+            position: animation.drive(tween),
+            child: child,
+          );
+        }),
+        (Route<dynamic> route) => route.isFirst
+      );
+    }
+  } 
 
   @override
   Widget build(BuildContext context) {

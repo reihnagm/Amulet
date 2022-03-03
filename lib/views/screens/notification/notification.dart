@@ -29,7 +29,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
 
     Future.delayed(Duration.zero, () {
       if(mounted) {
-        inboxProvider.fetchInbox(context);
+        inboxProvider.getInbox(context);
       }
     });
   }
@@ -55,7 +55,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
                   color: ColorResources.white,
                   onRefresh: () {
                     return Future.sync((){
-                      inboxProvider.fetchInbox(context);
+                      inboxProvider.getInbox(context);
                     });
                   },
                   child: Consumer<InboxProvider>(
@@ -132,6 +132,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
                                             uid: ip.inboxes[i].uid!, 
                                             title: ip.inboxes[i].title!, 
                                             content: ip.inboxes[i].content!, 
+                                            type: ip.inboxes[i].type!,
                                             thumbnail: ip.inboxes[i].thumbnail!,
                                             mediaUrl: ip.inboxes[i].mediaUrl!,
                                             createdAt: ip.inboxes[i].createdAt!
@@ -160,18 +161,25 @@ class _NotificationScreenState extends State<NotificationScreen> {
                                                   crossAxisAlignment: CrossAxisAlignment.start,
                                                   mainAxisSize: MainAxisSize.min,
                                                   children: [
-                                                    SizedBox(
-                                                      width: 200.0,
-                                                      child: Text(ip.inboxes[i].content!,
-                                                        softWrap: true,
-                                                        overflow: TextOverflow.ellipsis,
-                                                        style: TextStyle(
-                                                          color: ColorResources.black,
-                                                          fontWeight: ip.inboxes[i].isRead == 1 
-                                                          ? FontWeight.w400
-                                                          : FontWeight.bold,
-                                                          fontSize: Dimensions.fontSizeSmall,
-                                                        ),
+                                                    Text(ip.inboxes[i].title!,
+                                                      overflow: TextOverflow.ellipsis,
+                                                      style: TextStyle(
+                                                        color: ColorResources.black,
+                                                        fontWeight: ip.inboxes[i].isRead == 1 
+                                                        ? FontWeight.w400
+                                                        : FontWeight.bold,
+                                                        fontSize: Dimensions.fontSizeSmall,
+                                                      ),
+                                                    ),
+                                                    const SizedBox(height: 5.0),
+                                                    Text(ip.inboxes[i].content!,
+                                                      overflow: TextOverflow.ellipsis,
+                                                      style: TextStyle(
+                                                        color: ColorResources.black,
+                                                        fontWeight: ip.inboxes[i].isRead == 1 
+                                                        ? FontWeight.w400
+                                                        : FontWeight.bold,
+                                                        fontSize: Dimensions.fontSizeSmall,
                                                       ),
                                                     ),
                                                     const SizedBox(height: 8.0),
@@ -186,19 +194,17 @@ class _NotificationScreenState extends State<NotificationScreen> {
                                                             fontSize: Dimensions.fontSizeExtraSmall
                                                           ),
                                                         ),
-                                                        // const Text("15:38",
-                                                        //   style: TextStyle(
-                                                        //     color: ColorResources.greyDarkPrimary,
-                                                        //     fontWeight: FontWeight.w300,
-                                                        //     fontSize: Dimensions.fontSizeExtraSmall
-                                                        //   ),
-                                                        // )
                                                       ],
                                                     )
                                                   ],
                                                 ),
                                               ),
 
+                                              Expanded(
+                                                flex: 1,
+                                                child: Container()
+                                              ),
+                                              
                                               Expanded(
                                                 flex: 5,
                                                 child: Column(

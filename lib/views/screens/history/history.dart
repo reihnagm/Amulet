@@ -1,4 +1,3 @@
-import 'package:amulet/views/screens/media/preview_file.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -6,6 +5,7 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 
+import 'package:amulet/views/screens/media/preview_file.dart';
 import 'package:amulet/localization/language_constraints.dart';
 import 'package:amulet/utils/box_shadow.dart';
 import 'package:amulet/utils/color_resources.dart';
@@ -14,7 +14,6 @@ import 'package:amulet/providers/auth.dart';
 import 'package:amulet/providers/network.dart';
 import 'package:amulet/providers/videos.dart';
 import 'package:amulet/services/navigation.dart';
-import 'package:amulet/services/socket.dart';
 
 class HistoryScreen extends StatefulWidget {
   const HistoryScreen({ Key? key }) : super(key: key);
@@ -92,6 +91,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                                 backgroundColor: ColorResources.backgroundColor,
                                 pinned: true,
                                 centerTitle: true,
+                                elevation: 0.0,
                                 title: Text(getTranslated("HISTORY", context),
                                   style: TextStyle(
                                     fontSize: Dimensions.fontSizeDefault,
@@ -130,7 +130,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                                   ),
                                 ),
                         
-                        
+                              if(networkProvider.connectionStatus == ConnectionStatus.onInternet)
                                 SliverPadding(
                                   padding: EdgeInsets.only(top: 20.0, bottom: 20.0),
                                   sliver: SliverList(
@@ -172,7 +172,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                                                             crossAxisAlignment: CrossAxisAlignment.start,
                                                             mainAxisSize: MainAxisSize.min,
                                                             children: [
-                                                              Text("${getTranslated("CASE", context)} #${videoProvider.sosAgentDataHistory[i].signId} ${videoProvider.sosAgentDataHistory[i].category! == "-" ? "(${getTranslated("UNKNOWN", context)})" : videoProvider.sosAgentDataHistory[i].category!}",
+                                                              Text("${getTranslated("CASE", context)} #${videoProvider.sosAgentDataHistory[i].signId} ${videoProvider.sosAgentDataHistory[i].category! == "-" ? "" : videoProvider.sosAgentDataHistory[i].category!}",
                                                                 style: TextStyle(
                                                                   fontSize: Dimensions.fontSizeLarge,
                                                                   fontWeight: FontWeight.w500

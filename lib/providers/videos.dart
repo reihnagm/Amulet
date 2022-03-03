@@ -491,7 +491,9 @@ class VideoProvider with ChangeNotifier {
         id: Helper.createUniqueId(),
         title: "Info",
         body: "Rekaman Anda berhasil terkirim kepada Public Service dan Emergency Contact",
-        payload: {},
+        payload: {
+          "redirect": "list_video"
+        },
       );
 
       await context.read<InboxProvider>().insertInbox(context, 
@@ -552,7 +554,7 @@ class VideoProvider with ChangeNotifier {
                               onTap: () {
                                 Navigator.of(ctx, rootNavigator: true).pop();
                               },
-                              height: 30.0,
+                              height: 35.0,
                               btnColor: ColorResources.redPrimary,
                               btnTextColor: ColorResources.white,
                               isBoxShadow: true,

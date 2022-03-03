@@ -424,6 +424,9 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver, Si
       }
     }); 
     // categeoryC = TextEditingController(text: selectedTextCat); 
+    if(mounted) {
+      setUpTimeFetch();
+    }
     Future.delayed((Duration.zero), () {
       if(mounted) {
         locationProvider.getCurrentPosition(context);
@@ -435,10 +438,18 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver, Si
         videoProvider.getFcm(context);
       }
       if(mounted) {
-        inboxProvider.fetchInbox(context);
+        inboxProvider.getInbox(context);
       }
       if(mounted) {
         networkProvider.checkConnection(context);
+      }
+    });
+  }
+
+  setUpTimeFetch() {
+    Timer.periodic(const Duration(milliseconds: 1000), (_) {
+      if(mounted) {
+        inboxProvider.getInbox(context);
       }
     });
   }
@@ -483,6 +494,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver, Si
                           locationProvider.getCurrentPosition(context);
                           videoProvider.initFcm(context);
                           videoProvider.getFcm(context);
+                          inboxProvider.getInbox(context);
                         });
                       },
                       child: CustomScrollView(
@@ -645,15 +657,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver, Si
                           color: Colors.black87,
                         ),
                       ),
-                        
-                    if(networkProvider.connectionStatus == ConnectionStatus.onInternet)
-                      Center(
-                        child: SpinKitThreeBounce(
-                          size: 20.0,
-                          color: Colors.black87,
-                        ),
-                      ),
-
+                         
                     Consumer<LocationProvider>(
                       builder: (BuildContext context, LocationProvider lp, Widget? child) {
                         if(lp.locationStatus == LocationStatus.loading) {

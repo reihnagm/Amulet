@@ -1,11 +1,11 @@
 
-import 'package:amulet/services/navigation.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:provider/provider.dart';
 
+import 'package:amulet/services/navigation.dart';
 import 'package:amulet/views/screens/media/preview_file.dart';
 import 'package:amulet/utils/box_shadow.dart';
 import 'package:amulet/utils/dimensions.dart';
@@ -19,6 +19,7 @@ class NotificationDetail extends StatefulWidget {
   final String content;
   final String thumbnail;
   final String mediaUrl;
+  final String type;
   final String createdAt;
   const NotificationDetail({ 
     required this.uid,
@@ -26,6 +27,7 @@ class NotificationDetail extends StatefulWidget {
     required this.content,
     required this.thumbnail,
     required this.mediaUrl,
+    required this.type,
     required this.createdAt,
     Key? key 
   }) : super(key: key);
@@ -107,6 +109,15 @@ class _NotificationDetailState extends State<NotificationDetail> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               mainAxisSize: MainAxisSize.min,
                               children: [
+                                Text(widget.title,
+                                  softWrap: true,
+                                  style: TextStyle(
+                                    color: ColorResources.black,
+                                    fontWeight: FontWeight.w400,
+                                    fontSize: Dimensions.fontSizeSmall,
+                                  ),
+                                ),
+                                const SizedBox(height: 4.0),
                                 Text(widget.content,
                                   softWrap: true,
                                   style: TextStyle(

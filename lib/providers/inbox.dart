@@ -31,7 +31,7 @@ class InboxProvider with ChangeNotifier {
     Future.delayed(Duration.zero, () => notifyListeners());
   }
 
-  Future<void> fetchInbox(BuildContext context) async {
+  Future<void> getInbox(BuildContext context) async {
     if(authProvider.getUserId() != null) {
       try {
         InboxModel? inboxModel = await inboxRepo.getInbox(context, userId: authProvider.getUserId()!);
@@ -46,6 +46,7 @@ class InboxProvider with ChangeNotifier {
               mediaUrl: inbox.mediaUrl,
               thumbnail: inbox.thumbnail,
               title: inbox.title,
+              type: inbox.type,
               content: inbox.content,
               createdAt: inbox.createdAt,
               updatedAt: inbox.updatedAt
@@ -54,7 +55,7 @@ class InboxProvider with ChangeNotifier {
         }
         _inboxes = inboxAssign;
         setStateInboxStatus(InboxStatus.loaded);
-        if(inboxes.isEmpty) {
+        if(_inboxes.isEmpty) {
           setStateInboxStatus(InboxStatus.empty);
         }
       } catch(e) {
@@ -81,7 +82,7 @@ class InboxProvider with ChangeNotifier {
         userId: userId
       );
       Future.delayed(Duration.zero, () {
-        fetchInbox(context);
+        getInbox(context);
       });
     } catch(e) {
       debugPrint(e.toString());
@@ -92,7 +93,7 @@ class InboxProvider with ChangeNotifier {
     try {
       await inboxRepo.updateInbox(context, uid: uid);
       Future.delayed(Duration.zero, () async {
-        await fetchInbox(context);
+        await getInbox(context);
       });
     } catch(e) {
       debugPrint(e.toString());

@@ -709,7 +709,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
                                                   Container(
                                                     margin: const EdgeInsets.only(top: Dimensions.marginSizeDefault),
                                                     alignment: Alignment.center,
-                                                    child: Text(getTranslated(categories[i]["name"].toString(), context),
+                                                    child: Text(categories[i]["name"].toString(),
                                                       style: TextStyle(
                                                         color: selectedIndex == i 
                                                         ? ColorResources.white 
