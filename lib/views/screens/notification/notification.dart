@@ -161,15 +161,42 @@ class _NotificationScreenState extends State<NotificationScreen> {
                                                   crossAxisAlignment: CrossAxisAlignment.start,
                                                   mainAxisSize: MainAxisSize.min,
                                                   children: [
-                                                    Text(ip.inboxes[i].title!,
-                                                      overflow: TextOverflow.ellipsis,
-                                                      style: TextStyle(
-                                                        color: ColorResources.black,
-                                                        fontWeight: ip.inboxes[i].isRead == 1 
-                                                        ? FontWeight.w400
-                                                        : FontWeight.bold,
-                                                        fontSize: Dimensions.fontSizeSmall,
-                                                      ),
+                                                    Row(
+                                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                      mainAxisSize: MainAxisSize.max,
+                                                      children: [
+                                                        SizedBox(
+                                                          width: 200.0,
+                                                          child: Text(ip.inboxes[i].title!,
+                                                            overflow: TextOverflow.ellipsis,
+                                                            style: TextStyle(
+                                                              color: ColorResources.black,
+                                                              fontWeight: ip.inboxes[i].isRead == 1 
+                                                              ? FontWeight.w400
+                                                              : FontWeight.bold,
+                                                              fontSize: Dimensions.fontSizeSmall,
+                                                            ),
+                                                          ),
+                                                        ),
+                                                        Container(
+                                                          padding: EdgeInsets.all(6.0),
+                                                          decoration: BoxDecoration(
+                                                            color: ip.inboxes[i].type == "done"
+                                                            ? ColorResources.success 
+                                                            : ColorResources.redPrimary,
+                                                            borderRadius: BorderRadius.circular(8.0),
+                                                          ),
+                                                          child: Text(ip.inboxes[i].type == "done"
+                                                          ? getTranslated("DONE", context)
+                                                          : getTranslated("ONGOING", context),
+                                                            style: TextStyle(
+                                                              fontSize: Dimensions.fontSizeSmall,
+                                                              fontWeight: FontWeight.bold,
+                                                              color: ColorResources.white
+                                                            ),
+                                                          ),
+                                                        )
+                                                      ],
                                                     ),
                                                     const SizedBox(height: 5.0),
                                                     Text(ip.inboxes[i].content!,
@@ -194,49 +221,39 @@ class _NotificationScreenState extends State<NotificationScreen> {
                                                             fontSize: Dimensions.fontSizeExtraSmall
                                                           ),
                                                         ),
+                                                        Column(
+                                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                                          mainAxisSize: MainAxisSize.min,
+                                                          children: [
+                                                            Stack(
+                                                              clipBehavior: Clip.none,
+                                                              children: [
+                                                                ClipRRect(
+                                                                  borderRadius: BorderRadius.circular(10.0),
+                                                                  child: CachedNetworkImage(
+                                                                    imageUrl: ip.inboxes[i].thumbnail.toString(),
+                                                                    width: 50.0,
+                                                                    height: 50.0,
+                                                                    fit: BoxFit.cover,
+                                                                    placeholder: (BuildContext context, String url) {
+                                                                      return Center(
+                                                                        child: SpinKitThreeBounce(
+                                                                          size: 20.0,
+                                                                          color: Colors.black87,
+                                                                        ),
+                                                                      );              
+                                                                    },
+                                                                  ),
+                                                                ),
+                                                              ],
+                                                            )
+                                                          ],
+                                                        )
                                                       ],
                                                     )
                                                   ],
                                                 ),
-                                              ),
-
-                                              Expanded(
-                                                flex: 1,
-                                                child: Container()
-                                              ),
-                                              
-                                              Expanded(
-                                                flex: 5,
-                                                child: Column(
-                                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                                  mainAxisSize: MainAxisSize.min,
-                                                  children: [
-                                                    Stack(
-                                                      clipBehavior: Clip.none,
-                                                      children: [
-                                                        ClipRRect(
-                                                          borderRadius: BorderRadius.circular(10.0),
-                                                          child: CachedNetworkImage(
-                                                            imageUrl: ip.inboxes[i].thumbnail.toString(),
-                                                            width: 50.0,
-                                                            height: 50.0,
-                                                            fit: BoxFit.cover,
-                                                            placeholder: (BuildContext context, String url) {
-                                                              return Center(
-                                                                child: SpinKitThreeBounce(
-                                                                  size: 20.0,
-                                                                  color: Colors.black87,
-                                                                ),
-                                                              );              
-                                                            },
-                                                          ),
-                                                        ),
-                                                      ],
-                                                    )
-                                                  ],
-                                                ) 
-                                              )
-                                                                              
+                                              ),                  
                                             ],
                                           ),
                                         ),

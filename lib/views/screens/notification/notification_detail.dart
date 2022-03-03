@@ -99,102 +99,110 @@ class _NotificationDetailState extends State<NotificationDetail> {
                         borderRadius: BorderRadius.circular(10.0),
                         boxShadow: boxShadow
                       ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        mainAxisSize: MainAxisSize.max,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.min,
                         children: [
-                          Expanded(
-                            flex: 10,
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Text(widget.title,
-                                  softWrap: true,
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            mainAxisSize: MainAxisSize.max,
+                            children: [
+                              Text(widget.title,
+                                softWrap: true,
+                                style: TextStyle(
+                                  color: ColorResources.black,
+                                  fontWeight: FontWeight.w400,
+                                  fontSize: Dimensions.fontSizeSmall,
+                                ),
+                              ),
+                              Container(
+                                padding: EdgeInsets.all(6.0),
+                                decoration: BoxDecoration(
+                                  color: widget.type == "done"
+                                  ? ColorResources.success 
+                                  : ColorResources.redPrimary,
+                                  borderRadius: BorderRadius.circular(8.0),
+                                ),
+                                child: Text(widget.type == "done"
+                                ? getTranslated("DONE", context)
+                                : getTranslated("ONGOING", context),
                                   style: TextStyle(
-                                    color: ColorResources.black,
-                                    fontWeight: FontWeight.w400,
                                     fontSize: Dimensions.fontSizeSmall,
+                                    fontWeight: FontWeight.bold,
+                                    color: ColorResources.white
                                   ),
                                 ),
-                                const SizedBox(height: 4.0),
-                                Text(widget.content,
-                                  softWrap: true,
-                                  style: TextStyle(
-                                    color: ColorResources.black,
-                                    fontWeight: FontWeight.w400,
-                                    fontSize: Dimensions.fontSizeSmall,
-                                  ),
-                                ),
-                                const SizedBox(height: 12.0),
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  mainAxisSize: MainAxisSize.max,
-                                  children: [
-                                    Text(widget.createdAt,
-                                      style: const TextStyle(
-                                        color: ColorResources.greyDarkPrimary,
-                                        fontWeight: FontWeight.w300,
-                                        fontSize: Dimensions.fontSizeExtraSmall
-                                      ),
-                                    ),
-                                  ],
-                                )
-                              ],
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 6.0),
+                          Text(widget.content,
+                            softWrap: true,
+                            style: TextStyle(
+                              color: ColorResources.black,
+                              fontWeight: FontWeight.w400,
+                              fontSize: Dimensions.fontSizeSmall,
                             ),
                           ),
-                          Expanded(
-                            flex: 1,
-                            child: Container(),
-                          ),
-                          Expanded( 
-                            flex: 3,
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Stack(
-                                  clipBehavior: Clip.none,
-                                  children: [
-                                    ClipRRect(
-                                      borderRadius: BorderRadius.circular(10.0),
-                                      child: CachedNetworkImage(
-                                        imageUrl: widget.thumbnail.toString(),
-                                        width: 50.0,
-                                        height: 50.0,
-                                        fit: BoxFit.cover,
-                                        placeholder: (BuildContext context, String url) {
-                                          return Center(
-                                            child: SpinKitThreeBounce(
-                                              size: 20.0,
-                                              color: Colors.black87,
-                                            ),
-                                          );              
-                                        },
-                                      ),
-                                    ),
-                                    Positioned.fill(
-                                      left: 0.0,
-                                      right: 0.0,
-                                      child: Align(
-                                        alignment: Alignment.center,
-                                        child: InkWell(
-                                          onTap: () {
-                                            navigationService.pushNav(context, PreviewFileScreen(
-                                              mediaUrl: widget.mediaUrl
-                                            ));
+                          const SizedBox(height: 8.0),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            mainAxisSize: MainAxisSize.max,
+                            children: [
+                              Text(widget.createdAt,
+                                style: const TextStyle(
+                                  color: ColorResources.greyDarkPrimary,
+                                  fontWeight: FontWeight.w300,
+                                  fontSize: Dimensions.fontSizeExtraSmall
+                                ),
+                              ),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Stack(
+                                    clipBehavior: Clip.none,
+                                    children: [
+                                      ClipRRect(
+                                        borderRadius: BorderRadius.circular(10.0),
+                                        child: CachedNetworkImage(
+                                          imageUrl: widget.thumbnail.toString(),
+                                          width: 50.0,
+                                          height: 50.0,
+                                          fit: BoxFit.cover,
+                                          placeholder: (BuildContext context, String url) {
+                                            return Center(
+                                              child: SpinKitThreeBounce(
+                                                size: 20.0,
+                                                color: Colors.black87,
+                                              ),
+                                            );              
                                           },
-                                          child: const Icon(
-                                            Icons.play_arrow,
-                                            color: ColorResources.white,
-                                          ),
                                         ),
-                                      )
-                                    ),
-                                  ],
-                                )
-                              ],
-                            ) 
+                                      ),
+                                      Positioned.fill(
+                                        left: 0.0,
+                                        right: 0.0,
+                                        child: Align(
+                                          alignment: Alignment.center,
+                                          child: InkWell(
+                                            onTap: () {
+                                              navigationService.pushNav(context, PreviewFileScreen(
+                                                mediaUrl: widget.mediaUrl
+                                              ));
+                                            },
+                                            child: const Icon(
+                                              Icons.play_arrow,
+                                              color: ColorResources.white,
+                                            ),
+                                          ),
+                                        )
+                                      ),
+                                    ],
+                                  )
+                                ],
+                              )
+                            ],
                           )
                         ],
                       ),
