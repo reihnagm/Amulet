@@ -6,56 +6,52 @@ class AuthRepo {
   final SharedPreferences sharedPreferences;
   AuthRepo({required this.sharedPreferences});
 
-  String getUserToken() {
-    return sharedPreferences.getString("token")!;
-  }
-
-  String getUserIdentityNumber() {
+  String? getUserIdentityNumber() {
     Map<String, dynamic> prefs = json.decode(sharedPreferences.getString("user")!);
-    return prefs["identityNumber"];
+    return prefs["identityNumber"] ?? "-";
   }
 
-  String getUserFullName() {
+  String? getUserFullName() {
     Map<String, dynamic> prefs = json.decode(sharedPreferences.getString("user")!);
     return prefs["fullname"] ?? "-";
   }
 
-  String getUserEmailAddress() {
+  String? getUserEmailAddress() {
     Map<String, dynamic> prefs = json.decode(sharedPreferences.getString("user")!);
-    return prefs["email"];
+    return prefs["email"] ?? "-";
   }
 
-  String getUserDateOfBirth() {
+  String? getUserDateOfBirth() {
     Map<String, dynamic> prefs = json.decode(sharedPreferences.getString("user")!);
-    return prefs["dateOfBirth"];
+    return prefs["dateOfBirth"] ?? "-";
   }
 
-  String getUserGender() {
+  String? getUserGender() {
     Map<String, dynamic> prefs = json.decode(sharedPreferences.getString("user")!);
-    return prefs["gender"];
+    return prefs["gender"] ?? "-";
   }
 
-  String getUserNik() {
+  String? getUserNik() {
     Map<String, dynamic> prefs = json.decode(sharedPreferences.getString("user")!);
-    return prefs["nik"];
+    return prefs["nik"] ?? "-";
   }
 
-  String getUserPhone() {
+  String? getUserPhone() {
     Map<String, dynamic> prefs = json.decode(sharedPreferences.getString("user")!);
-    return prefs["phone"];
+    return prefs["phone"] ?? "-";
   }
 
-  String getUserPlaceOfBirth() {
+  String? getUserPlaceOfBirth() {
     Map<String, dynamic> prefs = json.decode(sharedPreferences.getString("user")!);
-    return prefs["placeOfBirth"];
+    return prefs["placeOfBirth"] ?? "-";
   }
 
   String? getUserId() {
     Map<String, dynamic> prefs = json.decode(sharedPreferences.getString("user")!);
-    return prefs["userId"];
+    return prefs["userId"] ?? "-";
   }
 
-  bool isLoggedIn() {
+  bool? isLoggedIn() {
     return sharedPreferences.containsKey("token");
   }
 }

@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 import 'dart:typed_data';
+
 import 'package:badges/badges.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -11,7 +12,6 @@ import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 import 'package:amulet/views/screens/media/record.dart';
-import 'package:amulet/localization/language_constraints.dart';
 import 'package:amulet/providers/inbox.dart';
 import 'package:amulet/services/navigation.dart';
 import 'package:amulet/views/screens/notification/notification.dart';
@@ -291,7 +291,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
                                       Container(
                                         margin: const EdgeInsets.only(left: Dimensions.marginSizeDefault),
                                         alignment: Alignment.centerLeft,
-                                        child: Text(authProvider.getUserFullname(),
+                                        child: Text(authProvider.getUserFullname()!,
                                           style: const TextStyle(
                                             fontWeight: FontWeight.w500,
                                             fontSize: Dimensions.fontSizeOverLarge

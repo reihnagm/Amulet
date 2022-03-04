@@ -1,3 +1,9 @@
+import 'package:intl/intl.dart';
+
+import 'package:flutter/material.dart';
+import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
+import 'package:provider/provider.dart';
+
 import 'package:amulet/localization/language_constraints.dart';
 import 'package:amulet/providers/auth.dart';
 import 'package:amulet/utils/color_resources.dart';
@@ -5,12 +11,6 @@ import 'package:amulet/utils/dimensions.dart';
 import 'package:amulet/utils/helper.dart';
 import 'package:amulet/views/basewidgets/loader/circular.dart';
 import 'package:amulet/views/basewidgets/separator/separator.dart';
-import 'package:intl/intl.dart';
-
-import 'package:flutter/material.dart';
-import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
-import 'package:provider/provider.dart';
-
 import 'package:amulet/views/basewidgets/appbar/custom_appbar.dart';
 import 'package:amulet/providers/ppob.dart';
 import 'package:amulet/views/screens/ppob/confirm_payment.dart';
@@ -114,7 +114,7 @@ class _TopUpScreenState extends State<TopUpScreen> {
                                                                     fontSize: Dimensions.fontSizeExtraSmall
                                                                   ),
                                                                 ),
-                                                                Text(context.read<AuthProvider>().getUserPhone(),
+                                                                Text(context.read<AuthProvider>().getUserPhone()!,
                                                                   style: TextStyle(
                                                                     fontSize: Dimensions.fontSizeExtraSmall
                                                                   ),

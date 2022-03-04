@@ -533,7 +533,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver, Si
                                       margin: const EdgeInsets.only(right: Dimensions.marginSizeDefault),
                                       child: InkWell(
                                         onTap: () {
-                                          if(authProvider.isLoggedIn()) {
+                                          if(authProvider.isLoggedIn()!) {
                                             navigationService.pushNav(context, NotificationScreen(key: UniqueKey()));
                                           } else {
                                             navigationService.pushNav(context, SignInScreen(key: UniqueKey()));
@@ -555,7 +555,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver, Si
                                       margin: const EdgeInsets.only(right: Dimensions.marginSizeDefault),
                                       child: InkWell(
                                         onTap: () {
-                                          if(authProvider.isLoggedIn()) {
+                                          if(authProvider.isLoggedIn()!) {
                                             navigationService.pushNav(context, NotificationScreen(key: UniqueKey()));
                                           } else {
                                             navigationService.pushNav(context, SignInScreen(key: UniqueKey()));
@@ -578,7 +578,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver, Si
                                       color: ColorResources.transparent,
                                       child: InkWell(
                                         onTap: () {
-                                          if(authProvider.isLoggedIn()) {
+                                          if(authProvider.isLoggedIn()!) {
                                             navigationService.pushNav(context, NotificationScreen(key: UniqueKey()));
                                           } else {
                                             navigationService.pushNav(context, SignInScreen(key: UniqueKey()));
@@ -615,7 +615,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver, Si
                               )
                             ],
                             bottom: PreferredSize(
-                              child: authProvider.isLoggedIn() ? Column(
+                              child: authProvider.isLoggedIn()! ? Column(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
                                   Container(
@@ -632,7 +632,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver, Si
                                   Container(
                                     margin: const EdgeInsets.only(left: Dimensions.marginSizeDefault),
                                     alignment: Alignment.centerLeft,
-                                    child: Text(authProvider.getUserFullname(),
+                                    child: Text(authProvider.getUserFullname()!,
                                       style: const TextStyle(
                                         fontWeight: FontWeight.w500,
                                         fontSize: Dimensions.fontSizeOverLarge
@@ -641,7 +641,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver, Si
                                   )
                                 ],
                               ) : SizedBox(),
-                              preferredSize: authProvider.isLoggedIn() 
+                              preferredSize: authProvider.isLoggedIn()! 
                               ? const Size.fromHeight(60.0) 
                               : const Size.fromHeight(0.0) 
                             ),
@@ -666,7 +666,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver, Si
                             child: Container(
                               width: double.infinity,
                               margin: EdgeInsets.only(
-                                top: authProvider.isLoggedIn() 
+                                top: authProvider.isLoggedIn()!
                                 ? 160.0 
                                 : 80.0
                               ),
@@ -695,7 +695,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver, Si
                             child: Container(
                               width: double.infinity,
                               margin: EdgeInsets.only(
-                                top: authProvider.isLoggedIn() 
+                                top: authProvider.isLoggedIn()!
                                 ? 160.0 
                                 : 80.0
                               ),
@@ -723,7 +723,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver, Si
                           child: Container(
                             width: double.infinity,
                             margin: EdgeInsets.only(
-                              top: authProvider.isLoggedIn() 
+                              top: authProvider.isLoggedIn()! 
                               ? 160.0 
                               : 80.0
                             ),
@@ -753,7 +753,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver, Si
                       alignment: Alignment.topLeft,
                       child: Container(
                         margin: EdgeInsets.only(
-                          top: authProvider.isLoggedIn() 
+                          top: authProvider.isLoggedIn()!
                           ? 175.0
                           : 100.0,
                           left: Dimensions.marginSizeDefault, 
@@ -765,7 +765,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver, Si
                         ),
                         child: InkWell(
                           onTap: () { 
-                            if(authProvider.isLoggedIn()) {
+                            if(authProvider.isLoggedIn()!) {
                               navigationService.pushNav(context,  CategoryScreen(key: UniqueKey()));
                             } else {
                               navigationService.pushNav(context,  SignInScreen(key: UniqueKey()));
@@ -806,7 +806,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver, Si
                           //   }
                           // },
                           onLongPress: () {
-                            if(authProvider.isLoggedIn()) {
+                            if(authProvider.isLoggedIn()!) {
                               controller.forward();
                             } else {
                               navigationService.pushNav(context, SignInScreen(key: UniqueKey()));

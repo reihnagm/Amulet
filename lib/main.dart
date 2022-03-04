@@ -1,11 +1,11 @@
 import 'dart:async';
 
-import 'package:amulet/views/screens/history/history.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
 
+import 'package:amulet/views/screens/history/history.dart';
 import 'package:amulet/utils/constant.dart';
 import 'package:amulet/views/screens/reports/index.dart';
 import 'package:amulet/localization/app_localization.dart';
@@ -40,7 +40,6 @@ class _MyAppState extends State<MyApp> {
   @override 
   void initState() {
     super.initState();
-
     firebaseProvider = context.read<FirebaseProvider>();
 
     Future.delayed(Duration.zero, () async {

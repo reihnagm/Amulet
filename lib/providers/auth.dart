@@ -104,20 +104,19 @@ class AuthProvider with ChangeNotifier {
     Future.delayed(Duration.zero, () => notifyListeners());
   }
 
-
-  String getUserPhone() {
+  String? getUserPhone() {
     return authRepo.getUserPhone();
   }
 
-  String getUserFullname() {
+  String? getUserFullname() {
     return authRepo.getUserFullName();
   }
 
   String? getUserId() {
-    return authRepo.getUserId()!;
+    return authRepo.getUserId();
   }
 
-  bool isLoggedIn() {
+  bool? isLoggedIn() {
     return authRepo.isLoggedIn();
   }
 

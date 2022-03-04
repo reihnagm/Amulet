@@ -54,7 +54,7 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                 padding: const EdgeInsets.all(40.0),
                 child: Image.asset("assets/images/logo.png")
               ),
-              if(!authProvider.isLoggedIn()) 
+              if(!authProvider.isLoggedIn()!) 
                 Container(
                   padding: const EdgeInsets.all(Dimensions.paddingSizeSmall),
                   child: Material(
@@ -75,7 +75,7 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                     ),
                   ),
                 ),
-              if(authProvider.isLoggedIn())    
+              if(authProvider.isLoggedIn()!)    
                 Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   mainAxisSize: MainAxisSize.min,
