@@ -147,6 +147,9 @@ class _HistoryScreenState extends State<HistoryScreen> {
                                           shrinkWrap: true,
                                           padding: EdgeInsets.zero,
                                           itemBuilder: (BuildContext context, int i) {
+                                           
+                                            DateTime date = videoProvider.sosAgentDataHistory[i].createdAt!;
+
                                             return Container(
                                               margin: EdgeInsets.only(
                                                 top: Dimensions.marginSizeSmall,
@@ -192,6 +195,8 @@ class _HistoryScreenState extends State<HistoryScreen> {
                                                                     ),
                                                                     child: Text(videoProvider.sosAgentDataHistory[i].isConfirm == 2 
                                                                     ? getTranslated("DONE", context)
+                                                                    : videoProvider.sosAgentDataHistory[i].isConfirm == 1 && date.hour > DateTime.now().hour 
+                                                                    ? getTranslated("CASE_EXPIRED", context)
                                                                     : getTranslated("ONGOING", context),
                                                                       style: TextStyle(
                                                                         fontSize: Dimensions.fontSizeSmall,
@@ -203,7 +208,11 @@ class _HistoryScreenState extends State<HistoryScreen> {
                                                                 ]
                                                               ),
                                                               const SizedBox(height: 5.0),
-                                                              Text("${getTranslated("CASE_ONGOING", context)}",
+                                                              Text("${videoProvider.sosAgentDataHistory[i].isConfirm == 2 
+                                                              ? getTranslated("CASE_SOLVED", context)
+                                                              : videoProvider.sosAgentDataHistory[i].isConfirm == 1 && date.hour > DateTime.now().hour 
+                                                              ? getTranslated("CASE_EXPIRED", context)
+                                                              : getTranslated("CASE_ONGOING", context)}",
                                                                 style: TextStyle(
                                                                   color: ColorResources.success,
                                                                   fontSize: Dimensions.fontSizeSmall
