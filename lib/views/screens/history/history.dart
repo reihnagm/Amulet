@@ -172,11 +172,35 @@ class _HistoryScreenState extends State<HistoryScreen> {
                                                             crossAxisAlignment: CrossAxisAlignment.start,
                                                             mainAxisSize: MainAxisSize.min,
                                                             children: [
-                                                              Text("${getTranslated("CASE", context)} #${videoProvider.sosAgentDataHistory[i].signId} ${videoProvider.sosAgentDataHistory[i].category! == "-" ? "" : videoProvider.sosAgentDataHistory[i].category!}",
-                                                                style: TextStyle(
-                                                                  fontSize: Dimensions.fontSizeLarge,
-                                                                  fontWeight: FontWeight.w500
-                                                                ),
+                                                              Row(
+                                                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                                mainAxisSize: MainAxisSize.max,
+                                                                children: [
+                                                                  Text("${getTranslated("CASE", context)} #${videoProvider.sosAgentDataHistory[i].signId} ${videoProvider.sosAgentDataHistory[i].category! == "-" ? "" : videoProvider.sosAgentDataHistory[i].category!}",
+                                                                    style: TextStyle(
+                                                                      fontSize: Dimensions.fontSizeLarge,
+                                                                      fontWeight: FontWeight.w500
+                                                                    ),
+                                                                  ),
+                                                                  Container(
+                                                                    padding: EdgeInsets.all(6.0),
+                                                                    decoration: BoxDecoration(
+                                                                      color: videoProvider.sosAgentDataHistory[i].isConfirm == 2 
+                                                                      ? ColorResources.success 
+                                                                      : ColorResources.redPrimary,
+                                                                      borderRadius: BorderRadius.circular(8.0),
+                                                                    ),
+                                                                    child: Text(videoProvider.sosAgentDataHistory[i].isConfirm == 2 
+                                                                    ? getTranslated("DONE", context)
+                                                                    : getTranslated("ONGOING", context),
+                                                                      style: TextStyle(
+                                                                        fontSize: Dimensions.fontSizeSmall,
+                                                                        fontWeight: FontWeight.bold,
+                                                                        color: ColorResources.white
+                                                                      ),
+                                                                    ),
+                                                                  )
+                                                                ]
                                                               ),
                                                               const SizedBox(height: 5.0),
                                                               Text("${getTranslated("CASE_ONGOING", context)}",
@@ -224,14 +248,6 @@ class _HistoryScreenState extends State<HistoryScreen> {
                                                             ],
                                                           ),
                                                         ),
-                                                        Expanded(
-                                                          flex: 3,
-                                                          child: Icon(
-                                                            Icons.check_circle,
-                                                            size: 40.0,
-                                                            color: ColorResources.green,
-                                                          )
-                                                        )
                                                       ],
                                                     ),
                                                     Column(

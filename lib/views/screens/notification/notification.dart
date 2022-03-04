@@ -68,6 +68,8 @@ class _NotificationScreenState extends State<NotificationScreen> {
                           SliverAppBar(
                             backgroundColor: ColorResources.white,
                             centerTitle: true,
+                            elevation: 0.0,
+                            pinned: true,
                             title: Text(getTranslated("NOTIFICATION", context),
                               style: TextStyle(
                                 color: ColorResources.black,
@@ -178,24 +180,25 @@ class _NotificationScreenState extends State<NotificationScreen> {
                                                             ),
                                                           ),
                                                         ),
-                                                        Container(
-                                                          padding: EdgeInsets.all(6.0),
-                                                          decoration: BoxDecoration(
-                                                            color: ip.inboxes[i].type == "done"
-                                                            ? ColorResources.success 
-                                                            : ColorResources.redPrimary,
-                                                            borderRadius: BorderRadius.circular(8.0),
-                                                          ),
-                                                          child: Text(ip.inboxes[i].type == "done"
-                                                          ? getTranslated("DONE", context)
-                                                          : getTranslated("ONGOING", context),
-                                                            style: TextStyle(
-                                                              fontSize: Dimensions.fontSizeSmall,
-                                                              fontWeight: FontWeight.bold,
-                                                              color: ColorResources.white
+                                                        if(ip.inboxes[i].type != "info")
+                                                          Container(
+                                                            padding: EdgeInsets.all(6.0),
+                                                            decoration: BoxDecoration(
+                                                              color: ip.inboxes[i].type == "done"
+                                                              ? ColorResources.success 
+                                                              : ColorResources.redPrimary,
+                                                              borderRadius: BorderRadius.circular(8.0),
                                                             ),
-                                                          ),
-                                                        )
+                                                            child: Text(ip.inboxes[i].type == "done"
+                                                            ? getTranslated("DONE", context)
+                                                            : getTranslated("ONGOING", context),
+                                                              style: TextStyle(
+                                                                fontSize: Dimensions.fontSizeSmall,
+                                                                fontWeight: FontWeight.bold,
+                                                                color: ColorResources.white
+                                                              ),
+                                                            ),
+                                                          )
                                                       ],
                                                     ),
                                                     const SizedBox(height: 5.0),

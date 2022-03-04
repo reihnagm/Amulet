@@ -188,6 +188,7 @@ class VideoProvider with ChangeNotifier {
           address: sosAgent.address,
           category: sosAgent.category,
           asName: sosAgent.asName,
+          isConfirm: sosAgent.isConfirm,
           signId: sosAgent.signId,
           content: sosAgent.content,
           mediaUrlPhone: sosAgent.mediaUrlPhone,
