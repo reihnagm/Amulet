@@ -3,6 +3,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:provider/provider.dart';
 
 import 'package:amulet/services/navigation.dart';
@@ -21,6 +22,7 @@ class NotificationDetail extends StatefulWidget {
   final String mediaUrl;
   final String type;
   final String createdAt;
+  final PagingController pagingController;
   const NotificationDetail({ 
     required this.uid,
     required this.title,
@@ -29,6 +31,7 @@ class NotificationDetail extends StatefulWidget {
     required this.mediaUrl,
     required this.type,
     required this.createdAt,
+    required this.pagingController,
     Key? key 
   }) : super(key: key);
 
@@ -48,7 +51,8 @@ class _NotificationDetailState extends State<NotificationDetail> {
       if(mounted) {
         await inboxProvider.updateInbox(
           context, 
-          uid: widget.uid
+          uid: widget.uid,
+          pagingController: widget.pagingController,
         );
       }
     });

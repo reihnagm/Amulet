@@ -438,7 +438,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver, Si
         videoProvider.getFcm(context);
       }
       if(mounted) {
-        inboxProvider.getInbox(context);
+        inboxProvider.getInboxTotalUnread(context);
       }
       if(mounted) {
         networkProvider.checkConnection(context);
@@ -449,7 +449,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver, Si
   setUpTimeFetch() {
     Timer.periodic(const Duration(milliseconds: 1000), (_) {
       if(mounted) {
-        inboxProvider.getInbox(context);
+        inboxProvider.getInboxTotalUnread(context);
       }
     });
   }
@@ -528,7 +528,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver, Si
                             actions: [
                               Consumer<InboxProvider>(
                                 builder: (BuildContext context, InboxProvider ip, Widget? child) {
-                                  if(ip.inboxStatus == InboxStatus.loading) {
+                                  if(ip.inboxTotalUnreadStatus== InboxTotalUnreadStatus.loading) {
                                     return Container(
                                       margin: const EdgeInsets.only(right: Dimensions.marginSizeDefault),
                                       child: InkWell(
@@ -550,7 +550,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver, Si
                                       ),
                                     );
                                   }
-                                  if(ip.inboxStatus == InboxStatus.empty) {
+                                  if(ip.totalUnread == 0) {
                                     return Container(
                                       margin: const EdgeInsets.only(right: Dimensions.marginSizeDefault),
                                       child: InkWell(
@@ -586,13 +586,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver, Si
                                         },
                                         child: Padding(
                                           padding: EdgeInsets.all(8.0),
-                                          child: ip.totalUnread == 0 
-                                          ? Icon(
-                                              Icons.notifications,
-                                              size: 25.0,
-                                              color: ColorResources.black,
-                                            )
-                                          : Badge(
+                                          child:  Badge(
                                             position: BadgePosition.topEnd(top: 12.0, end: -12),
                                             animationDuration: Duration.zero,
                                             badgeContent: Text(ip.totalUnread.toString(),

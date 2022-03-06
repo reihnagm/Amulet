@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:amulet/utils/dio.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animated_dialog/flutter_animated_dialog.dart';
@@ -7,7 +8,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:amulet/utils/exceptions.dart';
 import 'package:amulet/utils/dimensions.dart';
-import 'package:amulet/views/screens/auth/verify.dart';
 import 'package:amulet/data/models/inquiry/register.dart';
 import 'package:amulet/views/screens/auth/sign_in.dart';
 import 'package:amulet/views/screens/auth/otp.dart';
@@ -170,82 +170,26 @@ class AuthProvider with ChangeNotifier {
     return Future.value();
   }
 
-  Future<InquiryRegisterModel> verify(BuildContext context, GlobalKey<ScaffoldState> globalKey, String token, UserModel user) async {
+  Future<InquiryRegisterModel> verify(BuildContext context, GlobalKey<ScaffoldState> globalKey, User user) async {
     String productId = "";
-    if(user.data!.user!.role! == "1day") {
+    if(user.role! == "1d") {
       productId = "df78a1a0-9d5b-4a7c-bd48-d4395f207436"; // 30 K
     } else {
       productId = "92e1affe-467b-4b2a-a329-019c55fb53a9"; // 300 K
     }
+    debugPrint(productId);
     try {
+      Dio dio = await DioManager.shared.getClient(context);
       Response res = await dio.post("${AppConstants.baseUrlPpob}/registration/inquiry", data: {
         "productId" : productId
-      }, options: Options(
-        headers: {
-          "Authorization": "Bearer $token",
-          "X-Context-ID": AppConstants.xContextId
-        }
-      ));
-      Map<String, dynamic> resData = res.data;
-      InquiryRegisterModel inquiryRegisterModel = InquiryRegisterModel.fromJson(resData); 
-      return inquiryRegisterModel;  
-    } on DioError catch(e) {
-      if(e.response?.data != null) {
-        if(e.response?.data['code'] == 404 && user.data!.user!.status! == "pending") {
-          showAnimatedDialog(
-            context: context,
-            barrierDismissible: true,
-            builder: (BuildContext context) {
-              return Dialog(
-                child: Container(
-                  alignment: Alignment.center,
-                  height: 60.0,
-                  child: Text(getTranslated("THERE_WAS_PROBLEM", context),
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontSize: Dimensions.fontSizeDefault
-                    )
-                  ),
-                ),
-              );
-            },
-            animationType: DialogTransitionType.scale,
-            curve: Curves.fastOutSlowIn,
-            duration: const Duration(seconds: 2),
-          );
-        }
-        if(e.response?.data['code'] == 404 && user.data!.user!.status == "enabled" && user.data!.user!.emailActivated! == 1) {
-          writeData(user.data!); 
-          Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => HomeScreen(key: UniqueKey())));
-        } else {
-          sharedPreferences.setString("email_otp", user.data!.user!.emailAddress!);
-          Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => OtpScreen(key: UniqueKey())));
-        }
-      } else {
-        if(user.data?.user?.status == "pending") {
-          showAnimatedDialog(
-            context: context,
-            barrierDismissible: true,
-            builder: (BuildContext context) {
-              return Dialog(
-                child: Container(
-                  alignment: Alignment.center,
-                  height: 60.0,
-                  child: Text(getTranslated("THERE_WAS_PROBLEM", context),
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontSize: Dimensions.fontSizeDefault
-                    )
-                  ),
-                ),
-              );
-            },
-            animationType: DialogTransitionType.scale,
-            curve: Curves.fastOutSlowIn,
-            duration: const Duration(seconds: 2),
-          );
-        }
-      }
+      });
+      debugPrint(res.statusCode.toString());
+      // Map<String, dynamic> resData = res.data;
+      // InquiryRegisterModel inquiryRegisterModel = InquiryRegisterModel.fromJson(resData); 
+      // return inquiryRegisterModel;  
+    } on DioError catch(e) {    
+      debugPrint(e.response!.statusCode.toString());
+      debugPrint(e.response!.data.toString());
     } catch(e) {
       debugPrint(e.toString());
     }

@@ -58,6 +58,7 @@ dependencies:
 
   # I
   intl: ^0.17.0
+  infinite_scroll_pagination: ^3.1.0
 
   # L
   lpinyin: ^2.0.3

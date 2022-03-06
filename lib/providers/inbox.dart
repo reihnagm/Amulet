@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:amulet/providers/auth.dart';
@@ -6,6 +7,7 @@ import 'package:amulet/data/models/inbox/inbox.dart';
 import 'package:amulet/data/repository/inbox/inbox.dart';
 
 enum InboxStatus { idle, loading, loaded, empty, error }
+enum InboxTotalUnreadStatus { idle, loading, loaded, empty, error }
 
 class InboxProvider with ChangeNotifier {
   final AuthProvider authProvider;
@@ -18,10 +20,14 @@ class InboxProvider with ChangeNotifier {
     required this.inboxRepo
   });
 
-  int totalUnread = 0;
+  int _totalUnread = 0;
+  int get totalUnread => _totalUnread;
   
   InboxStatus _inboxStatus = InboxStatus.loading;
   InboxStatus get inboxStatus => _inboxStatus;
+
+  InboxTotalUnreadStatus _inboxTotalUnreadStatus = InboxTotalUnreadStatus.loading;
+  InboxTotalUnreadStatus get inboxTotalUnreadStatus => _inboxTotalUnreadStatus;
 
   List<InboxData> _inboxes = [];
   List<InboxData> get inboxes => [..._inboxes];
@@ -31,12 +37,22 @@ class InboxProvider with ChangeNotifier {
     Future.delayed(Duration.zero, () => notifyListeners());
   }
 
-  Future<void> getInbox(BuildContext context) async {
+  void setStateInboxTotalUnreadStatus(InboxTotalUnreadStatus inboxTotalUnreadStatus) {
+    _inboxTotalUnreadStatus = inboxTotalUnreadStatus;
+    Future.delayed(Duration.zero, () => notifyListeners());
+  }
+
+  Future<void> getInbox(BuildContext context, {
+    PagingController? pagingController,
+    int? pageKey,
+  }) async {
     if(authProvider.getUserId() != null) {
       try {
-        InboxModel? inboxModel = await inboxRepo.getInbox(context, userId: authProvider.getUserId()!);
-        totalUnread = inboxModel!.totalUnread!;
-        List<InboxData> inboxData = inboxModel.data!;
+        InboxModel? inboxModel = await inboxRepo.getInbox(context, 
+          userId: authProvider.getUserId()!,
+          pageKey: pageKey!
+        );
+        List<InboxData> inboxData = inboxModel!.data!;
         List<InboxData> inboxAssign = [];
         for (InboxData inbox in inboxData) {
           inboxAssign.add(
@@ -54,6 +70,19 @@ class InboxProvider with ChangeNotifier {
           );
         }
         _inboxes = inboxAssign;
+        final previouslyFetchedItemsCount = pagingController!.itemList?.length ?? 0;
+      
+        final isLastPage = _inboxes.length < previouslyFetchedItemsCount;
+        final newItems = _inboxes;
+
+        if (isLastPage) {
+          pagingController.appendLastPage(newItems);
+          Future.delayed(Duration.zero, () => notifyListeners());
+        } else {
+          int nextPageKey = pageKey + 1;
+          pagingController.appendPage(newItems, nextPageKey);
+          Future.delayed(Duration.zero, () => notifyListeners());
+        }
         setStateInboxStatus(InboxStatus.loaded);
         if(_inboxes.isEmpty) {
           setStateInboxStatus(InboxStatus.empty);
@@ -64,13 +93,24 @@ class InboxProvider with ChangeNotifier {
     }
   }
 
+  Future<void> getInboxTotalUnread(BuildContext context) async {
+    try {
+      int tu = await inboxRepo.getInboxTotalUnread(context, userId: authProvider.getUserId()!);
+      _totalUnread = tu;
+      setStateInboxTotalUnreadStatus(InboxTotalUnreadStatus.loaded);
+    } catch(e) {
+      setStateInboxTotalUnreadStatus(InboxTotalUnreadStatus.error);
+      debugPrint(e.toString());
+    }
+  }
+
   Future<void> insertInbox(BuildContext context, {
     required String title, 
     required String content, 
     required String thumbnail,
     required String mediaUrl,
     required String type,
-    required String userId
+    required String userId,
   }) async {
     try {
       await inboxRepo.storeInbox(context, 
@@ -79,21 +119,26 @@ class InboxProvider with ChangeNotifier {
         thumbnail: thumbnail,
         mediaUrl: mediaUrl,
         type: type,
-        userId: userId
+        userId: userId,
       );
-      Future.delayed(Duration.zero, () {
-        getInbox(context);
+      Future.delayed(Duration.zero, () async {
+        await getInboxTotalUnread(context);
       });
     } catch(e) {
       debugPrint(e.toString());
     } 
   }
 
-  Future<void> updateInbox(BuildContext context, {required String uid}) async {
+  Future<void> updateInbox(BuildContext context, {
+    required String uid,
+    required PagingController pagingController,
+  }) async {
     try {
       await inboxRepo.updateInbox(context, uid: uid);
+      pagingController.refresh();
+      Future.delayed(Duration.zero, () => notifyListeners());
       Future.delayed(Duration.zero, () async {
-        await getInbox(context);
+        await getInboxTotalUnread(context);
       });
     } catch(e) {
       debugPrint(e.toString());

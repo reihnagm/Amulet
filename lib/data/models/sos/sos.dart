@@ -44,6 +44,7 @@ class SosData {
     this.status,
     this.duration,
     this.thumbnail,
+    this.signId,
     this.fullname,
     this.userId,
     this.createdAt,
@@ -61,6 +62,7 @@ class SosData {
   String? status;
   String? duration;
   String? thumbnail;
+  String? signId;
   String? fullname;
   String? userId;
   dynamic createdAt;
@@ -78,6 +80,7 @@ class SosData {
     status: json["status"],
     duration: json["duration"],
     thumbnail: json["thumbnail"],
+    signId: json["sign_id"],
     fullname: json["fullname"],
     userId: json["user_id"],
     createdAt: json["created_at"],

@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:provider/provider.dart';
 import 'package:dio/dio.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -65,8 +66,6 @@ class VideoProvider with ChangeNotifier {
     Future.delayed(Duration.zero, () => notifyListeners());
   }
   
-  int _page = 1;
-  int get page => _page; 
 
   late BitmapDescriptor myCurrentPosition;
 
@@ -110,16 +109,14 @@ class VideoProvider with ChangeNotifier {
     setStateListenVStatus(ListenVStatus.loaded);
   }
 
-  Future<void> scrollNextPage(int limit) async {
-    _page += limit;
-    notifyListeners();
-  }
-
-  Future<void> getSos(BuildContext context) async {
+  Future<void> getSos(BuildContext context, {
+    required int pageKey, 
+    required PagingController pagingController
+  }) async {
     setStateListenVStatus(ListenVStatus.loading);
     try {
       Dio dio = Dio();
-      Response res = await dio.get("${AppConstants.baseUrl}/get-sos/${authProvider.getUserId()}?page=$page");
+      Response res = await dio.get("${AppConstants.baseUrl}/get-sos/${authProvider.getUserId()}?page=$pageKey");
       Map<String, dynamic> resData = res.data;
       SosModel sosModel = SosModel.fromJson(resData);
       _sosData = [];
@@ -138,6 +135,7 @@ class VideoProvider with ChangeNotifier {
           mediaUrlPhone: sos.mediaUrlPhone,
           status: sos.status,
           thumbnail: sos.thumbnail,
+          signId: sos.signId,
           uid: sos.uid,
           createdAt: sos.createdAt,
           updatedAt: sos.updatedAt,
@@ -145,6 +143,19 @@ class VideoProvider with ChangeNotifier {
         ));
       }
       _sosData = sosDataAssign;
+      final previouslyFetchedItemsCount = pagingController.itemList?.length ?? 0;
+      
+      final isLastPage = _sosData.length < previouslyFetchedItemsCount;
+      final newItems = _sosData;
+
+      if (isLastPage) {
+        pagingController.appendLastPage(newItems);
+        Future.delayed(Duration.zero, () => notifyListeners());
+      } else {
+        int nextPageKey = pageKey + 1;
+        pagingController.appendPage(newItems, nextPageKey);
+        Future.delayed(Duration.zero, () => notifyListeners());
+      }
       setStateListenVStatus(ListenVStatus.loaded);
       if(_sosData.isEmpty) {
         setStateListenVStatus(ListenVStatus.empty);
@@ -166,17 +177,23 @@ class VideoProvider with ChangeNotifier {
       ) {
         ShowSnackbar.snackbar(context, "(${e.response!.statusCode.toString()}) : Internal Server Error", "", ColorResources.error);
       }
+      pagingController.error = e;
       setStateListenVStatus(ListenVStatus.error);
     } catch(e) {
+      pagingController.error = e;
       debugPrint(e.toString());
       setStateListenVStatus(ListenVStatus.error);
     }
   }
 
-  Future<void> getHistorySos(BuildContext context, {required String isConfirm}) async {
+  Future<void> getHistorySos(BuildContext context, {
+      required String isConfirm, 
+      required PagingController pagingController,
+      required int pageKey
+    }) async {
     try {
       Dio dio = Dio();
-      Response res = await dio.get("${AppConstants.baseUrl}/get-history-sos/${isConfirm}/${authProvider.getUserId()}");
+      Response res = await dio.get("${AppConstants.baseUrl}/get-history-sos/${isConfirm}/${authProvider.getUserId()}?page=${pageKey}");
       Map<String, dynamic> resData = res.data;
       SosAgentModel sosAgentModel = SosAgentModel.fromJson(resData);
       _sosAgentDataHistory = [];
@@ -204,6 +221,19 @@ class VideoProvider with ChangeNotifier {
         ));
       }
       _sosAgentDataHistory = sosAgentDataHistoryAssign;
+      final previouslyFetchedItemsCount = pagingController.itemList?.length ?? 0;
+      
+      final isLastPage = _sosAgentDataHistory.length < previouslyFetchedItemsCount;
+      final newItems = _sosAgentDataHistory;
+
+      if (isLastPage) {
+        pagingController.appendLastPage(newItems);
+        Future.delayed(Duration.zero, () => notifyListeners());
+      } else {
+        int nextPageKey = pageKey + 1;
+        pagingController.appendPage(newItems, nextPageKey);
+        Future.delayed(Duration.zero, () => notifyListeners());
+      }
       setStateSosHistoryStatus(SosHistoryStatus.loaded);
       if(_sosAgentDataHistory.isEmpty) {
         setStateSosHistoryStatus(SosHistoryStatus.empty);

@@ -15,12 +15,15 @@ class InboxRepo {
     required this.sharedPreferences
   });
 
-  Future<InboxModel?> getInbox(BuildContext context, {required String userId}) async {
+  Future<InboxModel?> getInbox(BuildContext context, {
+    required String userId, 
+    required int pageKey
+  }) async {
     try {
       Dio dio = Dio();
-      Response res = await dio.get("${AppConstants.baseUrl}/inbox/${userId}");
+      Response res = await dio.get("${AppConstants.baseUrl}/inbox/${userId}?page=${pageKey}");
       Map<String, dynamic> data = res.data;
-      return compute(parseInboxes, data);
+      return compute(parseGetInbox, data);
     } on DioError catch(e) {
       if(
         e.response!.statusCode == 400
@@ -42,6 +45,37 @@ class InboxRepo {
       debugPrint(e.toString());
     }
     return null;
+  }
+
+  Future<int> getInboxTotalUnread(BuildContext context, {
+    required String userId, 
+  }) async {
+    try {
+      Dio dio = Dio();
+      Response res = await dio.get("${AppConstants.baseUrl}/inbox/count/${userId}");
+      Map<String, dynamic> data = res.data;
+      return compute(parseGetInboxTotalUnread, data);
+    } on DioError catch(e) {
+      if(
+        e.response!.statusCode == 400
+        || e.response!.statusCode == 401
+        || e.response!.statusCode == 402 
+        || e.response!.statusCode == 403
+        || e.response!.statusCode == 404 
+        || e.response!.statusCode == 405 
+        || e.response!.statusCode == 500 
+        || e.response!.statusCode == 501
+        || e.response!.statusCode == 502
+        || e.response!.statusCode == 503
+        || e.response!.statusCode == 504
+        || e.response!.statusCode == 505
+      ) {
+        ShowSnackbar.snackbar(context, "(${e.response!.statusCode.toString()}) : Internal Server Error", "", ColorResources.error);
+      }
+    } catch(e) {
+      debugPrint(e.toString());
+    }
+    return 0;
   }
 
   Future<void> storeInbox(BuildContext context, 
@@ -120,7 +154,11 @@ class InboxRepo {
 InboxModel inboxModel = InboxModel();
 
 
-InboxModel parseInboxes(dynamic data) {
+InboxModel parseGetInbox(dynamic data) {
   InboxModel inboxModel = InboxModel.fromJson(data);
   return inboxModel;
+}
+
+int parseGetInboxTotalUnread(dynamic data) {
+  return data["total_unread"];
 }

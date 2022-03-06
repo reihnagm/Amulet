@@ -16,7 +16,6 @@ import 'package:amulet/providers/firebase.dart';
 import 'package:amulet/services/notification.dart';
 import 'package:amulet/providers.dart';
 import 'package:amulet/container.dart' as core;
-
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();

@@ -1,12 +1,13 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:expandable/expandable.dart';
+import 'package:provider/provider.dart';
+import 'package:flutter_switch/flutter_switch.dart';
+
 import 'package:amulet/localization/language_constraints.dart';
 import 'package:amulet/providers/localization.dart';
 import 'package:amulet/utils/color_resources.dart';
 import 'package:amulet/utils/dimensions.dart';
-import 'package:provider/provider.dart';
-import 'package:flutter_switch/flutter_switch.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({ Key? key }) : super(key: key);
@@ -83,7 +84,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                     child: Text(getTranslated("SETTINGS_LANGUAGE", context),
                                       style: TextStyle(
                                         color: ColorResources.secondaryV3Background,
-                                        fontSize: constraints.maxWidth < 400 ? Dimensions.fontSizeDefault : Dimensions.fontSizeDefault
+                                        fontSize: Dimensions.fontSizeSmall
                                       )
                                     )
                                   ),

@@ -2,7 +2,6 @@
 class InboxModel {
   InboxModel({
     this.data,
-    this.totalUnread,
     this.total,
     this.perPage,
     this.nextPage,
@@ -13,7 +12,6 @@ class InboxModel {
   });
 
   List<InboxData>? data;
-  int? totalUnread;
   int? total;
   int? perPage;
   int? nextPage;
@@ -24,7 +22,6 @@ class InboxModel {
 
   factory InboxModel.fromJson(Map<String, dynamic> json) => InboxModel(
     data: List<InboxData>.from(json["data"].map((x) => InboxData.fromJson(x))),
-    totalUnread: json["total_unread"],
     total: json["total"],
     perPage: json["perPage"],
     nextPage: json["nextPage"],

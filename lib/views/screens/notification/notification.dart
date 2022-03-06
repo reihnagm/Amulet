@@ -1,7 +1,10 @@
+import 'package:amulet/data/models/inbox/inbox.dart';
+import 'package:amulet/providers/network.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:provider/provider.dart';
 
 import 'package:amulet/services/navigation.dart';
@@ -20,19 +23,39 @@ class NotificationScreen extends StatefulWidget {
 }
 
 class _NotificationScreenState extends State<NotificationScreen> {
+  GlobalKey<ScaffoldState> globalKey = GlobalKey<ScaffoldState>();
+  final pagingController = PagingController<int, InboxData>(
+    firstPageKey: 1,
+  );
+
   late InboxProvider inboxProvider;
+  late NetworkProvider networkProvider;
   late NavigationService navigationService;
 
   @override 
   void initState() {
     super.initState();
 
-    Future.delayed(Duration.zero, () {
+    Future.delayed(Duration.zero,() {
       if(mounted) {
-        inboxProvider.getInbox(context);
+        networkProvider.checkConnection(context);
       }
     });
+
+    pagingController.addPageRequestListener((pageKey) {
+      inboxProvider.getInbox(
+        context, 
+        pagingController: pagingController, 
+        pageKey: pageKey
+      );
+    });
   }
+
+  @override 
+  void dispose() {
+    pagingController.dispose();
+    super.dispose();
+  }  
 
   @override
   Widget build(BuildContext context) {
@@ -42,26 +65,34 @@ class _NotificationScreenState extends State<NotificationScreen> {
   Widget buildUI() {
     return Builder(
       builder: (BuildContext context) {
+        networkProvider = context.read<NetworkProvider>();
         inboxProvider = context.read<InboxProvider>();
         navigationService = NavigationService();
         return Scaffold(
           resizeToAvoidBottomInset: false,
+          key: globalKey,
           backgroundColor: ColorResources.backgroundColor,
           body: SafeArea(
             child: LayoutBuilder(
               builder: (BuildContext context, BoxConstraints constraints) {
-                return RefreshIndicator(
-                  backgroundColor: ColorResources.redPrimary,
-                  color: ColorResources.white,
-                  onRefresh: () {
-                    return Future.sync((){
-                      inboxProvider.getInbox(context);
-                    });
-                  },
-                  child: Consumer<InboxProvider>(
-                    builder: (BuildContext context, InboxProvider ip, Widget? child) {
-                     
-                      return CustomScrollView(
+                return Consumer<NetworkProvider>(
+                  builder: (BuildContext context, NetworkProvider networkProvider, Widget? child) {
+                    if(networkProvider.connectionStatus == ConnectionStatus.offInternet) 
+                      return Center(
+                        child: SpinKitThreeBounce(
+                          size: 20.0,
+                          color: Colors.black87,
+                        ),
+                      );
+                    return RefreshIndicator(
+                      backgroundColor: ColorResources.redPrimary,
+                      color: ColorResources.white,
+                      onRefresh: () {
+                        return Future.sync((){
+                          pagingController.refresh();
+                        });
+                      },
+                      child:  CustomScrollView(
                         physics: const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
                         slivers: [
 
@@ -84,35 +115,18 @@ class _NotificationScreenState extends State<NotificationScreen> {
                             )
                           ),
 
-                          if(ip.inboxStatus == InboxStatus.loading) 
-                            SliverFillRemaining(
-                              child: Center(
-                                child: SpinKitThreeBounce(
-                                  size: 20.0,
-                                  color: Colors.black87,
-                                ),
-                              ),
-                            ),
-
-                          if(ip.inboxStatus == InboxStatus.empty) 
-                            SliverFillRemaining(
-                              child: Center(
-                                child: Text(getTranslated("THERE_IS_NO_NOTIFICATION", context),
-                                  style: TextStyle(
-                                    color: ColorResources.black,
-                                    fontSize: Dimensions.fontSizeDefault
-                                  ),
-                                )
-                              ),
-                            ),
                           
 
                           SliverPadding(
                             padding: const EdgeInsets.only(top: 20.0, bottom: 20.0),
-                            sliver: SliverList(
-                              delegate: SliverChildBuilderDelegate(
-                                (BuildContext context, int i) {
-                                  return Container(
+                            sliver:  PagedSliverList.separated(
+                              pagingController: pagingController,
+                              separatorBuilder: (BuildContext context, int i) => const SizedBox(
+                                height: 16.0,
+                              ),
+                              builderDelegate: PagedChildBuilderDelegate<InboxData>(
+                                itemBuilder: (BuildContext context, InboxData inboxData, int i) {
+                                  return  Container(
                                     margin: const EdgeInsets.only(
                                       top: Dimensions.marginSizeSmall,
                                       left: Dimensions.marginSizeDefault,
@@ -131,13 +145,14 @@ class _NotificationScreenState extends State<NotificationScreen> {
                                         borderRadius: BorderRadius.circular(10.0),
                                         onTap: () {
                                           navigationService.pushNav(context, NotificationDetail(
-                                            uid: ip.inboxes[i].uid!, 
-                                            title: ip.inboxes[i].title!, 
-                                            content: ip.inboxes[i].content!, 
-                                            type: ip.inboxes[i].type!,
-                                            thumbnail: ip.inboxes[i].thumbnail!,
-                                            mediaUrl: ip.inboxes[i].mediaUrl!,
-                                            createdAt: ip.inboxes[i].createdAt!
+                                            uid: inboxData.uid!, 
+                                            title: inboxData.title!, 
+                                            content: inboxData.content!, 
+                                            type: inboxData.type!,
+                                            thumbnail: inboxData.thumbnail!,
+                                            mediaUrl: inboxData.mediaUrl!,
+                                            createdAt: inboxData.createdAt!,
+                                            pagingController: pagingController,
                                           ));
                                         },  
                                         child: Padding(
@@ -169,27 +184,27 @@ class _NotificationScreenState extends State<NotificationScreen> {
                                                       children: [
                                                         SizedBox(
                                                           width: 200.0,
-                                                          child: Text(ip.inboxes[i].title!,
+                                                          child: Text(inboxData.title!,
                                                             overflow: TextOverflow.ellipsis,
                                                             style: TextStyle(
                                                               color: ColorResources.black,
-                                                              fontWeight: ip.inboxes[i].isRead == 1 
+                                                              fontWeight: inboxData.isRead == 1 
                                                               ? FontWeight.w400
                                                               : FontWeight.bold,
                                                               fontSize: Dimensions.fontSizeSmall,
                                                             ),
                                                           ),
                                                         ),
-                                                        if(ip.inboxes[i].type != "info")
+                                                        if(inboxData.type != "info")
                                                           Container(
                                                             padding: EdgeInsets.all(6.0),
                                                             decoration: BoxDecoration(
-                                                              color: ip.inboxes[i].type == "done"
+                                                              color: inboxData.type == "done"
                                                               ? ColorResources.success 
                                                               : ColorResources.redPrimary,
                                                               borderRadius: BorderRadius.circular(8.0),
                                                             ),
-                                                            child: Text(ip.inboxes[i].type == "done"
+                                                            child: Text(inboxData.type == "done"
                                                             ? getTranslated("DONE", context)
                                                             : getTranslated("ONGOING", context),
                                                               style: TextStyle(
@@ -202,11 +217,11 @@ class _NotificationScreenState extends State<NotificationScreen> {
                                                       ],
                                                     ),
                                                     const SizedBox(height: 5.0),
-                                                    Text(ip.inboxes[i].content!,
+                                                    Text(inboxData.content!,
                                                       overflow: TextOverflow.ellipsis,
                                                       style: TextStyle(
                                                         color: ColorResources.black,
-                                                        fontWeight: ip.inboxes[i].isRead == 1 
+                                                        fontWeight: inboxData.isRead == 1 
                                                         ? FontWeight.w400
                                                         : FontWeight.bold,
                                                         fontSize: Dimensions.fontSizeSmall,
@@ -217,7 +232,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
                                                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                       mainAxisSize: MainAxisSize.max,
                                                       children: [
-                                                        Text(ip.inboxes[i].createdAt!,
+                                                        Text(inboxData.createdAt!,
                                                           style: const TextStyle(
                                                             color: ColorResources.greyDarkPrimary,
                                                             fontWeight: FontWeight.w300,
@@ -234,7 +249,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
                                                                 ClipRRect(
                                                                   borderRadius: BorderRadius.circular(10.0),
                                                                   child: CachedNetworkImage(
-                                                                    imageUrl: ip.inboxes[i].thumbnail.toString(),
+                                                                    imageUrl: inboxData.thumbnail.toString(),
                                                                     width: 50.0,
                                                                     height: 50.0,
                                                                     fit: BoxFit.cover,
@@ -264,15 +279,50 @@ class _NotificationScreenState extends State<NotificationScreen> {
                                     ),
                                   );
                                 },
-                                childCount: ip.inboxes.length
-                              )
-                            ),
+                                animateTransitions: true,
+                                firstPageProgressIndicatorBuilder: (BuildContext context) {
+                                  return const SpinKitChasingDots(
+                                    size: 16.0,
+                                    color: Colors.black
+                                  );
+                                },
+                                firstPageErrorIndicatorBuilder: (BuildContext context) => Container(
+                                  height: MediaQuery.of(context).size.height,
+                                  child: Center(
+                                    child: Text(getTranslated("THERE_WAS_PROBLEM", context),
+                                      style: TextStyle(
+                                        color: Colors.black,
+                                        fontSize: 14.0,
+                                        fontWeight: FontWeight.w500
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                newPageProgressIndicatorBuilder: (BuildContext context) {
+                                  return const SpinKitChasingDots(
+                                    size: 16.0,
+                                    color: Colors.black
+                                  );
+                                },
+                                noItemsFoundIndicatorBuilder: (BuildContext context) =>  Container(
+                                  height: MediaQuery.of(context).size.height,
+                                  child: Center(
+                                    child: Text(getTranslated("THERE_IS_NO_NOTIFICATION", context),
+                                      style: const TextStyle(
+                                        fontWeight: FontWeight.w400,
+                                        fontSize: Dimensions.fontSizeDefault
+                                      ),
+                                    )
+                                  ),
+                                ),
+                              ),
+                            ),    
                           )
 
                         ],
-                      );
-                    },
-                  )
+                      )
+                    );
+                  },
                 );
               },  
             ),
