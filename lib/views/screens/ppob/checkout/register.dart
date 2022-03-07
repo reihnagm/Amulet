@@ -2,28 +2,29 @@ import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import 'package:amulet/views/screens/home/home.dart';
 import 'package:amulet/utils/constant.dart';
 import 'package:amulet/localization/language_constraints.dart';
 import 'package:amulet/utils/color_resources.dart';
 import 'package:amulet/utils/dimensions.dart';
 import 'package:amulet/utils/helper.dart';
-import 'package:amulet/views/screens/auth/sign_in.dart';
 
 class CheckoutRegistrasiScreen extends StatefulWidget {
   final dynamic productPrice;
   final dynamic adminFee;
   final String? transactionId;
   final String? nameBank;
-  final String? paymentChannel;
+  final String? paymentCode;
   final String? noVa;
   final String? guide;
 
-  const CheckoutRegistrasiScreen({Key? key, 
+  const CheckoutRegistrasiScreen({
+    Key? key, 
     this.productPrice,
     this.adminFee,
     this.transactionId,
     this.nameBank,
-    this.paymentChannel,
+    this.paymentCode,
     this.noVa,
     this.guide
   }) : super(key: key);
@@ -74,11 +75,11 @@ class _CheckoutRegistrasiScreenState extends State<CheckoutRegistrasiScreen> wit
                           width: 180.0,
                           height: 120.0,
                           margin: const EdgeInsets.only(left: 16.0, right: 16.0),
-                          child: Image.asset("assets/images/logo/logo.png"),
+                          child: Image.asset("assets/images/logo.png"),
                         ),
                         Container(
                           margin: const EdgeInsets.only(bottom: 5.0),
-                          child: SelectableText("Checkout Registration",
+                          child: SelectableText("Checkout Subscriptions",
                             style: TextStyle(
                               fontSize: Dimensions.fontSizeSmall,
                               fontWeight: FontWeight.bold,
@@ -136,7 +137,7 @@ class _CheckoutRegistrasiScreenState extends State<CheckoutRegistrasiScreen> wit
                                         ),
                                         child: Row(
                                           children: [
-                                            SelectableText(getTranslated("REGISTRATION_FEE", context),
+                                            SelectableText(getTranslated("SUBSCRIPTION_FEE", context),
                                               style: TextStyle(
                                                 fontSize: Dimensions.fontSizeSmall
                                               ),
@@ -145,6 +146,7 @@ class _CheckoutRegistrasiScreenState extends State<CheckoutRegistrasiScreen> wit
                                               child: Column(
                                               crossAxisAlignment: CrossAxisAlignment.end,
                                               mainAxisAlignment: MainAxisAlignment.center,
+                                              mainAxisSize: MainAxisSize.min,
                                               children: [
                                                 if(nominal != null)
                                                   SelectableText(Helper.formatCurrency(nominal!),
@@ -240,12 +242,10 @@ class _CheckoutRegistrasiScreenState extends State<CheckoutRegistrasiScreen> wit
                                     child: TextButton(
                                       style: TextButton.styleFrom(
                                         elevation: 0.0,
-                                        backgroundColor: ColorResources.primaryOrange
+                                        backgroundColor: ColorResources.redPrimary
                                       ),
                                       onPressed: () {
-                                        Navigator.push(context,
-                                          MaterialPageRoute(builder: (context) => const SignInScreen()),
-                                        );
+                                        Navigator.push(context, MaterialPageRoute(builder: (context) => HomeScreen(key: UniqueKey())));
                                       },
                                       child: Text(getTranslated("BACK", context),
                                         style: TextStyle(
@@ -264,10 +264,10 @@ class _CheckoutRegistrasiScreenState extends State<CheckoutRegistrasiScreen> wit
                                     child: TextButton(
                                     style: TextButton.styleFrom(
                                       elevation: 0.0,
-                                      backgroundColor: ColorResources.primaryOrange,
+                                      backgroundColor: ColorResources.redPrimary,
                                     ),
                                     onPressed: () { 
-                                      Navigator.push(context, MaterialPageRoute(builder: (context) => const SignInScreen()));
+                                      Navigator.push(context, MaterialPageRoute(builder: (context) => HomeScreen(key: UniqueKey())));
                                     },
                                     child: Text("OK",
                                       style: TextStyle(
@@ -284,7 +284,6 @@ class _CheckoutRegistrasiScreenState extends State<CheckoutRegistrasiScreen> wit
                           ),
                         ],
                       ),
-
                     
                   ],
                 ),
@@ -298,11 +297,15 @@ class _CheckoutRegistrasiScreenState extends State<CheckoutRegistrasiScreen> wit
 
   Widget viewAutomate() {
     return Column(
+      mainAxisSize: MainAxisSize.min,
       children: [
         Container(
-          margin: const EdgeInsets.only(left: 16, right: 16, top: 10),
-          child: SelectableText(
-            "Transfer ke Nomor " + widget.nameBank! + " berikut ini :",
+          margin: const EdgeInsets.only(
+            top: 10.0,
+            left: 16.0, 
+            right: 16.0, 
+          ),
+          child: SelectableText("Transfer ke Nomor " + widget.nameBank! + " berikut ini :",
             textAlign: TextAlign.center,
             style: TextStyle(
               fontSize: Dimensions.fontSizeSmall,
@@ -311,8 +314,9 @@ class _CheckoutRegistrasiScreenState extends State<CheckoutRegistrasiScreen> wit
             )
           ),
         ),
+        const SizedBox(height: 12.0),
         Container(
-          margin: const EdgeInsets.only(bottom: 5.0),
+          margin: const EdgeInsets.only(bottom: 10.0),
           child: SelectableText(widget.noVa!,
             style: TextStyle(
               fontSize: Dimensions.fontSizeLarge,
@@ -322,12 +326,17 @@ class _CheckoutRegistrasiScreenState extends State<CheckoutRegistrasiScreen> wit
             textAlign: TextAlign.center,
           ),
         ),
+        const SizedBox(height: 12.0),
         Row(
           children: [
             Flexible(
               child: Container(
                 width: double.infinity,
-                margin: const EdgeInsets.only(bottom: 10.0, left: 10.0, right: 10.0),
+                margin: const EdgeInsets.only(
+                  bottom: 10.0, 
+                  left: 10.0, 
+                  right: 10.0
+                ),
                 height: 40.0,
                 child: TextButton(
                   style: TextButton.styleFrom(
@@ -340,12 +349,12 @@ class _CheckoutRegistrasiScreenState extends State<CheckoutRegistrasiScreen> wit
                   ),
                   onPressed: () async { 
                     try {
-                      await launch("${AppConstants.baseUrlHelpPayment}/${widget.paymentChannel}");
+                      await launch("${AppConstants.baseUrlHelpPayment}/${widget.paymentCode}");
                     } catch(e) {
                       debugPrint(e.toString());
                     }
                   },
-                  child: Text(getTranslated("METHOD_PAYMENT", context),
+                  child: Text(getTranslated("HOW_TO_PAYMENT", context),
                     style: TextStyle(
                       color: ColorResources.black,
                       fontSize: Dimensions.fontSizeSmall
@@ -357,7 +366,11 @@ class _CheckoutRegistrasiScreenState extends State<CheckoutRegistrasiScreen> wit
             Flexible(
               child: Container(
                 width: double.infinity,
-                margin: const EdgeInsets.only(bottom: 10.0, left: 10.0, right: 10.0),
+                margin: const EdgeInsets.only(
+                  bottom: 10.0,
+                  left: 10.0, 
+                  right: 10.0
+                ),
                 height: 40.0,
                 child: TextButton(
                   style: TextButton.styleFrom(

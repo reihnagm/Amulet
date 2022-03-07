@@ -1,5 +1,3 @@
-import 'package:amulet/data/models/inbox/inbox.dart';
-import 'package:amulet/providers/network.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -7,13 +5,19 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:provider/provider.dart';
 
-import 'package:amulet/services/navigation.dart';
-import 'package:amulet/views/screens/notification/notification_detail.dart';
 import 'package:amulet/localization/language_constraints.dart';
+import 'package:amulet/services/navigation.dart';
+
+import 'package:amulet/data/models/inbox/inbox.dart';
+
+import 'package:amulet/providers/network.dart';
 import 'package:amulet/providers/inbox.dart';
+
 import 'package:amulet/utils/box_shadow.dart';
 import 'package:amulet/utils/color_resources.dart';
 import 'package:amulet/utils/dimensions.dart';
+
+import 'package:amulet/views/screens/notification/notification_detail.dart';
 
 class NotificationScreen extends StatefulWidget {
   const NotificationScreen({ Key? key }) : super(key: key);
@@ -24,9 +28,6 @@ class NotificationScreen extends StatefulWidget {
 
 class _NotificationScreenState extends State<NotificationScreen> {
   GlobalKey<ScaffoldState> globalKey = GlobalKey<ScaffoldState>();
-  final pagingController = PagingController<int, InboxData>(
-    firstPageKey: 1,
-  );
 
   late InboxProvider inboxProvider;
   late NetworkProvider networkProvider;
@@ -36,16 +37,15 @@ class _NotificationScreenState extends State<NotificationScreen> {
   void initState() {
     super.initState();
 
-    Future.delayed(Duration.zero,() {
+    Future.delayed(Duration.zero, () {
       if(mounted) {
         networkProvider.checkConnection(context);
       }
     });
 
-    pagingController.addPageRequestListener((pageKey) {
+    context.read<InboxProvider>().pagingController.addPageRequestListener((pageKey) {
       inboxProvider.getInbox(
         context, 
-        pagingController: pagingController, 
         pageKey: pageKey
       );
     });
@@ -53,7 +53,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
 
   @override 
   void dispose() {
-    pagingController.dispose();
+    context.read<InboxProvider>().pagingController.dispose();
     super.dispose();
   }  
 
@@ -89,7 +89,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
                       color: ColorResources.white,
                       onRefresh: () {
                         return Future.sync((){
-                          pagingController.refresh();
+                           context.read<InboxProvider>().pagingController.refresh();
                         });
                       },
                       child:  CustomScrollView(
@@ -115,12 +115,10 @@ class _NotificationScreenState extends State<NotificationScreen> {
                             )
                           ),
 
-                          
-
                           SliverPadding(
                             padding: const EdgeInsets.only(top: 20.0, bottom: 20.0),
                             sliver:  PagedSliverList.separated(
-                              pagingController: pagingController,
+                              pagingController: context.read<InboxProvider>().pagingController,
                               separatorBuilder: (BuildContext context, int i) => const SizedBox(
                                 height: 16.0,
                               ),
@@ -152,7 +150,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
                                             thumbnail: inboxData.thumbnail!,
                                             mediaUrl: inboxData.mediaUrl!,
                                             createdAt: inboxData.createdAt!,
-                                            pagingController: pagingController,
+                                            pagingController:  context.read<InboxProvider>().pagingController,
                                           ));
                                         },  
                                         child: Padding(
@@ -183,7 +181,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
                                                       mainAxisSize: MainAxisSize.max,
                                                       children: [
                                                         SizedBox(
-                                                          width: 200.0,
+                                                          width: 130.0,
                                                           child: Text(inboxData.title!,
                                                             overflow: TextOverflow.ellipsis,
                                                             style: TextStyle(

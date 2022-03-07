@@ -1,11 +1,13 @@
-import 'package:amulet/views/screens/history/history.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:rxdart/rxdart.dart';
+import 'package:provider/provider.dart';
 
+import 'package:amulet/providers/inbox.dart';
+import 'package:amulet/views/screens/history/history.dart';
 import 'package:amulet/utils/color_resources.dart';
 import 'package:amulet/views/basewidgets/snackbar/snackbar.dart';
 import 'package:amulet/services/notification.dart';
@@ -96,6 +98,7 @@ class FirebaseProvider with ChangeNotifier {
         body: notification.body,
         payload: data,
       );
+      context.read<InboxProvider>().getInboxTotalUnread(context);
     });
   }
 

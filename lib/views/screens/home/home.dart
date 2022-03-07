@@ -9,6 +9,9 @@ import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
+import 'package:amulet/views/basewidgets/dialog/animated/animated.dart';
+import 'package:amulet/views/basewidgets/button/custom.dart';
+import 'package:amulet/views/screens/subscriptions/index.dart';
 import 'package:amulet/providers/network.dart';
 import 'package:amulet/views/screens/auth/sign_in.dart';
 import 'package:amulet/views/screens/media/record.dart';
@@ -424,9 +427,6 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver, Si
       }
     }); 
     // categeoryC = TextEditingController(text: selectedTextCat); 
-    if(mounted) {
-      setUpTimeFetch();
-    }
     Future.delayed((Duration.zero), () {
       if(mounted) {
         locationProvider.getCurrentPosition(context);
@@ -438,16 +438,8 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver, Si
         videoProvider.getFcm(context);
       }
       if(mounted) {
-        inboxProvider.getInboxTotalUnread(context);
-      }
-      if(mounted) {
         networkProvider.checkConnection(context);
       }
-    });
-  }
-
-  setUpTimeFetch() {
-    Timer.periodic(const Duration(milliseconds: 1000), (_) {
       if(mounted) {
         inboxProvider.getInboxTotalUnread(context);
       }
@@ -491,10 +483,11 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver, Si
                       color: ColorResources.redPrimary,
                       onRefresh: () {
                         return Future.sync(() {
-                          locationProvider.getCurrentPosition(context);
                           videoProvider.initFcm(context);
                           videoProvider.getFcm(context);
-                          inboxProvider.getInbox(context);
+                          locationProvider.getCurrentPosition(context);
+                          inboxProvider.getInboxTotalUnread(context);
+                          videoProvider.checkSubscription(context); 
                         });
                       },
                       child: CustomScrollView(
@@ -799,9 +792,131 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver, Si
                           //     controller.reverse();
                           //   }
                           // },
-                          onLongPress: () {
+                          onLongPress: () async {
                             if(authProvider.isLoggedIn()!) {
-                              controller.forward();
+                              await context.read<VideoProvider>().checkSubscription(context); 
+                              context.read<VideoProvider>().subscriptionStatus == SubscriptionStatus.loading 
+                              ? showAnimatedDialog(
+                                  context, 
+                                  Builder(
+                                    builder: (ctx) {
+                                      return Container();
+                                    }
+                                  )
+                                )
+                              : context.read<VideoProvider>().resCheckSubscription?.statusCode != 200 
+                              ? showAnimatedDialog(
+                                  context,
+                                  Builder(
+                                    builder: (ctx) {
+                                      return Stack(
+                                        clipBehavior: Clip.none,
+                                        children: [
+
+                                          Dialog(
+                                            backgroundColor: ColorResources.white,
+                                            shape: const RoundedRectangleBorder(
+                                              borderRadius: BorderRadius.only(
+                                                topLeft: Radius.circular(70.0),
+                                                topRight: Radius.circular(70.0)
+                                              )
+                                            ),
+                                            alignment: Alignment.center,
+                                            child: SizedBox(
+                                              height: 220.0,
+                                              child: Container(
+                                                margin: const EdgeInsets.only(
+                                                  top: Dimensions.marginSizeLarge,
+                                                  left: Dimensions.marginSizeSmall, 
+                                                  right: Dimensions.marginSizeSmall
+                                                ),
+                                                child: Column(
+                                                  mainAxisSize: MainAxisSize.min,
+                                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                                  mainAxisAlignment: MainAxisAlignment.center,
+                                                  children: [
+                                                    Text("${getTranslated("SUBSCRIBE_NOW", context)}! \n\n- ${getTranslated("SOS_EMERGENCY", context)}\n- ${getTranslated("SHARE_TO_EMERGENCY_CONTACT", context)}",
+                                                      textAlign: TextAlign.center,
+                                                      style: TextStyle(
+                                                        height: 1.5,
+                                                        fontWeight: FontWeight.w400,
+                                                        fontSize: Dimensions.fontSizeLarge
+                                                      ),
+                                                    ),
+
+                                                    Row(
+                                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                      mainAxisSize: MainAxisSize.max,
+                                                      children: [
+                                                        
+                                                        Expanded(
+                                                          child: Container(
+                                                            margin: const EdgeInsets.only(top: Dimensions.marginSizeDefault),
+                                                            child: CustomButton(
+                                                              onTap: () {
+                                                                Navigator.of(ctx, rootNavigator: true).pop();
+                                                              },
+                                                              height: 35.0,
+                                                              btnColor: ColorResources.redPrimary,
+                                                              btnTextColor: ColorResources.white,
+                                                              isBoxShadow: true,
+                                                              isBorder: false,
+                                                              isBorderRadius: false, 
+                                                              btnTxt: getTranslated("NO", context)
+                                                            ),
+                                                          ),
+                                                        ),
+
+                                                        SizedBox(width: 20.0),
+
+                                                        Expanded(
+                                                          child: Container(
+                                                            margin: const EdgeInsets.only(top: Dimensions.marginSizeDefault),
+                                                            child: CustomButton(
+                                                              onTap: () {
+                                                                navigationService.pushNav(context, SubscriptionsScreen(key: UniqueKey()));
+                                                              },
+                                                              height: 35.0,
+                                                              btnColor: ColorResources.redPrimary,
+                                                              btnTextColor: ColorResources.white,
+                                                              isBoxShadow: true,
+                                                              isBorder: false,
+                                                              isBorderRadius: false, 
+                                                              btnTxt: getTranslated("SUBSCRIBE", context)
+                                                            ),
+                                                          ),
+                                                        )
+
+                                                      ],
+                                                    )
+
+                                                  ],
+                                                ),
+                                              ),
+                                            )
+                                          ),
+
+                                          Positioned(
+                                            bottom: 500.0,
+                                            left: 0.0,
+                                            right: 0.0,
+                                            child: Align(
+                                              alignment: Alignment.center,
+                                              child: Image.asset('assets/images/amulet-icon-logo.png',
+                                                width: 100.0,
+                                                height: 100.0,
+                                                fit: BoxFit.scaleDown,
+                                              ),
+                                            ),
+                                          ),
+
+                                        ]
+                                      );
+                                    },
+                                  ),
+                                  dismissible: false
+                                )
+                              : controller.forward();
                             } else {
                               navigationService.pushNav(context, SignInScreen(key: UniqueKey()));
                             }
@@ -854,11 +969,6 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver, Si
 
                   ],
                 );
-                
-                
-                
-
-
               },
             ),
           ),

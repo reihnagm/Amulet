@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:provider/provider.dart';
@@ -44,6 +45,7 @@ class _ConfirmPaymentScreenState extends State<ConfirmPaymentScreen> {
   bool loadingBuyBtn = false;
   String methodName = "";
   String paymentChannel = "";
+  String paymentCode = "";
   int selectedIndex = -1;
 
   @override
@@ -78,22 +80,8 @@ class _ConfirmPaymentScreenState extends State<ConfirmPaymentScreen> {
                   ],
                 ),
                 child: Column(
+                  mainAxisSize: MainAxisSize.min,
                   children: [
-                    Row(
-                      children: [
-                        Image.asset('assets/icons/ic-${widget.provider}.png',
-                          width: 32.0,
-                          height: 32.0,
-                        ),
-                        const SizedBox(width: 15.0),
-                        Text(widget.description!.toUpperCase(),
-                          style: TextStyle(
-                            fontSize: Dimensions.fontSizeSmall,
-                            color: ColorResources.black
-                          ),
-                        )
-                      ],
-                    ),
                     Container(
                       margin: const EdgeInsets.only(top: 15.0, left: 16.0, right: 16.0),
                       child: const Divider(
@@ -191,7 +179,7 @@ class _ConfirmPaymentScreenState extends State<ConfirmPaymentScreen> {
                                               Row(
                                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                 children: [
-                                                  Text(widget.description!,
+                                                  Text(getTranslated("SUBSCRIBE", context),
                                                     style: TextStyle(
                                                       fontSize: Dimensions.fontSizeExtraSmall
                                                     ),
@@ -230,7 +218,7 @@ class _ConfirmPaymentScreenState extends State<ConfirmPaymentScreen> {
                                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                 children: [
                                                   if(widget.type == "register")
-                                                    Text(getTranslated("REGISTRATION_FEE", context), style: TextStyle(
+                                                    Text(getTranslated("SUBSCRIPTION_FEE", context), style: TextStyle(
                                                       fontSize: Dimensions.fontSizeExtraSmall
                                                     )),
                                                   if(widget.type == "pulsa" || widget.type == "emoney" || widget.type == "topup")
@@ -314,7 +302,7 @@ class _ConfirmPaymentScreenState extends State<ConfirmPaymentScreen> {
                             child: Text(getTranslated("SEE_DETAILS", context),
                               style: TextStyle(
                                 fontSize: Dimensions.fontSizeSmall,
-                                color: ColorResources.primaryOrange
+                                color: ColorResources.redPrimary
                               ),
                             ),
                           )
@@ -327,10 +315,16 @@ class _ConfirmPaymentScreenState extends State<ConfirmPaymentScreen> {
             ),
 
           Container(
-            margin: const EdgeInsets.only(top: 10.0, bottom: 10.0, left: 16.0, right: 16.0),
+            margin: const EdgeInsets.only(
+              top: 10.0, 
+              bottom: 10.0, 
+              left: 16.0, 
+              right: 16.0
+            ),
             child: Text(getTranslated("METHOD_PAYMENT", context),
               style: TextStyle(
-                color: ColorResources.black
+                color: ColorResources.black,
+                fontSize: Dimensions.fontSizeDefault
               )
             ),
           ),
@@ -339,7 +333,14 @@ class _ConfirmPaymentScreenState extends State<ConfirmPaymentScreen> {
             Consumer<PPOBProvider>(
               builder: (BuildContext context, PPOBProvider ppobProvider, Widget? child) {
                 if(ppobProvider.vaStatus == VaStatus.loading) {
-                  return Container();
+                  return Expanded(
+                    child: Center(
+                      child: SpinKitChasingDots(
+                        size: 20.0,
+                        color: ColorResources.black,
+                      ),
+                    ),
+                  );
                 }
                 return Expanded(
                   child: ListView.builder(
@@ -364,6 +365,7 @@ class _ConfirmPaymentScreenState extends State<ConfirmPaymentScreen> {
                             onTap: () {
                               setState(() {
                                 selectedIndex = i;
+                                paymentCode = ppobProvider.listVa[i].paymentCode!;
                                 paymentChannel = ppobProvider.listVa[i].channel!;
                               });
                             },
@@ -405,8 +407,7 @@ class _ConfirmPaymentScreenState extends State<ConfirmPaymentScreen> {
                                         child: Text(
                                           ppobProvider.listVa[i].name!,
                                           style: TextStyle(
-                                            color: selectedIndex == i ? ColorResources.white : ColorResources.primaryOrange
-                                          ),
+                                            color: selectedIndex == i ? ColorResources.white : ColorResources.redPrimary                                          ),
                                         ),
                                       )
                                     ],
@@ -500,7 +501,7 @@ class _ConfirmPaymentScreenState extends State<ConfirmPaymentScreen> {
               height: 80.0,
               child: TextButton(
               style: TextButton.styleFrom(
-                backgroundColor: ColorResources.primaryOrange,
+                backgroundColor: ColorResources.redPrimary,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10.0)
                 ),
@@ -521,7 +522,13 @@ class _ConfirmPaymentScreenState extends State<ConfirmPaymentScreen> {
                       await Provider.of<PPOBProvider>(context, listen: false).purchasePulsa(context, widget.productId!, widget.accountNumber!);
                     break;
                     case "register": 
-                      await Provider.of<PPOBProvider>(context, listen: false).payRegister(context, widget.productId!, paymentChannel, widget.transactionId!);
+                      await Provider.of<PPOBProvider>(context, listen: false).payRegister(
+                        context, 
+                        widget.productId!,
+                        paymentCode,
+                        paymentChannel, 
+                        widget.transactionId!
+                      );
                     break;
                     case "emoney":
                       await Provider.of<PPOBProvider>(context, listen: false).purchaseEmoney(context, widget.productId!, widget.accountNumber!);

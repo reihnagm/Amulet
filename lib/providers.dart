@@ -1,7 +1,8 @@
-import 'package:amulet/providers/contact.dart';
 import 'package:provider/provider.dart';
 import 'package:provider/single_child_widget.dart';
 
+import 'package:amulet/providers/contact.dart';
+import 'package:amulet/providers/ppob.dart';
 import 'package:amulet/providers/inbox.dart';
 import 'package:amulet/providers/localization.dart';
 import 'package:amulet/providers/splash.dart';
@@ -27,5 +28,6 @@ List<SingleChildWidget> independentServices = [
   ChangeNotifierProvider(create: (_) => c.getIt<LocalizationProvider>()),
   ChangeNotifierProvider(create: (_) => c.getIt<FirebaseProvider>()),
   ChangeNotifierProvider(create: (_) => c.getIt<InboxProvider>()),
+  ChangeNotifierProvider(create: (_) => c.getIt<PPOBProvider>()),
   Provider.value(value: const <String, dynamic>{})
 ];

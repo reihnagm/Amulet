@@ -46,7 +46,7 @@ class VerifyScreen extends StatelessWidget {
                   
                   Container(
                     margin: const EdgeInsets.only(top: 60.0, bottom: 55.0, left: 16.0, right: 16.0),
-                    child: Image.asset('assets/images/logo/logo.png',
+                    child: Image.asset('assets/images/logo.png',
                       width: 120.0,
                       height: 120.0,
                     ),
@@ -153,7 +153,7 @@ class VerifyScreen extends StatelessWidget {
                             children: [
                               SizedBox(
                                 width: 150.0,
-                                child: Text(getTranslated("REGISTRATION_FEE", context),
+                                child: Text(getTranslated("SUBSCRIPTION_FEE", context),
                                   style: TextStyle(
                                     fontSize: Dimensions.fontSizeSmall
                                   ),
@@ -193,7 +193,7 @@ class VerifyScreen extends StatelessWidget {
                           Container(
                             padding: const EdgeInsets.all(8.0),
                             decoration: BoxDecoration(
-                              color: ColorResources.primaryOrange,
+                              color: ColorResources.redPrimary,
                               borderRadius: BorderRadius.circular(8.0)
                             ),
                             child: Row(
@@ -233,7 +233,7 @@ class VerifyScreen extends StatelessWidget {
                           color: ColorResources.white,
                           borderRadius: BorderRadius.circular(10.0),
                           border: Border.all(
-                            color: ColorResources.primaryOrange,
+                            color: ColorResources.redPrimary,
                             width: 1.0
                           )
                         ),
@@ -241,7 +241,7 @@ class VerifyScreen extends StatelessWidget {
                           color: Colors.transparent,                
                           child: InkWell(
                             borderRadius: BorderRadius.circular(10.0),
-                            splashColor: ColorResources.primaryOrange,
+                            splashColor: ColorResources.redPrimary,
                             onTap: () => Navigator.of(context).pop(),
                             child: Container(
                               alignment: Alignment.center,
@@ -268,7 +268,7 @@ class VerifyScreen extends StatelessWidget {
                           color: ColorResources.white,
                           borderRadius: BorderRadius.circular(10.0),
                           border: Border.all(
-                            color: ColorResources.primaryOrange,
+                            color: ColorResources.redPrimary,
                             width: 1.0
                           )
                         ),
@@ -276,7 +276,7 @@ class VerifyScreen extends StatelessWidget {
                           color: Colors.transparent,                
                           child: InkWell(
                             borderRadius: BorderRadius.circular(10.0),
-                            splashColor: ColorResources.primaryOrange,
+                            splashColor: ColorResources.redPrimary,
                             onTap: () { 
                               Navigator.push(context,
                                 MaterialPageRoute(builder: (context) => ConfirmPaymentScreen(

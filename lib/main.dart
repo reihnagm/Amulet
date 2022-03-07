@@ -5,17 +5,24 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
 
-import 'package:amulet/views/screens/history/history.dart';
-import 'package:amulet/utils/constant.dart';
-import 'package:amulet/views/screens/reports/index.dart';
-import 'package:amulet/localization/app_localization.dart';
-import 'package:amulet/providers/localization.dart';
-import 'package:amulet/views/screens/home/home.dart';
-import 'package:amulet/utils/global.dart';
-import 'package:amulet/providers/firebase.dart';
+import 'package:amulet/data/models/language/language.dart';
+
 import 'package:amulet/services/notification.dart';
+
+import 'package:amulet/views/screens/history/history.dart';
+import 'package:amulet/views/screens/reports/index.dart';
+import 'package:amulet/views/screens/home/home.dart';
+
+import 'package:amulet/utils/constant.dart';
+import 'package:amulet/utils/global.dart';
+
+import 'package:amulet/providers/firebase.dart';
+import 'package:amulet/providers/localization.dart';
 import 'package:amulet/providers.dart';
+
+import 'package:amulet/localization/app_localization.dart';
 import 'package:amulet/container.dart' as core;
+
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
@@ -93,8 +100,11 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     List<Locale> locals = [];
-    for (var language in AppConstants.languages) {
-      locals.add(Locale(language.languageCode!, language.countryCode));
+    for (LanguageModel language in AppConstants.languages) {
+      locals.add(Locale(
+        language.languageCode!, 
+        language.countryCode
+      ));
     }
     return MaterialApp(
       title: 'Amulet',

@@ -1,4 +1,5 @@
 import 'package:amulet/providers/contact.dart';
+import 'package:amulet/providers/ppob.dart';
 import 'package:amulet/services/video.dart';
 import 'package:get_it/get_it.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -47,6 +48,11 @@ Future<void> init() async {
   getIt.registerFactory(() => SplashProvider(
     sharedPreferences: getIt(), 
     splashRepo: getIt()
+  ));
+
+   getIt.registerFactory(() => PPOBProvider(
+    authProvider: getIt(),
+    sharedPreferences: getIt(), 
   ));
 
   getIt.registerFactory(() => ContactProvider(authRepo: getIt()));

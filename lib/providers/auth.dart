@@ -1,13 +1,17 @@
 import 'dart:convert';
 
-import 'package:amulet/utils/dio.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_animated_dialog/flutter_animated_dialog.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'package:amulet/utils/exceptions.dart';
+
 import 'package:amulet/utils/dimensions.dart';
+import 'package:amulet/views/basewidgets/button/custom.dart';
+import 'package:amulet/views/basewidgets/dialog/animated/animated.dart';
+
+import 'package:amulet/utils/dio.dart';
+import 'package:amulet/views/screens/auth/verify.dart';
+import 'package:amulet/utils/exceptions.dart';
 import 'package:amulet/data/models/inquiry/register.dart';
 import 'package:amulet/views/screens/auth/sign_in.dart';
 import 'package:amulet/views/screens/auth/otp.dart';
@@ -116,6 +120,10 @@ class AuthProvider with ChangeNotifier {
     return authRepo.getUserId();
   }
 
+  String? getUserToken() {
+    return authRepo.getUserToken();
+  }
+
   bool? isLoggedIn() {
     return authRepo.isLoggedIn();
   }
@@ -173,23 +181,116 @@ class AuthProvider with ChangeNotifier {
   Future<InquiryRegisterModel> verify(BuildContext context, GlobalKey<ScaffoldState> globalKey, User user) async {
     String productId = "";
     if(user.role! == "1d") {
-      productId = "df78a1a0-9d5b-4a7c-bd48-d4395f207436"; // 30 K
+      productId = "746dcdfa-98a6-49ab-9421-08ba3b879eda"; // 30 K
     } else {
       productId = "92e1affe-467b-4b2a-a329-019c55fb53a9"; // 300 K
     }
-    debugPrint(productId);
     try {
       Dio dio = await DioManager.shared.getClient(context);
       Response res = await dio.post("${AppConstants.baseUrlPpob}/registration/inquiry", data: {
         "productId" : productId
       });
-      debugPrint(res.statusCode.toString());
-      // Map<String, dynamic> resData = res.data;
-      // InquiryRegisterModel inquiryRegisterModel = InquiryRegisterModel.fromJson(resData); 
-      // return inquiryRegisterModel;  
-    } on DioError catch(e) {    
-      debugPrint(e.response!.statusCode.toString());
-      debugPrint(e.response!.data.toString());
+      Map<String, dynamic> resData = res.data;
+      InquiryRegisterModel inquiryRegisterModel = InquiryRegisterModel.fromJson(resData); 
+      Navigator.of(context).push(MaterialPageRoute(builder: (context) => VerifyScreen(
+        accountName: inquiryRegisterModel.body!.data!.accountName!,
+        accountNumber: inquiryRegisterModel.body!.accountNumber2!,
+        bankFee: inquiryRegisterModel.body!.data!.bankFee!,
+        transactionId: inquiryRegisterModel.body!.transactionId!,
+        productId: inquiryRegisterModel.body!.productId!,
+        productPrice: inquiryRegisterModel.body!.productPrice!,
+      )));
+    } on DioError catch(_) {    
+      showAnimatedDialog(
+        context,
+        Builder(
+          builder: (ctx) {
+            return Stack(
+              clipBehavior: Clip.none,
+              children: [
+
+                Dialog(
+                  backgroundColor: ColorResources.white,
+                  shape: const RoundedRectangleBorder(
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(70.0),
+                      topRight: Radius.circular(70.0)
+                    )
+                  ),
+                  alignment: Alignment.center,
+                  child: SizedBox(
+                    height: 150.0,
+                    child: Container(
+                      margin: const EdgeInsets.only(
+                        top: Dimensions.marginSizeLarge,
+                        left: Dimensions.marginSizeSmall, 
+                        right: Dimensions.marginSizeSmall
+                      ),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text("${getTranslated("YOU_ARE_SUBSCRIBED", context)}!",
+                            style: TextStyle(
+                              height: 1.5,
+                              fontWeight: FontWeight.w400,
+                              fontSize: Dimensions.fontSizeLarge
+                            ),
+                          ),
+
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            mainAxisSize: MainAxisSize.max,
+                            children: [
+
+                              Expanded(
+                                child: Container(
+                                  margin: const EdgeInsets.only(top: Dimensions.marginSizeDefault),
+                                  child: CustomButton(
+                                    onTap: () {
+                                      Navigator.of(context, rootNavigator: true).pop();
+                                    },
+                                    height: 35.0,
+                                    btnColor: ColorResources.redPrimary,
+                                    btnTextColor: ColorResources.white,
+                                    isBoxShadow: true,
+                                    isBorder: false,
+                                    isBorderRadius: false, 
+                                    btnTxt: getTranslated("OK", context)
+                                  ),
+                                ),
+                              )
+
+                            ],
+                          )
+
+                        ],
+                      ),
+                    ),
+                  )
+                ),
+
+                Positioned(
+                  bottom: 450.0,
+                  left: 0.0,
+                  right: 0.0,
+                  child: Align(
+                    alignment: Alignment.center,
+                    child: Image.asset('assets/images/amulet-icon-logo.png',
+                      width: 100.0,
+                      height: 100.0,
+                      fit: BoxFit.scaleDown,
+                    ),
+                  ),
+                ),
+
+              ]
+            );
+          },
+        ),
+        dismissible: false
+      );
     } catch(e) {
       debugPrint(e.toString());
     }

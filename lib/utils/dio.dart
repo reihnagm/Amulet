@@ -7,7 +7,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:amulet/views/screens/auth/sign_in.dart';
 import 'package:amulet/views/basewidgets/snackbar/snackbar.dart';
+
 import 'package:amulet/localization/language_constraints.dart';
+
 import 'package:amulet/utils/color_resources.dart';
 import 'package:amulet/utils/constant.dart';
 
@@ -19,6 +21,7 @@ class DioManager {
     Dio dio = Dio();
     (dio.httpClientAdapter as DefaultHttpClientAdapter).onHttpClientCreate = (HttpClient client) {
       client.badCertificateCallback = (X509Certificate cert, String host, int port) => true;
+      return null;
     };
     dio.options.connectTimeout = 15000;
     dio.options.baseUrl = AppConstants.baseUrl;

@@ -22,7 +22,7 @@ class CustomAppBar extends StatelessWidget {
     return Stack(
       children: [
       Container(
-        color: ColorResources.primaryOrange,
+        color: ColorResources.redPrimary,
         margin: EdgeInsets.only(top: MediaQuery.of(context).padding.top),
         height: 50.0,
         alignment: Alignment.center,

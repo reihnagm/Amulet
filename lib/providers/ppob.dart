@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:amulet/providers/auth.dart';
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -63,9 +64,11 @@ enum SubmitDisbursementStatus { idle, loading, loaded, empty, error }
 
 
 class PPOBProvider with ChangeNotifier {
+  final AuthProvider authProvider;
   final SharedPreferences sharedPreferences;
 
   PPOBProvider({
+    required this.authProvider,
     required this.sharedPreferences
   });
 
@@ -243,7 +246,12 @@ class PPOBProvider with ChangeNotifier {
   String get getGlobalPaymentMethodName => sharedPreferences.getString("global_payment_method_name") ?? "";
   String get getGlobalPaymentMethodCode => sharedPreferences.getString("global_payment_method_code") ?? "";
 
-  Future payRegister(BuildContext context, String productId, String paymentChannel, String transactionId) async {
+  Future payRegister(BuildContext context, 
+    String productId, 
+    String paymentCode, 
+    String paymentChannel, 
+    String transactionId
+  ) async {
     try {
       loadingBuyBtn = true;
       Future.delayed(Duration.zero, () => notifyListeners());
@@ -255,22 +263,17 @@ class PPOBProvider with ChangeNotifier {
         "transactionId" : transactionId
       }, options: Options(
         headers: {
-          "Authorization": "Bearer ${sharedPreferences.getString("pay_register_token")}",
+          "Authorization": "Bearer ${authProvider.getUserToken()}",
           "X-Context-ID": AppConstants.xContextId
         }
       ));
       Map<String, dynamic> data = res.data;
       PayRegisterModel payRegisterModel = PayRegisterModel.fromJson(data);
-      // print(payRegisterModel.body!.productPrice);
-      // print(payRegisterModel.body!.data!.paymentAdminFee);
-      // print(payRegisterModel.body!.transactionId);
-      // print(payRegisterModel.body!.data!.paymentGuide);
-      // print(payRegisterModel.body!.data!.paymentChannel);
-      // print(payRegisterModel.body!.data!.paymentCode);
       Navigator.push(context,
         MaterialPageRoute(builder: (context) => CheckoutRegistrasiScreen(
           adminFee: double.parse(payRegisterModel.body!.data!.paymentAdminFee.toString()),
           guide: payRegisterModel.body!.data!.paymentGuide!,
+          paymentCode: paymentCode,
           nameBank: payRegisterModel.body!.data!.paymentChannel,
           noVa: payRegisterModel.body!.data!.paymentCode,
           productPrice: double.parse(payRegisterModel.body!.productPrice.toString()),
@@ -280,6 +283,8 @@ class PPOBProvider with ChangeNotifier {
       loadingBuyBtn = false;
       Future.delayed(Duration.zero, () => notifyListeners());
     } on DioError catch(e) {
+      debugPrint(e.response!.data.toString());
+      debugPrint(e.response!.statusCode.toString());
       if(e.response?.statusCode == 400) {
         loadingBuyBtn = false;
         Future.delayed(Duration.zero, () => notifyListeners());

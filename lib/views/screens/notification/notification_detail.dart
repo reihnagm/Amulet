@@ -52,7 +52,6 @@ class _NotificationDetailState extends State<NotificationDetail> {
         await inboxProvider.updateInbox(
           context, 
           uid: widget.uid,
-          pagingController: widget.pagingController,
         );
       }
     });

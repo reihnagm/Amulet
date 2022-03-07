@@ -13,6 +13,9 @@ class InboxProvider with ChangeNotifier {
   final AuthProvider authProvider;
   final SharedPreferences sharedPreferences;
   final InboxRepo inboxRepo;
+  final pagingController = PagingController<int, InboxData>(
+    firstPageKey: 1,
+  );
 
   InboxProvider({
     required this.authProvider,
@@ -43,60 +46,58 @@ class InboxProvider with ChangeNotifier {
   }
 
   Future<void> getInbox(BuildContext context, {
-    PagingController? pagingController,
     int? pageKey,
   }) async {
-    if(authProvider.getUserId() != null) {
-      try {
-        InboxModel? inboxModel = await inboxRepo.getInbox(context, 
-          userId: authProvider.getUserId()!,
-          pageKey: pageKey!
+    try {
+      InboxModel? inboxModel = await inboxRepo.getInbox(context, 
+        userId: authProvider.getUserId()!,
+        pageKey: pageKey!
+      );
+      List<InboxData> inboxData = inboxModel!.data!;
+      List<InboxData> inboxAssign = [];
+      for (InboxData inbox in inboxData) {
+        inboxAssign.add(
+          InboxData(
+            uid: inbox.uid,
+            isRead: inbox.isRead,
+            mediaUrl: inbox.mediaUrl,
+            thumbnail: inbox.thumbnail,
+            title: inbox.title,
+            type: inbox.type,
+            content: inbox.content,
+            createdAt: inbox.createdAt,
+            updatedAt: inbox.updatedAt
+          )
         );
-        List<InboxData> inboxData = inboxModel!.data!;
-        List<InboxData> inboxAssign = [];
-        for (InboxData inbox in inboxData) {
-          inboxAssign.add(
-            InboxData(
-              uid: inbox.uid,
-              isRead: inbox.isRead,
-              mediaUrl: inbox.mediaUrl,
-              thumbnail: inbox.thumbnail,
-              title: inbox.title,
-              type: inbox.type,
-              content: inbox.content,
-              createdAt: inbox.createdAt,
-              updatedAt: inbox.updatedAt
-            )
-          );
-        }
-        _inboxes = inboxAssign;
-        final previouslyFetchedItemsCount = pagingController!.itemList?.length ?? 0;
-      
-        final isLastPage = _inboxes.length < previouslyFetchedItemsCount;
-        final newItems = _inboxes;
-
-        if (isLastPage) {
-          pagingController.appendLastPage(newItems);
-          Future.delayed(Duration.zero, () => notifyListeners());
-        } else {
-          int nextPageKey = pageKey + 1;
-          pagingController.appendPage(newItems, nextPageKey);
-          Future.delayed(Duration.zero, () => notifyListeners());
-        }
-        setStateInboxStatus(InboxStatus.loaded);
-        if(_inboxes.isEmpty) {
-          setStateInboxStatus(InboxStatus.empty);
-        }
-      } catch(e) {
-        debugPrint(e.toString());
       }
+      _inboxes = inboxAssign;
+      final previouslyFetchedItemsCount = pagingController.itemList?.length ?? 0;
+    
+      final isLastPage = _inboxes.length < previouslyFetchedItemsCount;
+      final newItems = _inboxes;
+
+      if (isLastPage) {
+        pagingController.appendLastPage(newItems);
+      } else {
+        int nextPageKey = pageKey + 1;
+        pagingController.appendPage(newItems, nextPageKey);
+      }
+      setStateInboxStatus(InboxStatus.loaded);
+      if(_inboxes.isEmpty) {
+        setStateInboxStatus(InboxStatus.empty);
+      }
+    } catch(e) {
+      debugPrint(e.toString());
     }
   }
 
   Future<void> getInboxTotalUnread(BuildContext context) async {
     try {
-      int tu = await inboxRepo.getInboxTotalUnread(context, userId: authProvider.getUserId()!);
-      _totalUnread = tu;
+      int itu = await inboxRepo.getInboxTotalUnread(
+        context, 
+        userId: authProvider.getUserId()!
+      );
+      _totalUnread = itu;
       setStateInboxTotalUnreadStatus(InboxTotalUnreadStatus.loaded);
     } catch(e) {
       setStateInboxTotalUnreadStatus(InboxTotalUnreadStatus.error);
@@ -131,7 +132,6 @@ class InboxProvider with ChangeNotifier {
 
   Future<void> updateInbox(BuildContext context, {
     required String uid,
-    required PagingController pagingController,
   }) async {
     try {
       await inboxRepo.updateInbox(context, uid: uid);

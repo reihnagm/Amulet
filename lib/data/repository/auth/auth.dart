@@ -51,6 +51,10 @@ class AuthRepo {
     return prefs["userId"] ?? "-";
   }
 
+  String? getUserToken() {
+    return sharedPreferences.getString("token");
+  }
+
   bool? isLoggedIn() {
     return sharedPreferences.containsKey("token");
   }
