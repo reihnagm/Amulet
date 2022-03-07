@@ -115,9 +115,10 @@ class _NotificationDetailState extends State<NotificationDetail> {
                                 style: TextStyle(
                                   color: ColorResources.black,
                                   fontWeight: FontWeight.w400,
-                                  fontSize: Dimensions.fontSizeSmall,
+                                  fontSize: Dimensions.fontSizeDefault,
                                 ),
                               ),
+                              if(widget.type != "info")
                               Container(
                                 padding: EdgeInsets.all(6.0),
                                 decoration: BoxDecoration(

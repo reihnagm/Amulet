@@ -186,15 +186,11 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                               )
                             )
                           : context.read<VideoProvider>().resCheckSubscription?.statusCode != 200 
-                          ? showAnimatedDialog(
-                              context,
-                              Builder(
-                                builder: (ctx) {
-                                  return Stack(
-                                    clipBehavior: Clip.none,
-                                    children: [
-                                      
-                                      Dialog(
+                          ?  showAnimatedDialog(
+                                  context,
+                                  Builder(
+                                    builder: (ctx) {
+                                      return Dialog(
                                         backgroundColor: ColorResources.white,
                                         shape: const RoundedRectangleBorder(
                                           borderRadius: BorderRadius.only(
@@ -204,99 +200,99 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                                         ),
                                         alignment: Alignment.center,
                                         child: SizedBox(
-                                          height: 220.0,
+                                          height: 200.0,
                                           child: Container(
                                             margin: const EdgeInsets.only(
                                               top: Dimensions.marginSizeLarge,
                                               left: Dimensions.marginSizeSmall, 
                                               right: Dimensions.marginSizeSmall
                                             ),
-                                            child: Column(
-                                              mainAxisSize: MainAxisSize.min,
-                                              crossAxisAlignment: CrossAxisAlignment.center,
-                                              mainAxisAlignment: MainAxisAlignment.center,
+                                            child: Stack(
+                                              clipBehavior: Clip.none,
                                               children: [
-                                                Text("${getTranslated("SUBSCRIBE_NOW", context)}! \n\n- ${getTranslated("SOS_EMERGENCY", context)}\n- ${getTranslated("SHARE_TO_EMERGENCY_CONTACT", context)}",
-                                                  textAlign: TextAlign.center,
-                                                  style: TextStyle(
-                                                    height: 1.5,
-                                                    fontWeight: FontWeight.w400,
-                                                    fontSize: Dimensions.fontSizeLarge
-                                                  ),
-                                                ),
-
-                                                Row(
-                                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                  mainAxisSize: MainAxisSize.max,
-                                                  children: [
-                                                    
-                                                    Expanded(
-                                                      child: Container(
-                                                        margin: const EdgeInsets.only(top: Dimensions.marginSizeDefault),
-                                                        child: CustomButton(
-                                                          onTap: () {
-                                                            Navigator.of(ctx, rootNavigator: true).pop();
-                                                          },
-                                                          height: 35.0,
-                                                          btnColor: ColorResources.redPrimary,
-                                                          btnTextColor: ColorResources.white,
-                                                          isBoxShadow: true,
-                                                          isBorder: false,
-                                                          isBorderRadius: false, 
-                                                          btnTxt: getTranslated("NO", context)
-                                                        ),
-                                                      ),
+                                                
+                                              Column(
+                                                mainAxisSize: MainAxisSize.min,
+                                                crossAxisAlignment: CrossAxisAlignment.center,
+                                                mainAxisAlignment: MainAxisAlignment.center,
+                                                children: [
+                                                  Text("${getTranslated("SUBSCRIBE_NOW", context)}! \n\n- ${getTranslated("SOS_EMERGENCY", context)}\n- ${getTranslated("SHARE_TO_EMERGENCY_CONTACT", context)}",
+                                                    textAlign: TextAlign.center,
+                                                    style: TextStyle(
+                                                      height: 1.5,
+                                                      fontWeight: FontWeight.w400,
+                                                      fontSize: Dimensions.fontSizeLarge
                                                     ),
+                                                  ),
 
-                                                    SizedBox(width: 20.0),
-
-                                                    Expanded(
-                                                      child: Container(
-                                                        margin: const EdgeInsets.only(top: Dimensions.marginSizeDefault),
-                                                        child: CustomButton(
-                                                          onTap: () {
-                                                            navigationService.pushNav(context, SubscriptionsScreen(key: UniqueKey()));
-                                                          },
-                                                          height: 35.0,
-                                                          btnColor: ColorResources.redPrimary,
-                                                          btnTextColor: ColorResources.white,
-                                                          isBoxShadow: true,
-                                                          isBorder: false,
-                                                          isBorderRadius: false, 
-                                                          btnTxt: getTranslated("SUBSCRIBE", context)
+                                                  Row(
+                                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                    mainAxisSize: MainAxisSize.max,
+                                                    children: [
+                                                      
+                                                      Expanded(
+                                                        child: Container(
+                                                          margin: const EdgeInsets.only(top: Dimensions.marginSizeDefault),
+                                                          child: CustomButton(
+                                                            onTap: () {
+                                                              Navigator.of(ctx, rootNavigator: true).pop();
+                                                            },
+                                                            height: 35.0,
+                                                            btnColor: ColorResources.redPrimary,
+                                                            btnTextColor: ColorResources.white,
+                                                            isBoxShadow: true,
+                                                            isBorder: false,
+                                                            isBorderRadius: false, 
+                                                            btnTxt: getTranslated("NO", context)
+                                                          ),
                                                         ),
                                                       ),
-                                                    )
 
-                                                  ],
-                                                )
+                                                      SizedBox(width: 20.0),
 
-                                              ],
+                                                      Expanded(
+                                                        child: Container(
+                                                          margin: const EdgeInsets.only(top: Dimensions.marginSizeDefault),
+                                                          child: CustomButton(
+                                                            onTap: () {
+                                                              navigationService.pushNav(context, SubscriptionsScreen(key: UniqueKey()));
+                                                            },
+                                                            height: 35.0,
+                                                            btnColor: ColorResources.redPrimary,
+                                                            btnTextColor: ColorResources.white,
+                                                            isBoxShadow: true,
+                                                            isBorder: false,
+                                                            isBorderRadius: false, 
+                                                            btnTxt: getTranslated("SUBSCRIBE", context)
+                                                          ),
+                                                        ),
+                                                      )
+
+                                                    ],
+                                                  )
+
+                                                ],
+                                              ),
+
+                                            Positioned(
+                                              top: -90.0,
+                                              left: 0.0,
+                                              right: 0.0,
+                                              child: Image.asset('assets/images/amulet-icon-logo.png',
+                                                width: 100.0,
+                                                height: 100.0,
+                                              ),
                                             ),
-                                          ),
-                                        )
-                                      ),
 
-                                      Positioned(
-                                        bottom: 500.0,
-                                        left: 0.0,
-                                        right: 0.0,
-                                        child: Align(
-                                          alignment: Alignment.center,
-                                          child: Image.asset('assets/images/amulet-icon-logo.png',
-                                            width: 100.0,
-                                            height: 100.0,
-                                            fit: BoxFit.scaleDown,
-                                          ),
-                                        ),
+                                          ],  
+                                        ) 
                                       ),
-
-                                    ]
+                                    )
                                   );
-                                },
-                              ),
-                              dismissible: false
-                            )
+                                  },
+                                ),
+                                dismissible: false
+                              )
                           : navigationService.pushNav(context, ContactsScreen(key: UniqueKey()));
                         },
                         child: Padding(

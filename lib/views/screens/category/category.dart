@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 import 'dart:typed_data';
 
+import 'package:amulet/views/screens/auth/sign_in.dart';
 import 'package:badges/badges.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -51,6 +52,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
   late NavigationService navigationService;
   late AuthProvider authProvider;
   late VideoProvider videoProvider;
+  late InboxProvider inboxProvider;
   late LocationProvider locationProvider;
 
   List<Map<String, dynamic>> categories = [
@@ -128,6 +130,11 @@ class _CategoryScreenState extends State<CategoryScreen> {
   void initState() {
     super.initState();
     msgC = TextEditingController();
+     Future.delayed((Duration.zero), () {
+      if(mounted) {
+        inboxProvider.getInboxTotalUnread(context);
+      }
+    });
   }
 
   @override 
@@ -147,6 +154,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
         authProvider = context.read<AuthProvider>();
         videoProvider = context.read<VideoProvider>();
         locationProvider = context.read<LocationProvider>();
+        inboxProvider = context.read<InboxProvider>();
         navigationService = NavigationService();
         return Scaffold(
           resizeToAvoidBottomInset: false,
@@ -199,12 +207,16 @@ class _CategoryScreenState extends State<CategoryScreen> {
                                 actions: [
                                   Consumer<InboxProvider>(
                                     builder: (BuildContext context, InboxProvider ip, Widget? child) {
-                                      if(ip.inboxStatus == InboxStatus.loading) {
+                                      if(ip.inboxTotalUnreadStatus== InboxTotalUnreadStatus.loading) {
                                         return Container(
                                           margin: const EdgeInsets.only(right: Dimensions.marginSizeDefault),
                                           child: InkWell(
                                             onTap: () {
-                                              navigationService.pushNav(context, NotificationScreen(key: UniqueKey()));
+                                              if(authProvider.isLoggedIn()!) {
+                                                navigationService.pushNav(context, NotificationScreen(key: UniqueKey()));
+                                              } else {
+                                                navigationService.pushNav(context, SignInScreen(key: UniqueKey()));
+                                              }
                                             },
                                             child: Padding(
                                               padding: EdgeInsets.all(8.0),
@@ -217,12 +229,16 @@ class _CategoryScreenState extends State<CategoryScreen> {
                                           ),
                                         );
                                       }
-                                      if(ip.inboxStatus == InboxStatus.empty) {
+                                      if(ip.totalUnread == 0) {
                                         return Container(
                                           margin: const EdgeInsets.only(right: Dimensions.marginSizeDefault),
                                           child: InkWell(
                                             onTap: () {
-                                              navigationService.pushNav(context, NotificationScreen(key: UniqueKey()));
+                                              if(authProvider.isLoggedIn()!) {
+                                                navigationService.pushNav(context, NotificationScreen(key: UniqueKey()));
+                                              } else {
+                                                navigationService.pushNav(context, SignInScreen(key: UniqueKey()));
+                                              }
                                             },
                                             child: Padding(
                                               padding: EdgeInsets.all(8.0),
@@ -241,17 +257,15 @@ class _CategoryScreenState extends State<CategoryScreen> {
                                           color: ColorResources.transparent,
                                           child: InkWell(
                                             onTap: () {
-                                              navigationService.pushNav(context, NotificationScreen(key: UniqueKey()));
+                                              if(authProvider.isLoggedIn()!) {
+                                                navigationService.pushNav(context, NotificationScreen(key: UniqueKey()));
+                                              } else {
+                                                navigationService.pushNav(context, SignInScreen(key: UniqueKey()));
+                                              }
                                             },
                                             child: Padding(
                                               padding: EdgeInsets.all(8.0),
-                                              child: ip.totalUnread == 0 
-                                              ? Icon(
-                                                  Icons.notifications,
-                                                  size: 25.0,
-                                                  color: ColorResources.black,
-                                                )
-                                              : Badge(
+                                              child:  Badge(
                                                 position: BadgePosition.topEnd(top: 12.0, end: -12),
                                                 animationDuration: Duration.zero,
                                                 badgeContent: Text(ip.totalUnread.toString(),

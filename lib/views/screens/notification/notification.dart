@@ -44,18 +44,14 @@ class _NotificationScreenState extends State<NotificationScreen> {
     });
 
     context.read<InboxProvider>().pagingController.addPageRequestListener((pageKey) {
-      inboxProvider.getInbox(
-        context, 
-        pageKey: pageKey
-      );
+      if(mounted) {
+        inboxProvider.getInbox(
+          context, 
+          pageKey: pageKey
+        );
+      }
     });
   }
-
-  @override 
-  void dispose() {
-    context.read<InboxProvider>().pagingController.dispose();
-    super.dispose();
-  }  
 
   @override
   Widget build(BuildContext context) {
@@ -189,7 +185,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
                                                               fontWeight: inboxData.isRead == 1 
                                                               ? FontWeight.w400
                                                               : FontWeight.bold,
-                                                              fontSize: Dimensions.fontSizeSmall,
+                                                              fontSize: Dimensions.fontSizeDefault,
                                                             ),
                                                           ),
                                                         ),

@@ -99,6 +99,7 @@ class FirebaseProvider with ChangeNotifier {
         payload: data,
       );
       context.read<InboxProvider>().getInboxTotalUnread(context);
+      context.read<InboxProvider>().pagingController.refresh();
     });
   }
 

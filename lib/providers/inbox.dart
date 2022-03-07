@@ -122,6 +122,7 @@ class InboxProvider with ChangeNotifier {
         type: type,
         userId: userId,
       );
+      pagingController.refresh();
       Future.delayed(Duration.zero, () async {
         await getInboxTotalUnread(context);
       });
@@ -136,7 +137,6 @@ class InboxProvider with ChangeNotifier {
     try {
       await inboxRepo.updateInbox(context, uid: uid);
       pagingController.refresh();
-      Future.delayed(Duration.zero, () => notifyListeners());
       Future.delayed(Duration.zero, () async {
         await getInboxTotalUnread(context);
       });

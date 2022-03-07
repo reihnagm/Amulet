@@ -176,7 +176,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                                                             ),
                                                             child: Text(sosAgentDataHistory.isConfirm == 2 
                                                             ? getTranslated("DONE", context)
-                                                            : sosAgentDataHistory.isConfirm == 1 && date.hour > DateTime.now().hour 
+                                                            : sosAgentDataHistory.isConfirm == 1 && date.difference(DateTime.now()).inHours.abs() >= 1
                                                             ? getTranslated("CASE_EXPIRED", context)
                                                             : getTranslated("ONGOING", context),
                                                               style: TextStyle(
@@ -187,17 +187,6 @@ class _HistoryScreenState extends State<HistoryScreen> {
                                                             ),
                                                           )
                                                         ]
-                                                      ),
-                                                      const SizedBox(height: 5.0),
-                                                      Text("${sosAgentDataHistory.isConfirm == 2 
-                                                      ? getTranslated("CASE_SOLVED", context)
-                                                      : sosAgentDataHistory.isConfirm == 1 && date.hour > DateTime.now().hour 
-                                                      ? getTranslated("CASE_EXPIRED", context)
-                                                      : getTranslated("CASE_ONGOING", context)}",
-                                                        style: TextStyle(
-                                                          color: ColorResources.success,
-                                                          fontSize: Dimensions.fontSizeSmall
-                                                        ),
                                                       ),
                                                       const SizedBox(height: 5.0),
                                                       Text("${sosAgentDataHistory.asName} ${sosAgentDataHistory.acceptName}",

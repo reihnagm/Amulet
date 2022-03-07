@@ -1,7 +1,5 @@
 import 'dart:io';
 
-import 'package:amulet/data/models/subscription/subscription.dart';
-import 'package:amulet/utils/dio.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
@@ -11,6 +9,9 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:path/path.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'package:amulet/providers/inbox.dart';
+import 'package:amulet/utils/dio.dart';
+import 'package:amulet/utils/helper.dart';
 import 'package:amulet/providers/firebase.dart';
 import 'package:amulet/providers/auth.dart';
 import 'package:amulet/providers/location.dart';
@@ -543,9 +544,13 @@ class VideoProvider with ChangeNotifier {
           "username": authProvider.getUserFullname()
         }
       );
+
+      await getFcm(context);
   
+    
+
       for (FcmData fcm in fcmData) {
-        if(authProvider.getUserId() != fcm.uid) {
+        if(fcm.uid != authProvider.getUserId()) {
           await context.read<FirebaseProvider>().sendNotification(
             context, 
             title: "Info", 
@@ -555,23 +560,25 @@ class VideoProvider with ChangeNotifier {
         }
       }
 
-      // NotificationService.showNotification(
-      //   id: Helper.createUniqueId(),
-      //   title: "Info",
-      //   body: "Rekaman Anda berhasil terkirim kepada Public Service dan Emergency Contact",
-      //   payload: {
-      //     "redirect": "list_video"
-      //   },
-      // );      
+      
+     
+      NotificationService.showNotification(
+        id: Helper.createUniqueId(),
+        title: "Info",
+        body: "Rekaman Anda berhasil terkirim kepada Public Service dan Emergency Contact",
+        payload: {
+          "redirect": "list_video"
+        },
+      );      
 
-      // await context.read<InboxProvider>().insertInbox(context, 
-      //   title: "Info",
-      //   mediaUrl: mediaUrlPhone,
-      //   thumbnail: thumbnailUrl,
-      //   content: "Rekaman Anda berhasil terkirim kepada Public Service dan Emergency Contact",
-      //   type: "info",
-      //   userId: authProvider.getUserId()!,
-      // );
+      await context.read<InboxProvider>().insertInbox(context, 
+        title: "Info",
+        mediaUrl: mediaUrlPhone,
+        thumbnail: thumbnailUrl,
+        content: "Rekaman Anda berhasil terkirim kepada Public Service dan Emergency Contact",
+        type: "info",
+        userId: authProvider.getUserId()!,
+      );
       
       Navigator.of(context).pop();
       
