@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:soundpool/soundpool.dart';
 import 'package:provider/provider.dart';
 
 import 'package:amulet/views/basewidgets/snackbar/snackbar.dart';

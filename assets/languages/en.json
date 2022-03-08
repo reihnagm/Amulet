@@ -206,6 +206,7 @@
     "SET_DATE": "Set Date",
     "YOU_ARE_SUBSCRIBED": "You Are Subscribed",
     "SET_TIME_START": "Set Time Start",
+    "USER_PERMISSION": "User doesn't allowed to login",
     "SET_TIME_END": "Set Time End",
     "SET_LOCATION": "Set Location",
     "SUCCESSFUL_CREATE_CHECKIN": "Successfuly Create CheckIn",

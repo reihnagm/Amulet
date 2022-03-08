@@ -83,8 +83,12 @@ class _SubscriptionsScreenState extends State<SubscriptionsScreen> {
                           
                           Container(
                             margin: EdgeInsets.only(
-                              left: 90.0, 
-                              right: 90.0
+                              left: constraints.maxWidth > 360.0 
+                              ? 90.0 
+                              : 70.0, 
+                              right: constraints.maxWidth > 360.0 
+                              ? 90.0 
+                              : 70.0, 
                             ),
                             child: Stack(
                               clipBehavior: Clip.none,
@@ -206,8 +210,12 @@ class _SubscriptionsScreenState extends State<SubscriptionsScreen> {
 
                           Container(
                             margin: EdgeInsets.only(
-                              left: 90.0,
-                              right: 90.0
+                              left: constraints.maxWidth > 360.0 
+                              ? 90.0 
+                              : 70.0, 
+                              right: constraints.maxWidth > 360.0 
+                              ? 90.0 
+                              : 70.0,
                             ),
                             child: Stack(
                               clipBehavior: Clip.none,

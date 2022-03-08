@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:amulet/providers/splash.dart';
 import 'package:badges/badges.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
@@ -45,9 +46,9 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver, Si
   late LocationProvider locationProvider;
   late NetworkProvider networkProvider;
   late InboxProvider inboxProvider;
+  late SplashProvider splashProvider;
   late VideoProvider videoProvider;
   late NavigationService navigationService;
-
   // late TextEditingController categeoryC;
 
   String selectedTextCat = "";
@@ -443,6 +444,9 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver, Si
       if(mounted) {
         inboxProvider.getInboxTotalUnread(context);
       }
+      if(mounted) {
+        splashProvider.initConfig();
+      }
     });
   }
 
@@ -465,6 +469,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver, Si
         videoProvider = context.read<VideoProvider>();
         inboxProvider = context.read<InboxProvider>();
         networkProvider = context.read<NetworkProvider>();
+        splashProvider = context.read<SplashProvider>();
         navigationService = NavigationService();
         return Scaffold(
           resizeToAvoidBottomInset: false,

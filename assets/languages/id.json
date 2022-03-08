@@ -200,6 +200,7 @@
     "SET_DATE": "Ubah Tanggal",
     "YOU_ARE_SUBSCRIBED": "Anda telah Berlangganan",
     "SET_TIME_START": "Ubah waktu mulai",
+    "USER_PERMISSION": "Pengguna tidak diizinkan untuk masuk",
     "SET_TIME_END": "Ubah waktu selesai",
     "SET_LOCATION": "Ubah Lokasi",
     "SUCCESSFUL_CREATE_CHECKIN": "Berhasil Membuat CheckIn",

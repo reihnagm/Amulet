@@ -156,113 +156,109 @@ class _NotificationScreenState extends State<NotificationScreen> {
                                             mainAxisSize: MainAxisSize.max,
                                             children: [
                                               Expanded(
-                                                flex: 3,
-                                                child: Image.asset("assets/images/info-sos.png",
-                                                  width: 35.0,
-                                                  height: 35.0,
-                                                ),
-                                              ),
-                                              Expanded(
-                                                flex: 1,
-                                                child: Container()
-                                              ),
-                                              Expanded(
                                                 flex: 16,
                                                 child: Column(
                                                   crossAxisAlignment: CrossAxisAlignment.start,
                                                   mainAxisSize: MainAxisSize.min,
                                                   children: [
                                                     Row(
-                                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                       mainAxisSize: MainAxisSize.max,
                                                       children: [
-                                                        SizedBox(
-                                                          width: 130.0,
-                                                          child: Text(inboxData.title!,
-                                                            overflow: TextOverflow.ellipsis,
-                                                            style: TextStyle(
-                                                              color: ColorResources.black,
-                                                              fontWeight: inboxData.isRead == 1 
-                                                              ? FontWeight.w400
-                                                              : FontWeight.bold,
-                                                              fontSize: Dimensions.fontSizeDefault,
-                                                            ),
-                                                          ),
+                                                        Image.asset("assets/images/info-sos.png",
+                                                          width: 35.0,
+                                                          height: 35.0,
                                                         ),
-                                                        if(inboxData.type != "info")
-                                                          Container(
-                                                            padding: EdgeInsets.all(6.0),
-                                                            decoration: BoxDecoration(
-                                                              color: inboxData.type == "done"
-                                                              ? ColorResources.success 
-                                                              : ColorResources.redPrimary,
-                                                              borderRadius: BorderRadius.circular(8.0),
-                                                            ),
-                                                            child: Text(inboxData.type == "done"
-                                                            ? getTranslated("DONE", context)
-                                                            : getTranslated("ONGOING", context),
-                                                              style: TextStyle(
-                                                                fontSize: Dimensions.fontSizeSmall,
-                                                                fontWeight: FontWeight.bold,
-                                                                color: ColorResources.white
-                                                              ),
-                                                            ),
-                                                          )
-                                                      ],
-                                                    ),
-                                                    const SizedBox(height: 5.0),
-                                                    Text(inboxData.content!,
-                                                      overflow: TextOverflow.ellipsis,
-                                                      style: TextStyle(
-                                                        color: ColorResources.black,
-                                                        fontWeight: inboxData.isRead == 1 
-                                                        ? FontWeight.w400
-                                                        : FontWeight.bold,
-                                                        fontSize: Dimensions.fontSizeSmall,
-                                                      ),
-                                                    ),
-                                                    const SizedBox(height: 8.0),
-                                                    Row(
-                                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                      mainAxisSize: MainAxisSize.max,
-                                                      children: [
-                                                        Text(inboxData.createdAt!,
-                                                          style: const TextStyle(
-                                                            color: ColorResources.greyDarkPrimary,
-                                                            fontWeight: FontWeight.w300,
-                                                            fontSize: Dimensions.fontSizeExtraSmall
-                                                          ),
-                                                        ),
-                                                        Column(
-                                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                                          mainAxisSize: MainAxisSize.min,
-                                                          children: [
-                                                            Stack(
-                                                              clipBehavior: Clip.none,
-                                                              children: [
-                                                                ClipRRect(
-                                                                  borderRadius: BorderRadius.circular(10.0),
-                                                                  child: CachedNetworkImage(
-                                                                    imageUrl: inboxData.thumbnail.toString(),
-                                                                    width: 50.0,
-                                                                    height: 50.0,
-                                                                    fit: BoxFit.cover,
-                                                                    placeholder: (BuildContext context, String url) {
-                                                                      return Center(
-                                                                        child: SpinKitThreeBounce(
-                                                                          size: 20.0,
-                                                                          color: Colors.black87,
-                                                                        ),
-                                                                      );              
-                                                                    },
+                                                        const SizedBox(width: 15.0),
+                                                        Expanded(
+                                                          flex: 4,
+                                                          child: Column(
+                                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                                            mainAxisSize: MainAxisSize.min,
+                                                            children: [
+                                                              SizedBox(
+                                                                width: 190.0,
+                                                                child: Text(inboxData.title!,
+                                                                  overflow: TextOverflow.ellipsis,
+                                                                  style: TextStyle(
+                                                                    color: ColorResources.black,
+                                                                    fontWeight: inboxData.isRead == 1 
+                                                                    ? FontWeight.w400
+                                                                    : FontWeight.bold,
+                                                                    fontSize: Dimensions.fontSizeDefault,
                                                                   ),
                                                                 ),
-                                                              ],
-                                                            )
-                                                          ],
+                                                              ),
+                                                              const SizedBox(height: 5.0),
+                                                              SizedBox(
+                                                                width: 160.0,
+                                                                child: Text(inboxData.content!,
+                                                                  overflow: TextOverflow.ellipsis,
+                                                                  style: TextStyle(
+                                                                    color: ColorResources.black,
+                                                                    fontWeight: inboxData.isRead == 1 
+                                                                    ? FontWeight.w400
+                                                                    : FontWeight.bold,
+                                                                    fontSize: Dimensions.fontSizeSmall,
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                              const SizedBox(height: 5.0),
+                                                              Text(inboxData.createdAt!,
+                                                                style: const TextStyle(
+                                                                  color: ColorResources.greyDarkPrimary,
+                                                                  fontWeight: FontWeight.w300,
+                                                                  fontSize: Dimensions.fontSizeExtraSmall
+                                                                ),
+                                                              ),
+                                                            ],
+                                                          ),
+                                                        ),
+                                                        Expanded(
+                                                          flex: 1,
+                                                          child: ClipRRect(
+                                                            borderRadius: BorderRadius.circular(10.0),
+                                                            child: CachedNetworkImage(
+                                                              imageUrl: inboxData.thumbnail.toString(),
+                                                              width: 50.0,
+                                                              height: 50.0,
+                                                              fit: BoxFit.cover,
+                                                              placeholder: (BuildContext context, String url) {
+                                                                return Center(
+                                                                  child: SpinKitThreeBounce(
+                                                                    size: 20.0,
+                                                                    color: Colors.black87,
+                                                                  ),
+                                                                );              
+                                                              },
+                                                            ),
+                                                          ),
                                                         )
                                                       ],
-                                                    )
+                                                    ),
+
+                                                    const SizedBox(height: 5.0),
+                                                   
+                                                    if(inboxData.type != "info")
+                                                      const SizedBox(height: 8.0),
+                                                    if(inboxData.type != "info")
+                                                      Container(
+                                                        padding: EdgeInsets.all(6.0),
+                                                        decoration: BoxDecoration(
+                                                          color: inboxData.type == "done"
+                                                          ? ColorResources.success 
+                                                          : ColorResources.redPrimary,
+                                                          borderRadius: BorderRadius.circular(8.0),
+                                                        ),
+                                                        child: Text(inboxData.type == "done"
+                                                        ? getTranslated("DONE", context)
+                                                        : getTranslated("ONGOING", context),
+                                                          style: TextStyle(
+                                                            fontSize: Dimensions.fontSizeSmall,
+                                                            fontWeight: FontWeight.bold,
+                                                            color: ColorResources.white
+                                                          ),
+                                                        ),
+                                                      ),
                                                   ],
                                                 ),
                                               ),                  

@@ -18,6 +18,7 @@ class FcmData {
     this.lat,
     this.lng,
     this.fullname,
+    this.role,
     this.createdAt,
     this.updatedAt,
   });
@@ -28,6 +29,7 @@ class FcmData {
   String? lat;
   String? lng;
   String? fullname;
+  String? role;
   DateTime? createdAt;
   DateTime? updatedAt;
 
@@ -38,6 +40,7 @@ class FcmData {
     lat: json["lat"],
     lng: json["lng"],
     fullname: json["fullname"],
+    role: json["role"],
     createdAt: DateTime.parse(json["created_at"]),
     updatedAt: DateTime.parse(json["updated_at"]),
   );

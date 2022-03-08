@@ -331,11 +331,15 @@ class AuthProvider with ChangeNotifier {
       //   }
       // }
       if(userData.user!.emailActivated != 0) {
-        writeData(userData);
-        navigationService.pushNavReplacement(
-          context, 
-          HomeScreen(key: UniqueKey())
-        );
+        if(userData.user!.role == "agent") {
+          ShowSnackbar.snackbar(context, getTranslated("USER_PERMISSION", context), "", ColorResources.purpleDark);
+        } else {
+          writeData(userData);
+          navigationService.pushNavReplacement(
+            context, 
+            HomeScreen(key: UniqueKey())
+          );
+        }
       } else {
         sharedPreferences.setString("email_otp", userData.user!.emailAddress!);
         navigationService.pushNavReplacement(

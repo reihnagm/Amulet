@@ -547,21 +547,19 @@ class VideoProvider with ChangeNotifier {
 
       await getFcm(context);
   
-    
-
       for (FcmData fcm in fcmData) {
         if(fcm.uid != authProvider.getUserId()) {
-          await context.read<FirebaseProvider>().sendNotification(
-            context, 
-            title: "Info", 
-            body:"- Laporan baru telah masuk -",  
-            tokens: [fcm.fcmSecret!]
-          );
+          if(fcm.role == "agent") {
+            await context.read<FirebaseProvider>().sendNotification(
+              context, 
+              title: "Info", 
+              body:"- Laporan baru telah masuk -",  
+              tokens: [fcm.fcmSecret!]
+            );
+          }
         }
       }
 
-      
-     
       NotificationService.showNotification(
         id: Helper.createUniqueId(),
         title: "Info",

@@ -67,6 +67,7 @@ dependencies:
   # S
   socket_io_client: ^1.0.1
   sqflite: ^2.0.2
+    
   sn_progress_dialog: ^1.0.3
   slide_to_confirm: ^1.1.0
   shared_preferences: ^2.0.13
@@ -94,6 +95,7 @@ dependencies:
   date_time_picker: ^2.1.0
   mask_text_input_formatter: ^2.1.0
   flutter_html: ^2.2.1
+  soundpool: ^2.3.0
 
 dev_dependencies:
   flutter_test:
@@ -114,3 +116,4 @@ flutter:
     - assets/images/
     - assets/languages/
     - assets/icons/
+    - assets/sounds/

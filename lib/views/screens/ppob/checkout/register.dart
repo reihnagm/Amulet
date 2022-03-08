@@ -94,7 +94,7 @@ class _CheckoutRegistrasiScreenState extends State<CheckoutRegistrasiScreen> wit
                             children: [
                               Container(
                                 decoration: BoxDecoration(
-                                  color: Colors.white70,
+                                  color: Colors.white,
                                   borderRadius: BorderRadius.circular(4.0)
                                 ),
                                   child: Column(
@@ -319,9 +319,9 @@ class _CheckoutRegistrasiScreenState extends State<CheckoutRegistrasiScreen> wit
           margin: const EdgeInsets.only(bottom: 10.0),
           child: SelectableText(widget.noVa!,
             style: TextStyle(
-              fontSize: Dimensions.fontSizeLarge,
+              fontSize: Dimensions.fontSizeExtraLarge,
               fontWeight: FontWeight.bold,
-              color: Colors.black
+              color: ColorResources.blue
             ),
             textAlign: TextAlign.center,
           ),
